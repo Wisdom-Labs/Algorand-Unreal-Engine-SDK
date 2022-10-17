@@ -9,6 +9,14 @@
 
 #include <stdint.h>
 
+#if defined _WIN32 || defined _WIN64
+#define APPERROR_IMPORT __declspec(dllimport)
+#elif defined __linux__
+#define APPERROR_IMPORT __attribute__((visibility("default")))
+#else
+#define APPERROR_IMPORT
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -38,7 +46,7 @@ typedef struct
 
 void
 app_error_fault_handler(uint32_t id, uint32_t pc, long info);
-void
+APPERROR_IMPORT void
 app_error_handler(ret_code_t error_code, uint32_t line_num, const uint8_t *p_file_name);
 
 /**@brief Macro for calling error handler function.

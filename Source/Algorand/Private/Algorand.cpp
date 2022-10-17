@@ -1,5 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+#define WIN32_LEAN_AND_MEAN
+
 #include "Algorand.h"
 #include "Core.h"
 #include "Modules/ModuleManager.h"

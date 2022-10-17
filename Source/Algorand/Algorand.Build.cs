@@ -7,10 +7,12 @@ public class Algorand : ModuleRules
 	public Algorand(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		
+
+		AddEngineThirdPartyPrivateStaticDependencies(Target, "libcurl");
+
 		PublicIncludePaths.AddRange(
 			new string[] {
-				// ... add public include paths required here ...
+				// ... add other public include paths required here ...
 			}
 			);
 				
