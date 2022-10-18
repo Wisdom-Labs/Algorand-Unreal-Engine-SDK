@@ -1,4 +1,4 @@
-./Binaries
-./Intermediate
-./Source/ThirdParty/AlgorandLibrary/Mac
-./Source/ThirdParty/AlgorandLibrary/x64
+Binaries/
+Intermediate/
+Source/ThirdParty/AlgorandLibrary/Mac/
+Source/ThirdParty/AlgorandLibrary/x64/
