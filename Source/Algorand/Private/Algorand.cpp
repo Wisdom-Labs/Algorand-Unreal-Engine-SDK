@@ -7,6 +7,7 @@
 #include "Modules/ModuleManager.h"
 #include "Interfaces/IPluginManager.h"
 
+
 THIRD_PARTY_INCLUDES_START
 #include "AlgorandLibrary/main.h"
 THIRD_PARTY_INCLUDES_END
@@ -42,7 +43,6 @@ void FAlgorandModule::StartupModule()
 	{
 		FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("ThirdPartyLibraryError", "Failed to load example third party library"));
 	}
-	ExampleLibraryFunction();
 }
 
 void FAlgorandModule::ShutdownModule()

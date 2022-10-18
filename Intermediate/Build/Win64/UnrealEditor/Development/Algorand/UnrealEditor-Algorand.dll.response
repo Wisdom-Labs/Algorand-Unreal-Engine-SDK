@@ -16,6 +16,7 @@
 /INCREMENTAL:NO
 /ignore:4199
 /ignore:4099
+/DELAYLOAD:"libsodium.dll"
 /DELAYLOAD:"d3d12.dll"
 /DELAYLOAD:"DBGHELP.DLL"
 /DELAYLOAD:"vertices.dll"
@@ -38,6 +39,7 @@
 "E:\6.DevProject\UnrealEngine5\projects\Real\UnrealAlgorandPlugin\Intermediate\Build\Win64\UnrealAlgorandPluginEditor\Development\Core\SharedPCH.Core.ShadowErrors.h.obj"
 "E:\6.DevProject\UnrealEngine5\projects\Real\UnrealAlgorandPlugin\Plugins\Algorand\Intermediate\Build\Win64\UnrealEditor\Development\Algorand\Module.Algorand.cpp.obj"
 "E:\6.DevProject\UnrealEngine5\projects\Real\UnrealAlgorandPlugin\Plugins\Algorand\Intermediate\Build\Win64\UnrealEditor\Development\Algorand\Default.rc2.res"
+"E:\6.DevProject\UnrealEngine5\projects\Real\UnrealAlgorandPlugin\Plugins\Algorand\Source\Algorand\Libs\libsodium.lib"
 "ThirdParty\libcurl\curl-7.55.1\lib\Win64\VS2015\libcurl_a.lib"
 "E:\6.DevProject\UnrealEngine5\projects\Real\UnrealAlgorandPlugin\Plugins\Algorand\Source\ThirdParty\AlgorandLibrary\x64\Release\vertices.lib"
 "E:\6.DevProject\UnrealEngine5\projects\Real\UnrealAlgorandPlugin\Plugins\Algorand\Source\ThirdParty\AlgorandLibrary\x64\Release\cjson.lib"

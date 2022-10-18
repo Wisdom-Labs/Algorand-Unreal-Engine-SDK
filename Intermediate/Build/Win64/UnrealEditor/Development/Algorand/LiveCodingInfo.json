@@ -3,7 +3,8 @@
 	{
 		"Module.Algorand.cpp.obj": [
 			"Algorand.cpp.obj",
-			"http_curl.cpp.obj"
+			"http_curl.cpp.obj",
+			"VerticesSDK.cpp.obj"
 		]
 	}
 }

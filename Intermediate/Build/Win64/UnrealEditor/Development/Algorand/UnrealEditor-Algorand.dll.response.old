@@ -16,9 +16,11 @@
 /INCREMENTAL:NO
 /ignore:4199
 /ignore:4099
+/DELAYLOAD:"libsodium.dll"
 /DELAYLOAD:"d3d12.dll"
 /DELAYLOAD:"DBGHELP.DLL"
 /DELAYLOAD:"vertices.dll"
+/DELAYLOAD:"cjson.dll"
 /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\lib\x64"
 /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\lib\um\x64"
 /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.19041.0\ucrt\x64"
@@ -39,6 +41,7 @@
 "E:\6.DevProject\UnrealEngine5\projects\Real\UnrealAlgorandPlugin\Plugins\Algorand\Intermediate\Build\Win64\UnrealEditor\Development\Algorand\Default.rc2.res"
 "ThirdParty\libcurl\curl-7.55.1\lib\Win64\VS2015\libcurl_a.lib"
 "E:\6.DevProject\UnrealEngine5\projects\Real\UnrealAlgorandPlugin\Plugins\Algorand\Source\ThirdParty\AlgorandLibrary\x64\Release\vertices.lib"
+"E:\6.DevProject\UnrealEngine5\projects\Real\UnrealAlgorandPlugin\Plugins\Algorand\Source\ThirdParty\AlgorandLibrary\x64\Release\cjson.lib"
 "..\Intermediate\Build\Win64\UnrealEditor\Development\Core\UnrealEditor-Core.lib"
 "..\Intermediate\Build\Win64\UnrealEditor\Development\Projects\UnrealEditor-Projects.lib"
 "delayimp.lib"
@@ -65,6 +68,7 @@
 "setupapi.lib"
 "dwmapi.lib"
 "imm32.lib"
+"E:\6.DevProject\UnrealEngine5\projects\Real\UnrealAlgorandPlugin\Plugins\Algorand\Source\Algorand\x64\Release\libsodium.lib"
 /OUT:"E:\6.DevProject\UnrealEngine5\projects\Real\UnrealAlgorandPlugin\Plugins\Algorand\Binaries\Win64\UnrealEditor-Algorand.dll"
 /IMPLIB:"E:\6.DevProject\UnrealEngine5\projects\Real\UnrealAlgorandPlugin\Plugins\Algorand\Intermediate\Build\Win64\UnrealEditor\Development\Algorand\UnrealEditor-Algorand.suppressed.lib"
 /PDB:"E:\6.DevProject\UnrealEngine5\projects\Real\UnrealAlgorandPlugin\Plugins\Algorand\Binaries\Win64\UnrealEditor-Algorand.pdb"
