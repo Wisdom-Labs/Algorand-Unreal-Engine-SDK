@@ -1,7 +1,0 @@
-{
-	"SourceFiles": [
-		"E:\\6.DevProject\\UnrealEngine5\\projects\\Real\\UnrealAlgorandPlugin\\Plugins\\Algorand\\Source\\Algorand\\Algorand.Build.cs",
-		"E:\\6.DevProject\\UnrealEngine5\\projects\\Real\\UnrealAlgorandPlugin\\Plugins\\Algorand\\Source\\ThirdParty\\AlgorandLibrary\\AlgorandLibrary.Build.cs"
-	],
-	"EngineVersion": "5.0.3"
-}
