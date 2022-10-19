@@ -1,8 +1,13 @@
-﻿#include "VerticesSDK.h"
+﻿#pragma once
 
+#include "VerticesSDK.h"
+#include "Misc/Paths.h"
+#include <string>
+using namespace std;
 
-static ret_code_t
-vertices_evt_handler(vtc_evt_t* evt) {
+DECLARE_LOG_CATEGORY_EXTERN(LogMyAwesomeGame, Log, All);
+
+ret_code_t vertices_evt_handler(vtc_evt_t* evt) {
     ret_code_t err_code = VTC_SUCCESS;
 
     switch (evt->type) {
@@ -94,25 +99,26 @@ vertices_evt_handler(vtc_evt_t* evt) {
 
 /// Create new random account
 /// Account keys will be stored in files
-static ret_code_t
-create_new_account() {
-    ret_code_t err_code;
+ret_code_t VerticesSDK::create_new_account() {
+    ret_code_t err_code = VTC_SUCCESS;
 
     unsigned char seed[crypto_sign_ed25519_SEEDBYTES] = { 0 };
     unsigned char ed25519_pk[crypto_sign_ed25519_PUBLICKEYBYTES];
 
-    LOG_WARNING("🧾 Creating new random account and storing it (path  config)");
+    UE_LOG(LogTemp, Display, TEXT("🧾 Creating new random account and storing it (path  config)"));
 
     unsigned char ed25519_sk[crypto_sign_ed25519_SECRETKEYBYTES];
     randombytes_buf(seed, sizeof(seed));
 
     crypto_sign_ed25519_seed_keypair(ed25519_pk, ed25519_sk, seed);
-
+    
     memcpy(alice_account.private_key, ed25519_sk, sizeof(alice_account.private_key));
-
-    FILE* fw_priv = fopen("./config/private_key.bin", "wb");
+    
+    std::string config_file = std::string(TCHAR_TO_UTF8(*prv_key));
+    
+    FILE* fw_priv = fopen(config_file.c_str() , "wb");
     if (fw_priv == nullptr) {
-        LOG_ERROR("Cannot create ./config/private_key.bin");
+        UE_LOG(LogTemp, Error, TEXT("Cannot create ./config/private_key.bin"));
         return VTC_ERROR_NOT_FOUND;
     }
     else {
@@ -122,10 +128,12 @@ create_new_account() {
 
     // adding account, account address will be computed from binary public key
     err_code = vertices_account_new_from_bin((char*)ed25519_pk, &alice_account.vtc_account);
-    VTC_ASSERT(err_code);
+    UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_bin %d"), err_code);
+    //VTC_ASSERT(err_code);
 
     // we can now store the b32 address in a file
-    FILE* fw_pub = fopen("./config/public_b32.txt", "w");
+    config_file = std::string(TCHAR_TO_UTF8(*pub_key));
+    FILE* fw_pub = fopen(config_file.c_str(), "w");
     if (fw_pub != nullptr) {
         size_t len = strlen(alice_account.vtc_account->public_b32);
 
@@ -139,8 +147,7 @@ create_new_account() {
 
 /// Source the account using private/public keys from files.
 /// \return \c VTC_ERROR_NOT_FOUND account not found
-static ret_code_t
-load_existing_account() {
+ret_code_t VerticesSDK::load_existing_account() {
     ret_code_t err_code;
 
     char public_b32[PUBLIC_B32_STR_MAX_LENGTH] = { 0 };
@@ -149,24 +156,27 @@ load_existing_account() {
 
     // we either create a new random account or load it from private and public key files.
     // key files can also be generated using [`algokey`](https://developer.algorand.org/docs/reference/cli/algokey/generate/)
-    FILE* f_priv = fopen("./config/private_key.bin", "rb");
+    std::string config_file = std::string(TCHAR_TO_UTF8(*prv_key));
+
+    FILE* f_priv = fopen(config_file.c_str(), "rb");
     if (f_priv != nullptr) {
-        LOG_INFO("🔑 Loading private key from: %s", "./config/private_key.bin");
+        UE_LOG(LogTemp, Display, TEXT("🔑 Loading private key from %s"), *FString(prv_key));
 
         bytes_read = fread(alice_account.private_key, 1, ADDRESS_LENGTH, f_priv);
         fclose(f_priv);
     }
 
     if (f_priv == nullptr || bytes_read != ADDRESS_LENGTH) {
-        LOG_WARNING(
-            "🤔 private_key.bin does not exist or keys not found. You can pass the -n flag to create a new account");
+        UE_LOG(LogTemp, Display, TEXT(
+            "🤔 private_key.bin does not exist or keys not found. You can pass the -n flag to create a new account"));
 
         return VTC_ERROR_NOT_FOUND;
     }
 
-    FILE* f_pub = fopen("./config/public_b32.txt", "r");
+    config_file = std::string(TCHAR_TO_UTF8(*pub_key));
+    FILE* f_pub = fopen(config_file.c_str(), "r");
     if (f_pub != nullptr) {
-        LOG_INFO("🔑 Loading public key from: %s", "./config/public_b32.txt");
+        UE_LOG(LogTemp, Display, TEXT("🔑 Loading public key from: %s"), *FString(pub_key));
 
         bytes_read = fread(public_b32, 1, PUBLIC_B32_STR_MAX_LENGTH, f_pub);
         fclose(f_pub);
@@ -179,81 +189,65 @@ load_existing_account() {
     }
 
     if (f_pub == nullptr || bytes_read < ADDRESS_LENGTH) {
-        LOG_WARNING(
-            "🤔 public_b32.txt does not exist or keys not found. You can pass the -n flag to create a new account");
+        UE_LOG(LogTemp, Warning, TEXT(
+            "🤔 public_b32.txt does not exist or keys not found. You can pass the -n flag to create a new account"));
 
         return VTC_ERROR_NOT_FOUND;
     }
 
     err_code = vertices_account_new_from_b32(public_b32, &alice_account.vtc_account);
-    VTC_ASSERT(err_code);
+    UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_b32 %d"), err_code);
+    //VTC_ASSERT(err_code);
 
-    LOG_INFO("💳 Created Alice's account: %s", alice_account.vtc_account->public_b32);
+    UE_LOG(LogTemp, Display, TEXT("💳 Created Alice's account: %s"), *FString(alice_account.vtc_account->public_b32));
 
     return VTC_SUCCESS;
 }
 
-int
-testAlgorand() {
+int VerticesSDK::testAlgorand() {
+    UE_LOG(LogTemp, Display, TEXT("😎 I am here"));
     ret_code_t err_code;
 
-    bool create_new = true;                // bug fixing convert false to tru at first.
+    bool create_new = false;                // bug fixing convert false to tru at first.
     tx_type_t run_tx = ALGORAND_PAYMENT_TRANSACTION;
 
+    // init config
+    config_path = FPaths::ProjectPluginsDir() + "Algorand/Source/Algorand/config/";
+    prv_key = config_path + "private_key.bin";
+    pub_key = config_path + "public_b32.txt";
     //   initialize providers ,struct variable
     providers.url = (char*)SERVER_URL;
     providers.port = SERVER_PORT;
     providers.header = (char*)SERVER_TOKEN_HEADER;
     //
     //   initialize alice_account ,struct variable
-    memcpy(alice_account.private_key, 0, 32);
+    memset(alice_account.private_key, 0, 32);
     alice_account.vtc_account = nullptr;
     //
     //   initialize bob_account, struct variable
-    memcpy(bob_account.private_key, 0 , 32);
+    memset(bob_account.private_key, 0 , 32);
     bob_account.vtc_account = nullptr;
     //
     //   initialize m_vertex, struct variable
     m_vertex.provider = &providers;
-    m_vertex.vertices_evt_handler = vertices_evt_handler;
-    //
-    /*int opt;
-    while ((opt = getopt(argc, argv, "npa")) != -1) {
-        switch (opt) {
-        case 'n': {
-            create_new = true;
-        }
-                break;
-        case 'p': {
-            run_tx = PAY_TX;
-        }
-                break;
-        case 'a': {
-            run_tx = APP_CALL_TX;
-        }
-                break;
-
-        default: {
-            fprintf(stderr,
-                "Usage:\n%s [-p|-a] [-n] \nSend signed transaction on the blockchain.\n-p (default)\tSend [p]ayment (Alice sends tokens to Bob)\n-a\t\t\t\tSend [a]pplication call (Alice sends integer value to application)\n-n\t\t\t\tCreate [n]ew account",
-                argv[0]);
-            exit(EXIT_FAILURE);
-        }
-        }
-    }*/
+    m_vertex.vertices_evt_handler = &vertices_evt_handler;
+    
+    // select tx type
 
     LOG_INFO("😎 Vertices SDK running on Unix-based OS");
 
     int ret = sodium_init();
     VTC_ASSERT_BOOL(ret == 0);
-
+    
     // create new vertex
     err_code = vertices_new(&m_vertex);
+    UE_LOG(LogTemp, Warning, TEXT("err_code vertices_new %d"), err_code);
     VTC_ASSERT(err_code);
 
     // making sure the provider is accessible
     err_code = vertices_ping();
-    VTC_ASSERT(err_code);
+    //VTC_ASSERT(err_code);
+    UE_LOG(LogTemp, Warning, TEXT("err_code vertices_ping %d"), err_code);
 
     // ask for provider version
     provider_version_t version = { 0 };
@@ -262,103 +256,106 @@ testAlgorand() {
         LOG_WARNING("Version might not be accurate: old value is being used");
     }
     else {
-        VTC_ASSERT(err_code);
+        //VTC_ASSERT(err_code);
+        UE_LOG(LogTemp, Warning, TEXT("err_code vertices_version %d"), err_code);
     }
 
-    LOG_INFO("🏎 Running on %s v.%u.%u.%u",
-        version.network,
-        version.major,
-        version.minor,
-        version.patch);
+    //LOG_INFO("🏎 Running on %s v.%u.%u.%u",
+    //    version.network,
+    //    version.major,
+    //    version.minor,
+    //    version.patch);
 
     // Several ways to create/load accounts:
     if (create_new) {
         // 1) create new one
         err_code = create_new_account();
-        VTC_ASSERT(err_code);
+        //VTC_ASSERT(err_code);
+        UE_LOG(LogTemp, Warning, TEXT("err_code create_new_account %d"), err_code);
     }
     else {
         // 2) from files
         err_code = load_existing_account();
-        VTC_ASSERT(err_code);
+        //VTC_ASSERT(err_code);
+        UE_LOG(LogTemp, Warning, TEXT("err_code load_existing_account %d"), err_code);
     }
 
     //  3) from b32 address
     //      Note: creating a receiver account is not mandatory to send money to the account
     //      but we can use it to load the public key from the account address
-    err_code = vertices_account_new_from_b32((char*)ACCOUNT_RECEIVER, &bob_account.vtc_account);
-    VTC_ASSERT(err_code);
+    /*err_code = vertices_account_new_from_b32((char*)ACCOUNT_RECEIVER, &bob_account.vtc_account);
+    VTC_ASSERT(err_code);*/
 
-    LOG_INFO("🤑 %f Algos on Alice's account (%s)",
-        alice_account.vtc_account->amount / 1.e6,
-        alice_account.vtc_account->public_b32);
+    //LOG_INFO("🤑 %f Algos on Alice's account (%s)",
+    //    alice_account.vtc_account->amount / 1.e6,
+    //    alice_account.vtc_account->public_b32);
 
-    if (alice_account.vtc_account->amount < 1001000) {
-        LOG_ERROR(
-            "🙄 Amount available on account is too low to pass a transaction, consider adding Algos");
-        LOG_INFO("👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: %s",
-            alice_account.vtc_account->public_b32);
-        LOG_INFO("😎 Then wait for a few seconds for transaction to pass...");
-        return 0;
-    }
+    //if (alice_account.vtc_account->amount < 1001000) {
+    //    LOG_ERROR(
+    //        "🙄 Amount available on account is too low to pass a transaction, consider adding Algos");
+    //    LOG_INFO("👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: %s",
+    //        alice_account.vtc_account->public_b32);
+    //    LOG_INFO("😎 Then wait for a few seconds for transaction to pass...");
+    //    return 0;
+    //}
 
-    switch (run_tx) {
-    case ALGORAND_PAYMENT_TRANSACTION: {
-        // send assets from account 0 to account 1
-        char* notes = (char*)"Alice sent 1 Algo to Bob";
-        uint64_t AMOUNT_SENT = 100;
-        err_code =
-            vertices_transaction_pay_new(alice_account.vtc_account,
-                (char*)bob_account.vtc_account->public_b32 /* or ACCOUNT_RECEIVER */,AMOUNT_SENT,
-                notes);
-        VTC_ASSERT(err_code);
-    }
-               break;
+    //switch (run_tx) {
+    //case ALGORAND_PAYMENT_TRANSACTION: {
+    //    // send assets from account 0 to account 1
+    //    char* notes = (char*)"Alice sent 1 Algo to Bob";
+    //    uint64_t AMOUNT_SENT = 100;
+    //    err_code =
+    //        vertices_transaction_pay_new(alice_account.vtc_account,
+    //            (char*)bob_account.vtc_account->public_b32 /* or ACCOUNT_RECEIVER */,AMOUNT_SENT,
+    //            notes);
+    //    VTC_ASSERT(err_code);
+    //}
+    //           break;
 
-    case ALGORAND_APPLICATION_CALL_TRANSACTION: {
-        // get application information
-        LOG_INFO("Application %u, global states", APP_ID);
+    //case ALGORAND_APPLICATION_CALL_TRANSACTION: {
+    //    // get application information
+    //    LOG_INFO("Application %u, global states", APP_ID);
 
-        app_values_t app_kv = { 0 };
-        err_code = vertices_application_get(APP_ID, &app_kv);
-        VTC_ASSERT(err_code);
-        for (uint32_t i = 0; i < app_kv.count; ++i) {
-            if (app_kv.values[i].type == VALUE_TYPE_INTEGER) {
-                LOG_INFO("%s: %llu", app_kv.values[i].name, (long long unsigned) app_kv.values[i].value_uint);
-            }
-            else if (app_kv.values[i].type == VALUE_TYPE_BYTESLICE) {
-                LOG_INFO("%s: %s", app_kv.values[i].name, app_kv.values[i].value_slice);
-            }
-        }
+    //    app_values_t app_kv = { 0 };
+    //    err_code = vertices_application_get(APP_ID, &app_kv);
+    //    VTC_ASSERT(err_code);
+    //    for (uint32_t i = 0; i < app_kv.count; ++i) {
+    //        if (app_kv.values[i].type == VALUE_TYPE_INTEGER) {
+    //            LOG_INFO("%s: %llu", app_kv.values[i].name, (long long unsigned) app_kv.values[i].value_uint);
+    //        }
+    //        else if (app_kv.values[i].type == VALUE_TYPE_BYTESLICE) {
+    //            LOG_INFO("%s: %s", app_kv.values[i].name, app_kv.values[i].value_slice);
+    //        }
+    //    }
 
-        // send application call
-        app_values_t kv = { 0 };
-        kv.count = 1;
-        kv.values[0].type = VALUE_TYPE_INTEGER;
-        kv.values[0].value_uint = 32;
+    //    // send application call
+    //    app_values_t kv = { 0 };
+    //    kv.count = 1;
+    //    kv.values[0].type = VALUE_TYPE_INTEGER;
+    //    kv.values[0].value_uint = 32;
 
-        err_code = vertices_transaction_app_call(alice_account.vtc_account, APP_ID, &kv);
-        VTC_ASSERT(err_code);
-    }
-                    break;
+    //    err_code = vertices_transaction_app_call(alice_account.vtc_account, APP_ID, &kv);
+    //    VTC_ASSERT(err_code);
+    //}
+    //                break;
 
-    default:
-        LOG_ERROR("Unknown action to run");
-    }
+    //default:
+    //    LOG_ERROR("Unknown action to run");
+    //}
 
-    // processing
-    size_t queue_size = 1;
-    while (queue_size && err_code == VTC_SUCCESS) {
-        err_code = vertices_event_process(&queue_size);
-        VTC_ASSERT(err_code);
-    }
+    //// processing
+    //size_t queue_size = 1;
+    //while (queue_size && err_code == VTC_SUCCESS) {
+    //    err_code = vertices_event_process(&queue_size);
+    //    VTC_ASSERT(err_code);
+    //}
 
-    // delete the created accounts from the Vertices wallet
-    err_code = vertices_account_free(alice_account.vtc_account);
-    VTC_ASSERT(err_code);
+    //// delete the created accounts from the Vertices wallet
+    //err_code = vertices_account_free(alice_account.vtc_account);
+    //VTC_ASSERT(err_code);
 
-    err_code = vertices_account_free(bob_account.vtc_account);
-    VTC_ASSERT(err_code);
+    //err_code = vertices_account_free(bob_account.vtc_account);
+    //VTC_ASSERT(err_code);
 
     return 0;
 }
