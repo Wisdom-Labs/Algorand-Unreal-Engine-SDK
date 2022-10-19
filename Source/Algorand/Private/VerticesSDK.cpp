@@ -283,79 +283,77 @@ int VerticesSDK::testAlgorand() {
     //  3) from b32 address
     //      Note: creating a receiver account is not mandatory to send money to the account
     //      but we can use it to load the public key from the account address
-    /*err_code = vertices_account_new_from_b32((char*)ACCOUNT_RECEIVER, &bob_account.vtc_account);
-    VTC_ASSERT(err_code);*/
-
-    //LOG_INFO("🤑 %f Algos on Alice's account (%s)",
-    //    alice_account.vtc_account->amount / 1.e6,
-    //    alice_account.vtc_account->public_b32);
-
-    //if (alice_account.vtc_account->amount < 1001000) {
-    //    LOG_ERROR(
-    //        "🙄 Amount available on account is too low to pass a transaction, consider adding Algos");
-    //    LOG_INFO("👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: %s",
-    //        alice_account.vtc_account->public_b32);
-    //    LOG_INFO("😎 Then wait for a few seconds for transaction to pass...");
-    //    return 0;
-    //}
-
-    //switch (run_tx) {
-    //case ALGORAND_PAYMENT_TRANSACTION: {
-    //    // send assets from account 0 to account 1
-    //    char* notes = (char*)"Alice sent 1 Algo to Bob";
-    //    uint64_t AMOUNT_SENT = 100;
-    //    err_code =
-    //        vertices_transaction_pay_new(alice_account.vtc_account,
-    //            (char*)bob_account.vtc_account->public_b32 /* or ACCOUNT_RECEIVER */,AMOUNT_SENT,
-    //            notes);
-    //    VTC_ASSERT(err_code);
-    //}
-    //           break;
-
-    //case ALGORAND_APPLICATION_CALL_TRANSACTION: {
-    //    // get application information
-    //    LOG_INFO("Application %u, global states", APP_ID);
-
-    //    app_values_t app_kv = { 0 };
-    //    err_code = vertices_application_get(APP_ID, &app_kv);
-    //    VTC_ASSERT(err_code);
-    //    for (uint32_t i = 0; i < app_kv.count; ++i) {
-    //        if (app_kv.values[i].type == VALUE_TYPE_INTEGER) {
-    //            LOG_INFO("%s: %llu", app_kv.values[i].name, (long long unsigned) app_kv.values[i].value_uint);
-    //        }
-    //        else if (app_kv.values[i].type == VALUE_TYPE_BYTESLICE) {
-    //            LOG_INFO("%s: %s", app_kv.values[i].name, app_kv.values[i].value_slice);
-    //        }
-    //    }
-
-    //    // send application call
-    //    app_values_t kv = { 0 };
-    //    kv.count = 1;
-    //    kv.values[0].type = VALUE_TYPE_INTEGER;
-    //    kv.values[0].value_uint = 32;
-
-    //    err_code = vertices_transaction_app_call(alice_account.vtc_account, APP_ID, &kv);
-    //    VTC_ASSERT(err_code);
-    //}
-    //                break;
-
-    //default:
-    //    LOG_ERROR("Unknown action to run");
-    //}
-
-    //// processing
-    //size_t queue_size = 1;
-    //while (queue_size && err_code == VTC_SUCCESS) {
-    //    err_code = vertices_event_process(&queue_size);
-    //    VTC_ASSERT(err_code);
-    //}
-
-    //// delete the created accounts from the Vertices wallet
-    //err_code = vertices_account_free(alice_account.vtc_account);
+    err_code = vertices_account_new_from_b32((char*)ACCOUNT_RECEIVER, &bob_account.vtc_account);
     //VTC_ASSERT(err_code);
+    UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_b32 %d"), err_code);
 
-    //err_code = vertices_account_free(bob_account.vtc_account);
-    //VTC_ASSERT(err_code);
+    UE_LOG(LogTemp, Display, TEXT("🤑 %f Algos on Alice's account (%s)"), alice_account.vtc_account->amount / 1.e6, *FString(alice_account.vtc_account->public_b32));
 
-    return 0;
+    if (alice_account.vtc_account->amount < 1001000) {
+        UE_LOG(LogTemp, Error, TEXT("🙄 Amount available on account is too low to pass a transaction, consider adding Algos"));
+        
+        UE_LOG(LogTemp, Display, TEXT("👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: %s"), *FString(alice_account.vtc_account->public_b32));
+        UE_LOG(LogTemp, Display, TEXT("😎 Then wait for a few seconds for transaction to pass..."));
+        //return 0;
+    }
+
+    switch (run_tx) {
+    case ALGORAND_PAYMENT_TRANSACTION: {
+        // send assets from account 0 to account 1
+        char* notes = (char*)"Alice sent 1 Algo to Bob";
+        uint64_t AMOUNT_SENT = 100;
+        err_code =
+            vertices_transaction_pay_new(alice_account.vtc_account,
+                (char*)bob_account.vtc_account->public_b32 /* or ACCOUNT_RECEIVER */,AMOUNT_SENT,
+                notes);
+        UE_LOG(LogTemp, Warning, TEXT("err_code ALGORAND_PAYMENT_TRANSACTION %d"), err_code);
+    }
+               break;
+
+    case ALGORAND_APPLICATION_CALL_TRANSACTION: {
+        // get application information
+        UE_LOG(LogTemp, Display, TEXT("Application %u, global states"), APP_ID);
+
+        app_values_t app_kv = { 0 };
+        err_code = vertices_application_get(APP_ID, &app_kv);
+        UE_LOG(LogTemp, Warning, TEXT("err_code vertices_application_get %d"), err_code);
+        for (uint32_t i = 0; i < app_kv.count; ++i) {
+            if (app_kv.values[i].type == VALUE_TYPE_INTEGER) {
+                UE_LOG(LogTemp, Display, TEXT("%s: %llu"), *FString(app_kv.values[i].name), (long long unsigned) app_kv.values[i].value_uint);
+            }
+            else if (app_kv.values[i].type == VALUE_TYPE_BYTESLICE) {
+                UE_LOG(LogTemp, Display, TEXT("%s: %s"), *FString(app_kv.values[i].name), *FString((char*)app_kv.values[i].value_slice));
+            }
+        }
+
+        // send application call
+        app_values_t kv = { 0 };
+        kv.count = 1;
+        kv.values[0].type = VALUE_TYPE_INTEGER;
+        kv.values[0].value_uint = 32;
+
+        err_code = vertices_transaction_app_call(alice_account.vtc_account, APP_ID, &kv);
+        UE_LOG(LogTemp, Warning, TEXT("err_code vertices_transaction_app_call %d"), err_code);
+    }
+                    break;
+
+    default:
+        UE_LOG(LogTemp, Error, TEXT("Unknown action to run"));
+    }
+
+    // processing
+    size_t queue_size = 1;
+    while (queue_size && err_code == VTC_SUCCESS) {
+        err_code = vertices_event_process(&queue_size);
+        UE_LOG(LogTemp, Warning, TEXT("err_code vertices_event_process %d"), err_code);
+    }
+
+    // delete the created accounts from the Vertices wallet
+    err_code = vertices_account_free(alice_account.vtc_account);
+    UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_free alice %d"), err_code);
+
+    err_code = vertices_account_free(bob_account.vtc_account);
+    UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_free bob %d"), err_code);
+
+    return err_code;
 }

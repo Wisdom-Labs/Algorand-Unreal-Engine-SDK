@@ -37,7 +37,7 @@ HTTP_WEAK_IMPORT ret_code_t set_http_post(
         uint32_t* response_code));
 
 HTTP_WEAK_IMPORT ret_code_t set_http_close(
-    ret_code_t(*http_close_handler)());
+    void(*http_close_handler)(void));
 
 
 #ifdef __cplusplus

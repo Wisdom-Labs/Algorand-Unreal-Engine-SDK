@@ -191,7 +191,7 @@ http_post(const provider_info_t *provider,
 }
 
 void
-http_close()
+http_close(void)
 {
     curl_easy_cleanup(m_curl);
     curl_global_cleanup();
