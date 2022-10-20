@@ -5,7 +5,6 @@
 THIRD_PARTY_INCLUDES_START
 #include "AlgorandLibrary/include/vertices/vertices.h"
 #include "AlgorandLibrary/include/vertices_log.h"
-#include "AlgorandLibrary/include/algorand.h"
 #include "AlgorandLibrary/include/utils/base32.h"
 #include "AlgorandLibrary/include/utils/base64.h"
 #include "http_weak.h"
@@ -13,7 +12,7 @@ THIRD_PARTY_INCLUDES_END
 
 #include "unix_config.h"
 #include <cstring>
-#include <sodium.h>
+#include "../Libs/include/sodium.h"
 
 /// We store anything related to the account into the below structure
 /// The private key is used outside of the Vertices library:
@@ -23,10 +22,15 @@ typedef struct {
     account_info_t* vtc_account;               //!< pointer to Vertices account data
 } account_t;
 
-//typedef enum {
-//    PAY_TX = 0,
-//    APP_CALL_TX
-//} tx_type_t;
+typedef enum
+{
+    ALGORAND_PAYMENT_TRANSACTION = 0,
+    ALGORAND_KEY_REGISTRATION_TRANSACTION,
+    ALGORAND_ASSET_CONFIGURATION_TRANSACTION,
+    ALGORAND_ASSET_TRANSFER_TRANSACTION,
+    ALGORAND_ASSET_FREEZE_TRANSACTION,
+    ALGORAND_APPLICATION_CALL_TRANSACTION,
+} tx_type_t;
 
 
 // Alice's account is used to send data, keys will be retrived from config/key_files.txt

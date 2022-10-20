@@ -2,7 +2,7 @@
 
 THIRD_PARTY_INCLUDES_START
 #include "AlgorandLibrary/include/vertices_log.h"
-#include "AlgorandLibrary/include/compilers.h"
+//#include "AlgorandLibrary/include/compilers.h"
 #include "AlgorandLibrary/include/vertices/vertices_http.h"
 THIRD_PARTY_INCLUDES_END
 
