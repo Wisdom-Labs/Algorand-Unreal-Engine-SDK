@@ -11,7 +11,8 @@ public class Wallet : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "Core"
+                "Core",
+                "AlgorandLibrary"
             }
             );
     }

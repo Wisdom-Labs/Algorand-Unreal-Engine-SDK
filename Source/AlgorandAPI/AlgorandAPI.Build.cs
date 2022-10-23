@@ -3,7 +3,7 @@
 using System.IO;
 using UnrealBuildTool;
 
-public class Blockchain : ModuleRules
+public class AlgorandAPI : ModuleRules
 {
 	public Blockchain(ReadOnlyTargetRules Target) : base(Target)
 	{
@@ -14,7 +14,6 @@ public class Blockchain : ModuleRules
 			{
 				"Core",
 				"Projects",
-				"Wallet",
 				"AlgorandLibrary"
 			}
 			);
