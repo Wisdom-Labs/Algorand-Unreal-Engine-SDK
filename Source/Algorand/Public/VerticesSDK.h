@@ -4,7 +4,6 @@
 
 THIRD_PARTY_INCLUDES_START
 #include "AlgorandLibrary/include/vertices/vertices.h"
-#include "AlgorandLibrary/include/vertices_log.h"
 #include "AlgorandLibrary/include/utils/base32.h"
 #include "AlgorandLibrary/include/utils/base64.h"
 #include "http_weak.h"

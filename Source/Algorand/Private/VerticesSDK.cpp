@@ -234,7 +234,7 @@ int VerticesSDK::testAlgorand() {
     
     // select tx type
 
-    LOG_INFO("😎 Vertices SDK running on Unix-based OS");
+    UE_LOG(LogTemp, Display, TEXT("😎 Vertices SDK running on Windows-based OS"));
 
     int ret = sodium_init();
     VTC_ASSERT_BOOL(ret == 0);
@@ -253,7 +253,7 @@ int VerticesSDK::testAlgorand() {
     provider_version_t version = { 0 };
     err_code = vertices_version(&version);
     if (err_code == VTC_ERROR_OFFLINE) {
-        LOG_WARNING("Version might not be accurate: old value is being used");
+        UE_LOG(LogTemp, Warning, TEXT("Version might not be accurate: old value is being used"));
     }
     else {
         //VTC_ASSERT(err_code);
