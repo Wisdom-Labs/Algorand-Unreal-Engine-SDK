@@ -5,7 +5,7 @@ using UnrealBuildTool;
 
 public class AlgorandAPI : ModuleRules
 {
-	public Blockchain(ReadOnlyTargetRules Target) : base(Target)
+	public AlgorandAPI(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		

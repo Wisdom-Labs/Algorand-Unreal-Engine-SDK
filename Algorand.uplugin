@@ -24,6 +24,16 @@
 			"Name": "Blockchain",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "Wallet",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "AlgorandAPI",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
 	]
 }
