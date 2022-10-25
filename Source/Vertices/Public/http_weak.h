@@ -1,9 +1,7 @@
 #pragma once
 
-THIRD_PARTY_INCLUDES_START
-#include "AlgorandLibrary/public/include/vertices_log.h"
-#include "AlgorandLibrary/public/include/vertices/vertices_http.h"
-THIRD_PARTY_INCLUDES_END
+#include "include/vertices_log.h"
+#include "include/vertices/vertices_http.h"
 
 #ifdef __cplusplus
 extern "C" {

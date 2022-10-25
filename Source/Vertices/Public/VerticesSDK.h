@@ -7,24 +7,24 @@
 #include "include/utils/base64.h"
 #include "http_weak.h"
 
+
 #include "unix_config.h"
 #include <cstring>
 #include "../Libs/include/sodium.h"
 
+
 namespace algorand {
 namespace vertices {
 
-    class VerticesSDK
+    class VERTICES_API VerticesSDK
     {
     public:
         VerticesSDK();
-        ~VerticesSDK() {};
-        //ret_code_t vertices_evt_handler(vtc_evt_t* evt);
-        ret_code_t create_new_account();
-        ret_code_t load_existing_account();
-        int testAlgorand();
+        ~VerticesSDK();
+    
     private:
-        FString config_path, prv_key, pub_key;
+        void* VerticesHandle;
+        void* SodiumHandle;
     };
 
 }

@@ -1,8 +1,8 @@
 
-#include "Thirdparty/AlgorandLibrary/include/vertices/vertices_errors.h"
-//#include "Thirdparty/AlgorandLibrary/include/provider.h"
+#include "include/vertices/vertices_errors.h"
+#include "include/vertices/vertices_types.h"
+#include "include/vertices_log.h"
 #include <curl/curl.h>
-#include "Thirdparty/AlgorandLibrary/include/vertices_log.h"
 #include <string.h>
 
 static CURL *m_curl;

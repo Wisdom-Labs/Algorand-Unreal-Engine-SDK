@@ -15,5 +15,7 @@ public class Wallet : ModuleRules
                 "Vertices"
             }
             );
+
+        PublicDefinitions.Add("WIN32_LEAN_AND_MEAN");
     }
 }

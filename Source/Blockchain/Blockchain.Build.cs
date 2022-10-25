@@ -14,10 +14,9 @@ public class Blockchain : ModuleRules
 			{
 				"Core",
 				"Projects",
-				"Wallet",
-				"Vertices"
+				"Wallet"
 			}
 			);
-			
+
 	}
 }

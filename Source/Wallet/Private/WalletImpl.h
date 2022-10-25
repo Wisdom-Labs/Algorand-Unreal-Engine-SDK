@@ -2,14 +2,12 @@
 
 #include "Wallet.h"
 
-THIRD_PARTY_INCLUDES_START
-#include "AlgorandLibrary/public/include/vertices/vertices.h"
-#include "AlgorandLibrary/public/include/vertices_log.h"
-#include "AlgorandLibrary/public/include/utils/base32.h"
-#include "AlgorandLibrary/public/include/utils/base64.h"
-#include "AlgorandLibrary/Libs/include/sodium.h"
-#include "AlgorandLibrary/public/unix_config.h"
-THIRD_PARTY_INCLUDES_END
+#include "include/vertices/vertices.h"
+#include "include/vertices_log.h"
+#include "include/utils/base32.h"
+#include "include/utils/base64.h"
+#include "../../Vertices/Libs/include/sodium.h"
+#include "unix_config.h"
 
 #include <cstring>
 
