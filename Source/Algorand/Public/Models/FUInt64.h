@@ -2,6 +2,9 @@
 
 #include "FUInt64.generated.h"
 
+#define PACKED
+#pragma pack(push, 1)
+
 USTRUCT(BlueprintType)
 struct FUInt64 {
     GENERATED_BODY()
@@ -11,14 +14,17 @@ struct FUInt64 {
     operator uint64() const;
     FUInt64();
     FUInt64(uint64 value);
-}
+};
+
+#pragma pack(pop)
+#undef PACKED
 
 UCLASS(BlueprintType)
-class UUInt64Factory : public UObject 
+class UUInt64Factory : public UObject
 {
     GENERATED_BODY()
 
-    public:
+public:
     UFUNCTION(BlueprintCallable, Category = "UInt64")
-    static FUInt64 UInt64FromString(const FString& value);
-}
+        static FUInt64 UInt64FromString(const FString& value);
+};

@@ -14,7 +14,7 @@ public class AlgorandAPI : ModuleRules
 			{
 				"Core",
 				"Projects",
-				"AlgorandLibrary"
+				"Vertices"
 			}
 			);
 			

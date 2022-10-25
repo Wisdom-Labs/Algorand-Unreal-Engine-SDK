@@ -8,7 +8,7 @@
 
 class RequestContextManager
 {
-public: 
+public:
 	template <typename DelegateType, typename RequestType, typename CallbackFunctionType>
 	FString createContext(const RequestType& request, TFunction<void(const RequestType&, DelegateType)> requestMethod, CallbackFunctionType&& callback);
 
@@ -21,14 +21,14 @@ private:
 	FString createUniqueID() const;
 
 	TMap<FString, RequestContext> contextStorage_;
-}
+};
 
 template <typename DelegateType, typename RequestType, typename CallbackFunctionType>
-FString RequestContextManager::createContext(const RequestType& request, TFunction<void(const RequestType&, DelegateType)> requestMethod, CallbackFunctionType&& callback)
+inline FString RequestContextManager::createContext(const RequestType& request, TFunction<void(const RequestType&, DelegateType)> requestMethod, CallbackFunctionType&& callback)
 {
 	FString id(createUniqueID());
 
-	TSharedPtr<ApiDelegate> delegatePtr(MakeShared<ApiDelegate>)(TInPlaceType<DelegateType>()));
+	TSharedPtr<ApiDelegate> delegatePtr(MakeShared<ApiDelegate>(TInPlaceType<DelegateType>()));
 
 	auto& delegate = delegatePtr->Get<DelegateType>();
 	delegate.BindLambda(
@@ -37,12 +37,13 @@ FString RequestContextManager::createContext(const RequestType& request, TFuncti
 		this->disposeContext(contextID);
 	});
 
-	contextStorage_.Add(id, { requestMethod(request, delegate), delegatePtr });
+	requestMethod(request, delegate);
+	//contextStorage_.Add(id, { requestMethod(request, delegate), delegatePtr });
 
 	return id;
 }
 
-bool RequestContextManager::disposeContext(const FString& id)
+inline bool RequestContextManager::disposeContext(const FString& id)
 {
 	if (contextStorage_.Contains(id)) {
 		contextStorage_.Remove(id);
@@ -52,17 +53,17 @@ bool RequestContextManager::disposeContext(const FString& id)
 	return false;
 }
 
-RequestContext& RequestContextManager::getContext(const FString& id)
+inline RequestContext& RequestContextManager::getContext(const FString& id)
 {
 	return contextStorage_[id];
 }
 
-const RequestContext& RequestContextManager::getContext(const FString& id) const
+inline const RequestContext& RequestContextManager::getContext(const FString& id) const
 {
 	return contextStorage_[id];
 }
 
-FString RequestContextManager::createUniqueID() const
+inline FString RequestContextManager::createUniqueID() const
 {
 	while (true) {
 		FString id(FGuid::NewGuid().ToString());

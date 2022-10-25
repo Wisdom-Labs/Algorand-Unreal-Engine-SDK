@@ -9,21 +9,6 @@ public class Algorand : ModuleRules
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		AddEngineThirdPartyPrivateStaticDependencies(Target, "libcurl");
-
-		if (Target.Platform == UnrealTargetPlatform.Win64)
-		{
-			// Add the import library
-			//
-			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "Libs", "libsodium.lib"));
-
-			// Delay-load the DLL, so we can load it from the right place first
-			PublicDelayLoadDLLs.Add("libsodium.dll");
-
-			// Ensure that the DLL is staged along with the executable
-			RuntimeDependencies.Add("$(PluginDir)/Binaries/ThirdParty/AlgorandLibrary/Win64/libsodium.dll");
-		}
-
 		PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add other public include paths required here ...
@@ -42,7 +27,10 @@ public class Algorand : ModuleRules
 			new string[]
 			{
 				"Core",
-				"AlgorandLibrary",
+				"Engine",
+				"CoreUObject",
+				"AlgorandAPI",
+				"Vertices",
 				"Blockchain",
 				"Wallet",
 				"Projects"

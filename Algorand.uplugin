@@ -34,6 +34,11 @@
 			"Name": "AlgorandAPI",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "Vertices",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
 	]
 }

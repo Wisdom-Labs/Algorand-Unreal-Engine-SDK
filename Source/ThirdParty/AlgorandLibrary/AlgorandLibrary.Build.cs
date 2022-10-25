@@ -9,20 +9,25 @@ public class AlgorandLibrary : ModuleRules
 	{
 		Type = ModuleType.External;
 
+		AddEngineThirdPartyPrivateStaticDependencies(Target, "libcurl");
+
 		if (Target.Platform == UnrealTargetPlatform.Win64)
 		{
 			// Add the import library
 			//
 			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "x64", "Release", "vertices.lib"));
 			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "x64", "Release", "cjson.lib"));
+			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "Libs", "libsodium.lib"));
 
 			// Delay-load the DLL, so we can load it from the right place first
 			PublicDelayLoadDLLs.Add("vertices.dll");
 			PublicDelayLoadDLLs.Add("cjson.dll");
+			PublicDelayLoadDLLs.Add("libsodium.dll");
 
 			// Ensure that the DLL is staged along with the executable
 			RuntimeDependencies.Add("$(PluginDir)/Binaries/ThirdParty/AlgorandLibrary/Win64/vertices.dll");
 			RuntimeDependencies.Add("$(PluginDir)/Binaries/ThirdParty/AlgorandLibrary/Win64/cjson.dll");
+			RuntimeDependencies.Add("$(PluginDir)/Binaries/ThirdParty/AlgorandLibrary/Win64/libsodium.dll");
 		}
         else if (Target.Platform == UnrealTargetPlatform.Mac)
         {

@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class Wallet : ModuleRules
+public class Vertices : ModuleRules
 {
-    public Wallet(ReadOnlyTargetRules Target) : base(Target)
+    public Vertices(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -12,7 +12,7 @@ public class Wallet : ModuleRules
             new string[]
             {
                 "Core",
-                "Vertices"
+                "AlgorandLibrary"
             }
             );
     }

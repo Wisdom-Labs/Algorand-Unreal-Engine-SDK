@@ -5,9 +5,9 @@
 namespace algorand{
 namespace api{
 
-class UnrealApi
+class ALGORANDAPI_API UnrealApi
 {
-    public:
+public:
     UnrealApi();
     ~UnrealApi();
 
@@ -17,15 +17,15 @@ class UnrealApi
     class AlgorandGetaddressbalanceGetRequest;
     class AlgorandGetaddressbalanceGetResponse;
 
-    DECLARE_DELEGATE_OneParam(FAlgorandGetaddressbalanceGetDelegate, const Unity3dGetaddressbalanceGetResponse&);
+    DECLARE_DELEGATE_OneParam(FAlgorandGetaddressbalanceGetDelegate, const AlgorandGetaddressbalanceGetResponse&);
 
     void AlgorandGetaddressbalanceGet(const AlgorandGetaddressbalanceGetRequest& Request, const FAlgorandGetaddressbalanceGetDelegate& Delegate = FAlgorandGetaddressbalanceGetDelegate()) const;
 
-    private:
-        void OnAlgorandGetaddressbalanceGetResponse(AlgorandGetaddressbalanceGetRequest HttpRequest, AlgorandGetaddressbalanceGetResponse HttpResponse, bool bSucceeded, FAlgorandGetaddressbalanceGetDelegate Delegate) const;
+private:
+    void OnAlgorandGetaddressbalanceGetResponse(AlgorandGetaddressbalanceGetResponse response, bool bSucceed, FAlgorandGetaddressbalanceGetDelegate Delegate) const;
 
     FString Url;
-}
+};
        
 }
 }

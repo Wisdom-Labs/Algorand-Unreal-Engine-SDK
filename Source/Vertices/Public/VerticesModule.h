@@ -2,7 +2,7 @@
 
 #include "Modules/ModuleManager.h"
 
-class FWalletModule : public IModuleInterface
+class FVerticesModule : public IModuleInterface
 {
 public:
 
