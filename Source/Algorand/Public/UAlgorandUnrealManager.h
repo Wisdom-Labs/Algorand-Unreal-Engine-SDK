@@ -10,7 +10,8 @@
 
 #include "UStratisUnrealManager.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FGetBalanaceResponseReceivedDelegate, const FUINt64& , money)
+DECLARE_DYNAMIC_DELEGATE_OneParam(FGetBalanceResponseReceivedDelegate, const FUINt64& , money)
+DECLARE_DYNAMIC_DELEGATE_OneParam(FErrorReceivedDelegate, const FError&, error)
 
 class TransactionBuilder;
 
@@ -21,6 +22,11 @@ class UAlgorandUnrealManager : public UObjecct
 
     public:
     UAlgorandUnrealManager();
+
+    UFUNCTION(BlueprintCallable, Category = "StratisUnrealManager")
+    void getBalance(const FGetBalanceResponseReceivedDelegate& delegate,
+                    const FErrorReceivedDelegate& errorDelegate);
+    void getBalance(TFunction<void(const TResult<int64>&)> callback);
 
     UWorld* GetWorld() const override;
 
