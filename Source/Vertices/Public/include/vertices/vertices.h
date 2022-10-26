@@ -24,6 +24,9 @@
 extern "C" {
 #endif
 
+VERTICES_IMPORT bool
+vertices_check_writable();
+
 VERTICES_IMPORT ret_code_t
 vertices_version(provider_version_t *version);
 

@@ -217,7 +217,8 @@ namespace algorand {
             ret_code_t err_code = VTC_SUCCESS;
             FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Get Address Balance"));
             account_t test_account;
-
+            if (!vertices_check_writable())
+                return;
             memset(test_account.private_key, 0, 32);
             test_account.vtc_account = nullptr;
 
