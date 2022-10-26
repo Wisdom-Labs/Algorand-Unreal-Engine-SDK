@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "VerticesSDK.h"
 
 namespace algorand{
 namespace api{
@@ -8,7 +9,7 @@ namespace api{
 class ALGORANDAPI_API UnrealApi
 {
 public:
-    UnrealApi();
+    UnrealApi(TSharedPtr<algorand::vertices::VerticesSDK>&);
     ~UnrealApi();
 
     /* Sets the URL Endpoint*/
@@ -23,6 +24,8 @@ public:
 
 private:
     void OnAlgorandGetaddressbalanceGetResponse(AlgorandGetaddressbalanceGetResponse response, bool bSucceed, FAlgorandGetaddressbalanceGetDelegate Delegate) const;
+
+    TSharedPtr<algorand::vertices::VerticesSDK> vertices_;
 
     FString Url;
 };

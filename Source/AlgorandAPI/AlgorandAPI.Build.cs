@@ -13,7 +13,8 @@ public class AlgorandAPI : ModuleRules
 			new string[]
 			{
 				"Core",
-				"Projects"
+				"Projects",
+				"Vertices"
 			}
 			);
 

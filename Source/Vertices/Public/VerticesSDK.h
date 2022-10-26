@@ -21,10 +21,18 @@ namespace vertices {
     public:
         VerticesSDK();
         ~VerticesSDK();
+        void loadVerticesLibrary();
+        void setHTTPCURLs();
+        void createNewVertices(char* , short, char* , ret_code_t&);
+        void vertices_ping_check(ret_code_t&);
+        void vertices_version_check(ret_code_t&);
+
+        void AlgorandGetaddressbalanceGet(FString& address);
     
     private:
         void* VerticesHandle;
         void* SodiumHandle;
+        bool loaded_;
     };
 
 }

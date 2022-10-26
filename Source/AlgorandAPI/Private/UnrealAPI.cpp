@@ -8,9 +8,10 @@
 namespace algorand{
 namespace api {
 
-UnrealApi::UnrealApi()
+UnrealApi::UnrealApi(TSharedPtr<algorand::vertices::VerticesSDK>& vertices)
     : Url(TEXT("http://localhost"))
 {
+    vertices_ = vertices;
 }
 
 UnrealApi::~UnrealApi() {}
@@ -30,7 +31,8 @@ void UnrealApi::AlgorandGetaddressbalanceGet(const AlgorandGetaddressbalanceGetR
     {
         FString newUrl = Url.Replace(TEXT("local"), TEXT("oal"), ESearchCase::CaseSensitive );
     }
-    
+    FString address = FString("QTYBYPJVSPT7SXSJQ5CLH2C5EQXXWEBBCKUWZUCGJGOGTODHYG43WQQSCM");
+    this->vertices_->AlgorandGetaddressbalanceGet(address);
 }
 
 void UnrealApi::OnAlgorandGetaddressbalanceGetResponse(AlgorandGetaddressbalanceGetResponse response, bool bSucceed, FAlgorandGetaddressbalanceGetDelegate Delegate) const
