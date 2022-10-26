@@ -1,11 +1,15 @@
 #include "RequestBuilders.h"
+#include "VerticesApiOperations.h"
 
-namespace request_builders {
-algorand::api::UnrealApi::AlgorandGetaddressbalanceGetRequest
-buildGetBalanceRequest(const FString& address)
-{
-	algorand::api::UnrealApi::AlgorandGetaddressbalanceGetRequest request;
-	request.Address = address;
-	return request;
+namespace {
+	using Vertices = algorand::vertices::VerticesSDK;
 }
+namespace request_builders {
+	Vertices::VerticesGetaddressbalanceGetRequest
+	buildGetBalanceRequest(const FString& address)
+	{
+		Vertices::VerticesGetaddressbalanceGetRequest request;
+		request.Address = address;
+		return request;
+	}
 }

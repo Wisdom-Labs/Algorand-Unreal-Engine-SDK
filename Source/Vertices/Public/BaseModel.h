@@ -1,7 +1,7 @@
 #pragma once
 
 namespace algorand {
-namespace api {
+namespace vertices {
 
     class Request
     {

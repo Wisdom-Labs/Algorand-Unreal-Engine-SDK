@@ -9,6 +9,6 @@ using ApiDelegate = TVariant<
 	algorand::api::UnrealApi::FAlgorandGetaddressbalanceGetDelegate>;
 
 struct RequestContext {
-	TSharedPtr<algorand::api::Request>  request;
+	TSharedPtr<algorand::vertices::Request>  request;
 	TSharedPtr<ApiDelegate> delegate;
 };

@@ -3,7 +3,13 @@
 */
 
 #include "UnrealApi.h"
-#include "UnrealApiOperations.h"
+#include "Misc/MessageDialog.h"
+
+#define LOCTEXT_NAMESPACE "FVerticesModule"
+
+namespace {
+    using Vertices = algorand::vertices::VerticesSDK;
+}
 
 namespace algorand{
 namespace api {
@@ -21,24 +27,27 @@ void UnrealApi::SetURL(const FString& InUrl)
     Url = InUrl;
 }
 
-void UnrealApi::AlgorandGetaddressbalanceGet(const AlgorandGetaddressbalanceGetRequest& Request, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const
+void UnrealApi::AlgorandGetaddressbalanceGet(const Vertices::VerticesGetaddressbalanceGetRequest& Request, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const
 {
     // IsValid Endpoint Url is not set ,  check this
 
-    // Request process for http
-    // if result , call onAlgorandgetbalance with Delegate
-    if (Url.Find("local"))
-    {
-        FString newUrl = Url.Replace(TEXT("local"), TEXT("oal"), ESearchCase::CaseSensitive );
-    }
-    FString address = FString("QTYBYPJVSPT7SXSJQ5CLH2C5EQXXWEBBCKUWZUCGJGOGTODHYG43WQQSCM");
-    this->vertices_->AlgorandGetaddressbalanceGet(address);
+    Vertices::FVerticesGetaddressbalanceGetDelegate delegate;
+
+    delegate.BindLambda([this, Delegate]
+        (const auto& response) {
+            OnAlgorandGetaddressbalanceGetResponse(response, true, Delegate);
+        });
+
+    this->vertices_->VerticesGetaddressbalanceGet(Request, delegate);
 }
 
-void UnrealApi::OnAlgorandGetaddressbalanceGetResponse(AlgorandGetaddressbalanceGetResponse response, bool bSucceed, FAlgorandGetaddressbalanceGetDelegate Delegate) const
+void UnrealApi::OnAlgorandGetaddressbalanceGetResponse(const Vertices::VerticesGetaddressbalanceGetResponse& response, bool bSucceed, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const
 {
+    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "I am on UnrealAPI"));
     Delegate.ExecuteIfBound(response);
 }
 
 }
 }
+
+#undef LOCTEXT_NAMESPACE

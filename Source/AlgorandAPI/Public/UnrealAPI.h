@@ -3,6 +3,10 @@
 #include "CoreMinimal.h"
 #include "VerticesSDK.h"
 
+namespace {
+    using Vertices = algorand::vertices::VerticesSDK;
+}
+
 namespace algorand{
 namespace api{
 
@@ -15,15 +19,15 @@ public:
     /* Sets the URL Endpoint*/
     void SetURL(const FString& Url);
 
-    class AlgorandGetaddressbalanceGetRequest;
-    class AlgorandGetaddressbalanceGetResponse;
+    //class AlgorandGetaddressbalanceGetRequest;
+    //class AlgorandGetaddressbalanceGetResponse;
 
-    DECLARE_DELEGATE_OneParam(FAlgorandGetaddressbalanceGetDelegate, const AlgorandGetaddressbalanceGetResponse&);
+    DECLARE_DELEGATE_OneParam(FAlgorandGetaddressbalanceGetDelegate, const Vertices::VerticesGetaddressbalanceGetResponse&);
 
-    void AlgorandGetaddressbalanceGet(const AlgorandGetaddressbalanceGetRequest& Request, const FAlgorandGetaddressbalanceGetDelegate& Delegate = FAlgorandGetaddressbalanceGetDelegate()) const;
+    void AlgorandGetaddressbalanceGet(const Vertices::VerticesGetaddressbalanceGetRequest& Request, const FAlgorandGetaddressbalanceGetDelegate& Delegate = FAlgorandGetaddressbalanceGetDelegate()) const;
 
 private:
-    void OnAlgorandGetaddressbalanceGetResponse(AlgorandGetaddressbalanceGetResponse response, bool bSucceed, FAlgorandGetaddressbalanceGetDelegate Delegate) const;
+    void OnAlgorandGetaddressbalanceGetResponse(const Vertices::VerticesGetaddressbalanceGetResponse& response, bool bSucceed, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const;
 
     TSharedPtr<algorand::vertices::VerticesSDK> vertices_;
 

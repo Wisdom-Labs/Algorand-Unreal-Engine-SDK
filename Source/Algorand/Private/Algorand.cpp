@@ -19,13 +19,6 @@ void FAlgorandModule::ShutdownModule()
 	// we call this function before unloading the module.
 }
 
-void FAlgorandModule::setHTTPCURLs() {
-	/*set_http_init(&http_init);
-	set_http_get(&http_get);
-	set_http_post(&http_post);
-	set_http_close(&http_close);*/
-}
-
 #undef LOCTEXT_NAMESPACE
 	
 IMPLEMENT_MODULE(FAlgorandModule, Algorand)

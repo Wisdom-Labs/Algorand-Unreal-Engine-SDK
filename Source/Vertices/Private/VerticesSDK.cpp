@@ -3,6 +3,8 @@
 #include "Misc/Paths.h"
 #include "Misc/MessageDialog.h"
 #include "Interfaces/IPluginManager.h"
+#include "VerticesApiOperations.h"
+#include "ResponseBuilers.h"
 
 #include <string>
 using namespace std;
@@ -210,7 +212,7 @@ namespace algorand {
                 version.patch);
         }
 
-        void VerticesSDK::AlgorandGetaddressbalanceGet(FString& address) 
+        void VerticesSDK::VerticesGetaddressbalanceGet(const VerticesGetaddressbalanceGetRequest& Request, const FVerticesGetaddressbalanceGetDelegate& delegate)
         {
             ret_code_t err_code = VTC_SUCCESS;
             FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Get Address Balance"));
@@ -219,8 +221,21 @@ namespace algorand {
             memset(test_account.private_key, 0, 32);
             test_account.vtc_account = nullptr;
 
+            const FString& address = Request.Address.GetValue();
             err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*address), &test_account.vtc_account);
             UE_LOG(LogTemp, Warning, TEXT("err_code AlgorandGetaddressbalanceGet %d"), test_account.vtc_account->amount);
+
+            VerticesSDK::VerticesGetaddressbalanceGetResponse response;
+
+            if (err_code == VTC_SUCCESS) {
+                response = response_builders::buildGetBalanceResponse(test_account.vtc_account->amount);
+                response.SetSuccessful(true);
+            }
+            else
+            {
+                response.SetSuccessful(false);
+            }
+            delegate.ExecuteIfBound(response);
         }
 
         void VerticesSDK::setHTTPCURLs() {

@@ -12,7 +12,6 @@
 #include <cstring>
 #include "../Libs/include/sodium.h"
 
-
 namespace algorand {
 namespace vertices {
 
@@ -27,7 +26,12 @@ namespace vertices {
         void vertices_ping_check(ret_code_t&);
         void vertices_version_check(ret_code_t&);
 
-        void AlgorandGetaddressbalanceGet(FString& address);
+        class VerticesGetaddressbalanceGetRequest;
+        class VerticesGetaddressbalanceGetResponse;
+
+        DECLARE_DELEGATE_OneParam(FVerticesGetaddressbalanceGetDelegate, const VerticesGetaddressbalanceGetResponse&);
+
+        void VerticesGetaddressbalanceGet(const VerticesGetaddressbalanceGetRequest&, const FVerticesGetaddressbalanceGetDelegate&);
     
     private:
         void* VerticesHandle;

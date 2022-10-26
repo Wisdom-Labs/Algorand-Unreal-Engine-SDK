@@ -1,8 +1,8 @@
 #pragma once
 
-#include "UnrealApiOperations.h"
+#include "VerticesSDK.h"
 
 namespace request_builders {
-algorand::api::UnrealApi::AlgorandGetaddressbalanceGetRequest
-buildGetBalanceRequest(const FString& address);
+	algorand::vertices::VerticesSDK::VerticesGetaddressbalanceGetRequest
+	buildGetBalanceRequest(const FString& address);
 }
