@@ -44,7 +44,7 @@ void UAlgorandUnrealManager::getBalance(
                     callback(result::ok(balance));
                 }
                 else {
-                    callback(result::error<int64>(FString("response error")));
+                    callback(result::error<int64>(response.GetResponseString()));
                 }
             });
 }

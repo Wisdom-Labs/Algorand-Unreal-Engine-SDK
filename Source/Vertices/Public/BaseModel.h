@@ -17,8 +17,12 @@ namespace vertices {
         void SetSuccessful(bool InSuccessful) { Successful = InSuccessful; }
         bool IsSuccessful() const { return Successful; }
 
+        void SetResponseString(const FString& InResponseString) { ResponseString = InResponseString; }
+        const FString& GetResponseString() const { return ResponseString; }
+
     private:
         bool Successful;
+        FString ResponseString;
     };
 
 }

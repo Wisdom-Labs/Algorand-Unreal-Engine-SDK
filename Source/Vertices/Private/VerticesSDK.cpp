@@ -235,6 +235,7 @@ namespace algorand {
             else
             {
                 response.SetSuccessful(false);
+                response.SetResponseString("response failed");
             }
             delegate.ExecuteIfBound(response);
         }

@@ -68,13 +68,13 @@ namespace vertices {
 		
 		contextStorage_.Add(id, { (algorand::vertices::Request*)&request, delegatePtr, delegatePtr->GetIndex() });  //delegate, requestMethod
 
-		/*FRequestWorker* requestWorker = new FRequestWorker(
+		FRequestWorker requestWorker = FRequestWorker(
 			std::bind(&ThreadContextManager::_transactionMethod, this,
 			std::placeholders::_1), 
 			id
-		);*/
-		//requestWorker->Init();
-		_transactionMethod(id);
+		);
+		requestWorker.Init();
+		//_transactionMethod(id);
 		
 		//requestMethod(request, delegate);
 

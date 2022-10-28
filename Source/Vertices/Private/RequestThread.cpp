@@ -11,7 +11,7 @@ namespace vertices {
 	{
 		transactionMethod = _method;
 		threadID = _threadID;
-		Thread = FRunnableThread::Create(this, TEXT("Give your thread a good name"));
+		Thread = FRunnableThread::Create(this, TEXT("FRequestWorker"), 0, TPri_BelowNormal);
 	}
 
 	FRequestWorker::~FRequestWorker()
@@ -42,8 +42,8 @@ namespace vertices {
 		while (bRunThread)
 		{
 			bool boo = false;
-			UE_LOG(LogTemp, Warning, TEXT("My custom thread is running!"));
-			FPlatformProcess::Sleep(1.0f);
+			UE_LOG(LogTemp, Warning, TEXT("My custom thread: %s is running!"), *(threadID));
+			FPlatformProcess::Sleep(0.03);
 			boo = vertices_check_writable();
 			if (vertices_check_writable())
 			{
