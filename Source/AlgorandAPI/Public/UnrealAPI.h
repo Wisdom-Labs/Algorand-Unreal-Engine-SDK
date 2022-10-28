@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "VerticesSDK.h"
+#include "ThreadContextManager.h"
 
 namespace {
     using Vertices = algorand::vertices::VerticesSDK;
@@ -13,7 +14,7 @@ namespace api{
 class ALGORANDAPI_API UnrealApi
 {
 public:
-    UnrealApi(TSharedPtr<algorand::vertices::VerticesSDK>&);
+    UnrealApi(TSharedPtr<algorand::vertices::ThreadContextManager>&);
     ~UnrealApi();
 
     /* Sets the URL Endpoint*/
@@ -29,7 +30,7 @@ public:
 private:
     void OnAlgorandGetaddressbalanceGetResponse(const Vertices::VerticesGetaddressbalanceGetResponse& response, bool bSucceed, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const;
 
-    TSharedPtr<algorand::vertices::VerticesSDK> vertices_;
+    TSharedPtr<algorand::vertices::ThreadContextManager> threadContextManager_;
 
     FString Url;
 };

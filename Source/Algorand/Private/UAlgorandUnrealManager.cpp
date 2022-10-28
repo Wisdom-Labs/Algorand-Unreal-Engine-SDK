@@ -16,8 +16,9 @@ namespace {
 
 UAlgorandUnrealManager::UAlgorandUnrealManager()
 {
-    vertices_ = MakeShared<algorand::vertices::VerticesSDK>();
-    unrealApi_ = MakeShared<algorand::api::UnrealApi>(vertices_);
+    threadContextManager_ = MakeShared<algorand::vertices::ThreadContextManager>();
+    threadContextManager_->createVertices();
+    unrealApi_ = MakeShared<algorand::api::UnrealApi>(threadContextManager_);
 }
 
 void UAlgorandUnrealManager::getBalance(

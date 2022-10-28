@@ -29,8 +29,10 @@ public class Vertices : ModuleRules
             {
                 "Core",
                 "AlgorandLibrary",
+                "Engine",
                 "Projects"
             }
         );
+
     }
 }

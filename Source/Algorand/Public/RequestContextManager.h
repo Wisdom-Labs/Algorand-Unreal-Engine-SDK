@@ -3,9 +3,13 @@
 #include "CoreMinimal.h"
 
 #include "RequestContext.h"
+#include "VerticesSDK.h"
 
 #include <functional>
 
+namespace {
+	using Vertices = algorand::vertices::VerticesSDK;
+}
 class RequestContextManager
 {
 public:

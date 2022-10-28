@@ -14,10 +14,10 @@ namespace {
 namespace algorand{
 namespace api {
 
-UnrealApi::UnrealApi(TSharedPtr<algorand::vertices::VerticesSDK>& vertices)
+UnrealApi::UnrealApi(TSharedPtr<algorand::vertices::ThreadContextManager>& threadContextManager)
     : Url(TEXT("http://localhost"))
 {
-    vertices_ = vertices;
+    threadContextManager_ = threadContextManager;
 }
 
 UnrealApi::~UnrealApi() {}
@@ -31,14 +31,18 @@ void UnrealApi::AlgorandGetaddressbalanceGet(const Vertices::VerticesGetaddressb
 {
     // IsValid Endpoint Url is not set ,  check this
 
-    Vertices::FVerticesGetaddressbalanceGetDelegate delegate;
-
-    delegate.BindLambda([this, Delegate]
-        (const auto& response) {
-            OnAlgorandGetaddressbalanceGetResponse(response, true, Delegate);
-        });
-
-    this->vertices_->VerticesGetaddressbalanceGet(Request, delegate);
+    this->threadContextManager_->createContext<Vertices::FVerticesGetaddressbalanceGetDelegate,
+                                               Vertices::VerticesGetaddressbalanceGetRequest>(
+            Request,
+            std::bind(&Vertices::VerticesGetaddressbalanceGet, threadContextManager_->getVertices().Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            [this, Delegate]
+            (const auto& response) {
+                OnAlgorandGetaddressbalanceGetResponse(response, true, Delegate);
+            }
+            );
+    /*std::bind(&Vertices::VerticesGetaddressbalanceGet, threadContextManager_->getVertices().Get(),
+        std::placeholders::_1, std::placeholders::_2),*/
 }
 
 void UnrealApi::OnAlgorandGetaddressbalanceGetResponse(const Vertices::VerticesGetaddressbalanceGetResponse& response, bool bSucceed, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const

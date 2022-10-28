@@ -4,6 +4,7 @@
 #include "Engine/World.h"
 
 #include "RequestContextManager.h"
+#include "ThreadContextManager.h"
 #include "Models/FUInt64.h"
 #include "Models/FError.h"
 #include "TResult.h"
@@ -35,7 +36,9 @@ public:
 private:
     TSharedPtr<TransactionBuilder> transactionBuilder_;
     TSharedPtr<algorand::api::UnrealApi> unrealApi_;
-    TSharedPtr<algorand::vertices::VerticesSDK> vertices_;
-    
+
+    TSharedPtr<algorand::vertices::ThreadContextManager> threadContextManager_;
+
     RequestContextManager requestContextManager_;
+     
 };
