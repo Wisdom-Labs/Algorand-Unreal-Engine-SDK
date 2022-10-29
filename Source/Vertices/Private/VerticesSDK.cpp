@@ -240,7 +240,13 @@ namespace algorand {
             delegate.ExecuteIfBound(response);
         }
 
-        void VerticesSDK::setHTTPCURLs() {
+        void VerticesSDK::VerticesLoadaccountinfoGet(const VerticesLoadaccountinfoGetRequest& Request, const FVerticesLoadaccountinfoGetDelegate& delegate)
+        {
+            FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Load Account Info"));
+        }
+
+        void VerticesSDK::setHTTPCURLs() 
+        {
             set_http_init(&http_init);
             set_http_get(&http_get);
             set_http_post(&http_post);

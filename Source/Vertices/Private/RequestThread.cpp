@@ -18,8 +18,7 @@ namespace vertices {
 	{
 		if (Thread)
 		{
-			// Kill() is a blocking call, it waits for the thread to finish.
-			// Hopefully that doesn't take too long
+			UE_LOG(LogTemp, Warning, TEXT("My custom thread has been deleted"));
 			Thread->Kill();
 			delete Thread;
 		}

@@ -20,5 +20,20 @@ namespace algorand {
             ~VerticesGetaddressbalanceGetResponse() {}
             int Amount;
         };
+
+        class VerticesSDK::VerticesLoadaccountinfoGetRequest : public Request
+        {
+        public:
+            virtual ~VerticesLoadaccountinfoGetRequest() {}
+
+            TOptional<FString> Address;
+        };
+
+        class VerticesSDK::VerticesLoadaccountinfoGetResponse : public Response
+        {
+        public:
+            ~VerticesLoadaccountinfoGetResponse() {}
+            int Amount;
+        };
     }
 }

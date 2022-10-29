@@ -12,4 +12,12 @@ namespace request_builders {
 		request.Address = address;
 		return request;
 	}
+
+	Vertices::VerticesLoadaccountinfoGetRequest
+		buildLoadAccountInfoRequest(const FString& address)
+	{
+		Vertices::VerticesLoadaccountinfoGetRequest request;
+		request.Address = address;
+		return request;
+	}
 }

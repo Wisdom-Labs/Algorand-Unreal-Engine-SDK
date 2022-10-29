@@ -6,7 +6,9 @@
 #include "UnrealApi.h"
 
 using ApiDelegate = TVariant<
-	algorand::api::UnrealApi::FAlgorandGetaddressbalanceGetDelegate>;
+	algorand::api::UnrealApi::FAlgorandGetaddressbalanceGetDelegate,
+	algorand::api::UnrealApi::FAlgorandLoadaccountinfoGetDelegate
+>;
 
 struct RequestContext {
 	TSharedPtr<algorand::vertices::Request>  request;

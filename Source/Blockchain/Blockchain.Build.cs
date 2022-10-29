@@ -17,6 +17,10 @@ public class Blockchain : ModuleRules
 				"Wallet"
 			}
 			);
+		bUseRTTI = true;
+		bEnableExceptions = true;
+		bEnableUndefinedIdentifierWarnings = true;
 
+		CppStandard = CppStandardVersion.Cpp17;
 	}
 }

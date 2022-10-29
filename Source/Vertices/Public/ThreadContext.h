@@ -9,14 +9,18 @@ namespace {
 }
 
 using VerticesDelegate = TVariant<
-	Vertices::FVerticesGetaddressbalanceGetDelegate>;
+	Vertices::FVerticesGetaddressbalanceGetDelegate,
+	Vertices::FVerticesLoadaccountinfoGetDelegate
+>;
 
-using VerticesRequest = TVariant<
-	Vertices::VerticesGetaddressbalanceGetRequest>;
+using VerticesRequest = TVariant <
+	Vertices::VerticesGetaddressbalanceGetRequest,
+	Vertices::VerticesLoadaccountinfoGetRequest
+>;
 
-using VerticesMethod = TVariant<
-	TFunction<void(const Vertices::VerticesGetaddressbalanceGetRequest&, Vertices::FVerticesGetaddressbalanceGetDelegate)>
-	>;
+//using VerticesMethod = TVariant<
+//	TFunction<void(const Vertices::VerticesGetaddressbalanceGetRequest&, Vertices::FVerticesGetaddressbalanceGetDelegate)>
+//	>;
 
 struct ThreadContext {
 	algorand::vertices::Request* request;

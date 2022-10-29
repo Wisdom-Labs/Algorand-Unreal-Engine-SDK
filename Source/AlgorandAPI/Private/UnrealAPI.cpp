@@ -51,6 +51,28 @@ void UnrealApi::OnAlgorandGetaddressbalanceGetResponse(const Vertices::VerticesG
     Delegate.ExecuteIfBound(response);
 }
 
+void UnrealApi::AlgorandLoadaccountinfoGet(const Vertices::VerticesLoadaccountinfoGetRequest& Request, const FAlgorandLoadaccountinfoGetDelegate& Delegate) const
+{
+    // IsValid Endpoint Url is not set ,  check this
+
+    this->threadContextManager_->createContext<Vertices::FVerticesLoadaccountinfoGetDelegate,
+        Vertices::VerticesLoadaccountinfoGetRequest>(
+            Request,
+            std::bind(&Vertices::VerticesLoadaccountinfoGet, threadContextManager_->getVertices().Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            [this, Delegate]
+            (const auto& response) {
+                OnAlgorandLoadaccountinfoGetResponse(response, true, Delegate);
+            }
+    );
+}
+
+void UnrealApi::OnAlgorandLoadaccountinfoGetResponse(const Vertices::VerticesLoadaccountinfoGetResponse& response, bool bSucceed, const FAlgorandLoadaccountinfoGetDelegate& Delegate) const
+{
+    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "I am on UnrealAPI Load Account Info"));
+    Delegate.ExecuteIfBound(response);
+}
+
 }
 }
 

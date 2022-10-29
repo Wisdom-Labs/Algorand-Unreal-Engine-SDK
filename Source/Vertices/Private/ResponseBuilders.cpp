@@ -13,4 +13,12 @@ namespace response_builders {
 		response.Amount = amount;
 		return response;
 	}
+
+	Vertices::VerticesLoadaccountinfoGetResponse
+		buildLoadAccountInfoResponse(const int& amount)
+	{
+		Vertices::VerticesLoadaccountinfoGetResponse response;
+		response.Amount = amount;
+		return response;
+	}
 }
