@@ -28,10 +28,14 @@ namespace vertices {
 
         class VerticesGetaddressbalanceGetRequest;
         class VerticesGetaddressbalanceGetResponse;
+        class VerticesLoadaccountinfoGetRequest;
+        class VerticesLoadaccountinfoGetResponse;
 
         DECLARE_DELEGATE_OneParam(FVerticesGetaddressbalanceGetDelegate, const VerticesGetaddressbalanceGetResponse&);
+        DECLARE_DELEGATE_OneParam(FVerticesLoadaccountinfoGetDelegate, const VerticesLoadaccountinfoGetResponse&);
 
         void VerticesGetaddressbalanceGet(const VerticesGetaddressbalanceGetRequest&, const FVerticesGetaddressbalanceGetDelegate&);
+        void VerticesLoadaccountinfoGet(const VerticesLoadaccountinfoGetRequest&, const FVerticesLoadaccountinfoGetDelegate&);
     
     private:
         void* VerticesHandle;
