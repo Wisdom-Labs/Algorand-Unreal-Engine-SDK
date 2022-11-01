@@ -37,5 +37,21 @@ namespace algorand {
             ~VerticesPaymentTransactionGetResponse() {}
             int Amount;
         };
+
+        class VerticesSDK::VerticesApplicationCallTransactionGetRequest : public Request
+        {
+        public:
+            virtual ~VerticesApplicationCallTransactionGetRequest() {}
+
+            TOptional<FString> senderAddress;
+            TOptional<uint64_t> app_ID;
+        };
+
+        class VerticesSDK::VerticesApplicationCallTransactionGetResponse : public Response
+        {
+        public:
+            ~VerticesApplicationCallTransactionGetResponse() {}
+            int Amount;
+        };
     }
 }

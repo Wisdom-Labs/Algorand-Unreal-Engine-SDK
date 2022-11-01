@@ -31,12 +31,16 @@ namespace vertices {
         class VerticesGetaddressbalanceGetResponse;
         class VerticesPaymentTransactionGetRequest;
         class VerticesPaymentTransactionGetResponse;
+        class VerticesApplicationCallTransactionGetRequest;
+        class VerticesApplicationCallTransactionGetResponse;
 
         DECLARE_DELEGATE_OneParam(FVerticesGetaddressbalanceGetDelegate, const VerticesGetaddressbalanceGetResponse&);
         DECLARE_DELEGATE_OneParam(FVerticesPaymentTransactionGetDelegate, const VerticesPaymentTransactionGetResponse&);
+        DECLARE_DELEGATE_OneParam(FVerticesApplicationCallTransactionGetDelegate, const VerticesApplicationCallTransactionGetResponse&);
 
         void VerticesGetaddressbalanceGet(const VerticesGetaddressbalanceGetRequest&, const FVerticesGetaddressbalanceGetDelegate&);
         void VerticesPaymentTransactionGet(const VerticesPaymentTransactionGetRequest&, const FVerticesPaymentTransactionGetDelegate&);
+        void VerticesApplicationCallTransactionGet(const VerticesApplicationCallTransactionGetRequest&, const FVerticesApplicationCallTransactionGetDelegate&);
     
     private:
         void* VerticesHandle;

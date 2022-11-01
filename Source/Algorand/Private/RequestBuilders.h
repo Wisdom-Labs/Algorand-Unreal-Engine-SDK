@@ -9,4 +9,7 @@ namespace request_builders {
 		buildPaymentTransactionRequest(const FString& sender,
 									   const FString& receiver,
 									   const uint64_t& amount);
+	algorand::vertices::VerticesSDK::VerticesApplicationCallTransactionGetRequest
+		buildApplicationCallTransactionRequest(const FString& sender,
+									   const uint64_t& app_ID);
 }

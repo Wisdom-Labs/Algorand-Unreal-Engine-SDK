@@ -24,4 +24,14 @@ namespace request_builders {
 		request.amount = amount;
 		return request;
 	}
+
+	Vertices::VerticesApplicationCallTransactionGetRequest
+		buildApplicationCallTransactionRequest(const FString& sender, 
+									   const uint64_t& app_ID)
+	{
+		Vertices::VerticesApplicationCallTransactionGetRequest request;
+		request.senderAddress = sender;
+		request.app_ID = app_ID;
+		return request;
+	}
 }

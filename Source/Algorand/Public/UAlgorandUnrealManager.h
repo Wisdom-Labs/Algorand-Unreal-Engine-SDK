@@ -16,6 +16,7 @@
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FGetBalanceResponseReceivedDelegate, const FUInt64&, money);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FPaymentTransactionResponseReceivedDelegate, const FUInt64&, money);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FApplicationCallTransactionResponseReceivedDelegate, const FUInt64&, money);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FErrorReceivedDelegate, const FError&, error);
 
 class TransactionBuilder;
@@ -44,7 +45,13 @@ public:
                          const FErrorReceivedDelegate& errorDelegate);
     void sendPaymentTransaction(const FString& receiverAddress,
                                 const uint64_t& amount,
-                                TFunction<void(const TResult<int64>&)> callback);   // account_t
+                                TFunction<void(const TResult<int64>&)> callback);   
+
+    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+    void sendApplicationCallTransaction(const FApplicationCallTransactionResponseReceivedDelegate& delegate,
+                         const FErrorReceivedDelegate& errorDelegate);
+    void sendApplicationCallTransaction(const uint64_t& app_ID,
+                                TFunction<void(const TResult<int64>&)> callback);   
 
     UWorld* GetWorld() const override;
 

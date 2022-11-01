@@ -94,6 +94,35 @@ void UAlgorandUnrealManager::sendPaymentTransaction(const FString& receiverAddre
             });
 }
 
+void UAlgorandUnrealManager::sendApplicationCallTransaction(
+    const FApplicationCallTransactionResponseReceivedDelegate& delegate,
+    const FErrorReceivedDelegate& errorDelegate)
+{
+
+}
+
+void UAlgorandUnrealManager::sendApplicationCallTransaction(const uint64_t& app_ID,
+                                                    TFunction<void(const TResult<int64>&)> callback)
+{
+    this->requestContextManager_
+        .createContext<API::FAlgorandApplicationCallTransactionGetDelegate,
+        Vertices::VerticesApplicationCallTransactionGetRequest>(
+            request_builders::buildApplicationCallTransactionRequest(this->getAddress(),
+                                                                     app_ID),
+            std::bind(&API::AlgorandApplicationCallTransactionGet, unrealApi_.Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            [callback](const auto& response) {
+                FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Payment Transaction"));
+                if (response.IsSuccessful()) {
+                    int64 balance = response.Amount;
+                    callback(result::ok(balance));
+                }
+                else {
+                    callback(result::error<int64>(response.GetResponseString()));
+                }
+            });
+}
+
 UWorld* UAlgorandUnrealManager::GetWorld() const
 {
     return GetOuter()->GetWorld();

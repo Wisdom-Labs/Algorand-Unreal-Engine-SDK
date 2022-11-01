@@ -73,6 +73,28 @@ void UnrealApi::OnAlgorandPaymentTransactionGetResponse(const Vertices::Vertices
     Delegate.ExecuteIfBound(response);
 }
 
+void UnrealApi::AlgorandApplicationCallTransactionGet(const Vertices::VerticesApplicationCallTransactionGetRequest& Request, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const
+{
+    // IsValid Endpoint Url is not set ,  check this
+
+    this->threadContextManager_->createContext<Vertices::FVerticesApplicationCallTransactionGetDelegate,
+        Vertices::VerticesApplicationCallTransactionGetRequest>(
+            Request,
+            std::bind(&Vertices::VerticesApplicationCallTransactionGet, threadContextManager_->getVertices().Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            [this, Delegate]
+            (const auto& response) {
+                OnAlgorandApplicationCallTransactionGetResponse(response, true, Delegate);
+            }
+    );
+}
+
+void UnrealApi::OnAlgorandApplicationCallTransactionGetResponse(const Vertices::VerticesApplicationCallTransactionGetResponse& response, bool bSucceed, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const
+{
+    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "I am on UnrealAPI Application Call Transaction"));
+    Delegate.ExecuteIfBound(response);
+}
+
 }
 }
 

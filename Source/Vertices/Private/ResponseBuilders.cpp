@@ -21,4 +21,12 @@ namespace response_builders {
 		response.Amount = amount;
 		return response;
 	}
+
+	Vertices::VerticesApplicationCallTransactionGetResponse
+		buildApplicationCallTransactionResponse(const int& amount)
+	{
+		Vertices::VerticesApplicationCallTransactionGetResponse response;
+		response.Amount = amount;
+		return response;
+	}
 }

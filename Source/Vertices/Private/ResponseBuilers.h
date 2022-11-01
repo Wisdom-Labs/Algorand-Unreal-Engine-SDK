@@ -7,4 +7,6 @@ namespace response_builders {
 		buildGetBalanceResponse(const int& amount);
 	algorand::vertices::VerticesSDK::VerticesPaymentTransactionGetResponse
 		buildPaymentTransactionResponse(const int& amount);
+	algorand::vertices::VerticesSDK::VerticesApplicationCallTransactionGetResponse
+		buildApplicationCallTransactionResponse(const int& amount);
 }
