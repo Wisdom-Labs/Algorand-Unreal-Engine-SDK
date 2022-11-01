@@ -2,12 +2,14 @@
 #include "VerticesSDK.h"
 #include "Misc/Paths.h"
 #include "Misc/MessageDialog.h"
+#include "Internationalization/Text.h"
 #include "Interfaces/IPluginManager.h"
 #include "VerticesApiOperations.h"
 #include "ResponseBuilers.h"
+#include "HAL/UnrealMemory.h"
 
+#include <cstring>
 
-#include <string>
 using namespace std;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogMyAwesomeGame, Log, All);
@@ -19,7 +21,11 @@ typedef struct {
     account_info_t* vtc_account;               //!< pointer to Vertices account data
 } account_t;
 
-account_t alice_account;
+account_t sender_account;
+
+#ifdef __cplusplus
+extern "C++" {
+#endif
 
 ret_code_t vertices_evt_handler(vtc_evt_t* evt) {
     ret_code_t err_code = VTC_SUCCESS;
@@ -29,13 +35,13 @@ ret_code_t vertices_evt_handler(vtc_evt_t* evt) {
         signed_transaction_t* tx = nullptr;
         err_code = vertices_event_tx_get(evt->bufid, &tx);
         if (err_code == VTC_SUCCESS) {
-            LOG_DEBUG("About to sign tx: data length %lu", (unsigned long)(tx->payload_body_length));
+            UE_LOG(LogTemp, Display, TEXT("event process About to sign tx: data length %lu"), (unsigned long)(tx->payload_body_length));
 
             // libsodium wants to have private and public keys concatenated
             unsigned char keys[crypto_sign_ed25519_SECRETKEYBYTES] = { 0 };
-            memcpy(keys, alice_account.private_key, sizeof(alice_account.private_key));
+            memcpy(keys, sender_account.private_key, sizeof(sender_account.private_key));
             memcpy(&keys[32],
-                alice_account.vtc_account->public_key,
+                sender_account.vtc_account->public_key,
                 ADDRESS_LENGTH);
 
             // prepend "TX" to the payload before signing
@@ -58,7 +64,7 @@ ret_code_t vertices_evt_handler(vtc_evt_t* evt) {
                 sizeof(tx->signature),
                 b64_signature,
                 &b64_signature_len);
-            LOG_DEBUG("Signature %s (%zu bytes)", b64_signature, b64_signature_len);
+            UE_LOG(LogTemp, Display, TEXT("event processSignature %s (%zu bytes)"), b64_signature, b64_signature_len);
 
             // send event to send the signed TX
             vtc_evt_t sched_evt;
@@ -111,6 +117,10 @@ ret_code_t vertices_evt_handler(vtc_evt_t* evt) {
     return err_code;
 }
 
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
 provider_info_t providers;
 
 vertex_t m_vertex;
@@ -128,15 +138,23 @@ namespace algorand {
                 return;
             }
 
-            FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Third Party Plugin", "Loaded C-Vertices-sdk.dll & libsodium.dll from Third Party Plugin sample."));
+            UE_LOG(LogTemp, Display, TEXT("Loaded C-Vertices-sdk.dll & libsodium.dll from Third Party Plugin sample."));
             setHTTPCURLs();
             createNewVertices(SERVER_URL, SERVER_PORT, SERVER_TOKEN_HEADER, err_code);
 
             if (err_code == VTC_SUCCESS) {
-                FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Created Vertices Network"));
+                UE_LOG(LogTemp, Display, TEXT("Created Vertices Network"));
+            }
+
+            err_code = load_existing_account();
+
+            if (err_code == VTC_SUCCESS) {
+                UE_LOG(LogTemp, Display, TEXT("Loaded main account."));
             }
 
             vertices_ping_check(err_code);
+
+            vertices_version_check(err_code);
         }
 
         VerticesSDK::~VerticesSDK () {
@@ -185,6 +203,66 @@ namespace algorand {
             // create new vertex
             err_code = vertices_new(&m_vertex);
             UE_LOG(LogTemp, Warning, TEXT("err_code vertices_new %d"), err_code);
+        }
+
+        ret_code_t VerticesSDK::load_existing_account() {
+            ret_code_t err_code;
+
+            char public_b32[PUBLIC_B32_STR_MAX_LENGTH] = { 0 };
+
+            size_t bytes_read = 0;
+
+            config_path = FPaths::ProjectPluginsDir() + "Algorand/Source/Algorand/config/";
+
+            char* config_file = TCHAR_TO_ANSI(*(config_path + "private_key.bin"));
+
+            memset(sender_account.private_key, 0, 32);
+            sender_account.vtc_account = nullptr;
+
+            FILE * f_priv = fopen(config_file, "rb");
+            if (f_priv != nullptr) {
+                UE_LOG(LogTemp, Display, TEXT("🔑 Loading private key from %s"), config_file);
+
+                bytes_read = fread(sender_account.private_key, 1, ADDRESS_LENGTH, f_priv);
+                fclose(f_priv);
+            }
+
+            if (f_priv == nullptr || bytes_read != ADDRESS_LENGTH) {
+                UE_LOG(LogTemp, Display, TEXT(
+                    "🤔 private_key.bin does not exist or keys not found. You can pass the -n flag to create a new account"));
+
+                return VTC_ERROR_NOT_FOUND;
+            }
+
+            config_file = TCHAR_TO_ANSI(*(config_path + "public_b32.txt"));
+            FILE * f_pub = fopen(config_file, "r");
+            if (f_pub != nullptr) {
+                UE_LOG(LogTemp, Display, TEXT("🔑 Loading public key from: %s"), config_file);
+
+                bytes_read = fread(public_b32, 1, PUBLIC_B32_STR_MAX_LENGTH, f_pub);
+                fclose(f_pub);
+
+                size_t len = strlen(public_b32);
+                while (public_b32[len - 1] == '\n' || public_b32[len - 1] == '\r') {
+                    public_b32[len - 1] = '\0';
+                    len--;
+                }
+            }
+
+            if (f_pub == nullptr || bytes_read < ADDRESS_LENGTH) {
+                UE_LOG(LogTemp, Warning, TEXT(
+                    "🤔 public_b32.txt does not exist or keys not found. You can pass the -n flag to create a new account"));
+
+                return VTC_ERROR_NOT_FOUND;
+            }
+
+            err_code = vertices_account_new_from_b32(public_b32, &sender_account.vtc_account);
+            UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_b32 %d"), err_code);
+            //VTC_ASSERT(err_code);
+
+            UE_LOG(LogTemp, Display, TEXT("💳 Created Alice's account: %s"), *FString(sender_account.vtc_account->public_b32));
+
+            return VTC_SUCCESS;
         }
 
         void VerticesSDK::vertices_ping_check(ret_code_t& err_code) 
@@ -237,12 +315,60 @@ namespace algorand {
                 response.SetSuccessful(false);
                 response.SetResponseString("response failed");
             }
+
+            err_code = vertices_account_free(test_account.vtc_account);
+            VTC_ASSERT(err_code);
+
             delegate.ExecuteIfBound(response);
         }
 
-        void VerticesSDK::VerticesLoadaccountinfoGet(const VerticesLoadaccountinfoGetRequest& Request, const FVerticesLoadaccountinfoGetDelegate& delegate)
+        void VerticesSDK::VerticesPaymentTransactionGet(const VerticesPaymentTransactionGetRequest& Request, const FVerticesPaymentTransactionGetDelegate& delegate)
         {
-            FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Load Account Info"));
+            ret_code_t err_code = VTC_SUCCESS;
+            FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Sending Payment Transaction"));
+
+            if (sender_account.vtc_account->amount < 1001000) {
+                FFormatNamedArguments Arguments;
+                Arguments.Add(TEXT("Address"), FText::FromString(sender_account.vtc_account->public_b32));
+
+                UE_LOG(LogTemp, Warning,
+                    TEXT("🙄 Amount available on account is too low to pass a transaction, consider adding Algos"));
+                FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning","👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
+                UE_LOG(LogTemp, Warning, TEXT("😎 Then wait for a few seconds for transaction to pass..."));
+                return;
+            }
+
+            char* notes = (char*)"Alice sent 1 Algo to Bob";
+            err_code =
+                vertices_transaction_pay_new(sender_account.vtc_account,
+                    TCHAR_TO_ANSI(*(Request.receiverAddress.GetValue())) /* or ACCOUNT_RECEIVER */,
+                    (uint64_t)Request.amount.GetValue(),
+                    notes);
+            VTC_ASSERT(err_code);
+
+            size_t queue_size = 1;
+            while (queue_size && err_code == VTC_SUCCESS) {
+                err_code = vertices_event_process(&queue_size);
+                VTC_ASSERT(err_code);
+            }
+
+            err_code = vertices_account_free(sender_account.vtc_account);
+            VTC_ASSERT(err_code);
+
+            UE_LOG(LogTemp, Warning, TEXT("err_code VerticesPaymentTransactionGetRequest Success"));
+
+            /*VerticesSDK::VerticesGetaddressbalanceGetResponse response;
+
+            if (err_code == VTC_SUCCESS) {
+                response = response_builders::buildGetBalanceResponse(test_account.vtc_account->amount);
+                response.SetSuccessful(true);
+            }
+            else
+            {
+                response.SetSuccessful(false);
+                response.SetResponseString("response failed");
+            }
+            delegate.ExecuteIfBound(response);*/
         }
 
         void VerticesSDK::setHTTPCURLs() 
