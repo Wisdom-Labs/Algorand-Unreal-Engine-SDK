@@ -15,7 +15,7 @@
 #include "UAlgorandUnrealManager.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FGetBalanceResponseReceivedDelegate, const FUInt64&, money);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FLoadAccountInfoResponseReceivedDelegate, const FUInt64&, money);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FPaymentTransactionResponseReceivedDelegate, const FUInt64&, money);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FErrorReceivedDelegate, const FError&, error);
 
 class TransactionBuilder;
@@ -40,9 +40,11 @@ public:
     void getBalance(TFunction<void(const TResult<int64>&)> callback);
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
-    void loadAccountInfo(const FLoadAccountInfoResponseReceivedDelegate& delegate,
+    void sendPaymentTransaction(const FPaymentTransactionResponseReceivedDelegate& delegate,
                          const FErrorReceivedDelegate& errorDelegate);
-    void loadAccountInfo(TFunction<void(const TResult<int64>&)> callback);   // account_t
+    void sendPaymentTransaction(const FString& receiverAddress,
+                                const uint64_t& amount,
+                                TFunction<void(const TResult<int64>&)> callback);   // account_t
 
     UWorld* GetWorld() const override;
 

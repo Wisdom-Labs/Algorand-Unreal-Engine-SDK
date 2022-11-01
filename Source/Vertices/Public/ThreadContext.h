@@ -10,12 +10,12 @@ namespace {
 
 using VerticesDelegate = TVariant<
 	Vertices::FVerticesGetaddressbalanceGetDelegate,
-	Vertices::FVerticesLoadaccountinfoGetDelegate
+	Vertices::FVerticesPaymentTransactionGetDelegate
 >;
 
 using VerticesRequest = TVariant <
 	Vertices::VerticesGetaddressbalanceGetRequest,
-	Vertices::VerticesLoadaccountinfoGetRequest
+	Vertices::VerticesPaymentTransactionGetRequest
 >;
 
 //using VerticesMethod = TVariant<

@@ -46,6 +46,9 @@ namespace vertices {
 			case 0: 
 				this->vertices_->VerticesGetaddressbalanceGet((const Vertices::VerticesGetaddressbalanceGetRequest&)*(_context.request), _context.delegate->Get<Vertices::FVerticesGetaddressbalanceGetDelegate>());
 				break;
+			case 1:
+				this->vertices_->VerticesPaymentTransactionGet((const Vertices::VerticesPaymentTransactionGetRequest&)*(_context.request), _context.delegate->Get<Vertices::FVerticesPaymentTransactionGetDelegate>());
+				break;
 		}
 	}
 

@@ -21,18 +21,20 @@ namespace algorand {
             int Amount;
         };
 
-        class VerticesSDK::VerticesLoadaccountinfoGetRequest : public Request
+        class VerticesSDK::VerticesPaymentTransactionGetRequest : public Request
         {
         public:
-            virtual ~VerticesLoadaccountinfoGetRequest() {}
+            virtual ~VerticesPaymentTransactionGetRequest() {}
 
-            TOptional<FString> Address;
+            TOptional<FString> senderAddress;
+            TOptional<FString> receiverAddress;
+            TOptional<uint64_t> amount;
         };
 
-        class VerticesSDK::VerticesLoadaccountinfoGetResponse : public Response
+        class VerticesSDK::VerticesPaymentTransactionGetResponse : public Response
         {
         public:
-            ~VerticesLoadaccountinfoGetResponse() {}
+            ~VerticesPaymentTransactionGetResponse() {}
             int Amount;
         };
     }

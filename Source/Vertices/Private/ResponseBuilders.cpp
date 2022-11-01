@@ -14,10 +14,10 @@ namespace response_builders {
 		return response;
 	}
 
-	Vertices::VerticesLoadaccountinfoGetResponse
-		buildLoadAccountInfoResponse(const int& amount)
+	Vertices::VerticesPaymentTransactionGetResponse
+		buildPaymentTransactionResponse(const int& amount)
 	{
-		Vertices::VerticesLoadaccountinfoGetResponse response;
+		Vertices::VerticesPaymentTransactionGetResponse response;
 		response.Amount = amount;
 		return response;
 	}

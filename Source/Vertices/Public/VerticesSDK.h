@@ -23,24 +23,26 @@ namespace vertices {
         void loadVerticesLibrary();
         void setHTTPCURLs();
         void createNewVertices(char* , short, char* , ret_code_t&);
+        ret_code_t load_existing_account();
         void vertices_ping_check(ret_code_t&);
         void vertices_version_check(ret_code_t&);
 
         class VerticesGetaddressbalanceGetRequest;
         class VerticesGetaddressbalanceGetResponse;
-        class VerticesLoadaccountinfoGetRequest;
-        class VerticesLoadaccountinfoGetResponse;
+        class VerticesPaymentTransactionGetRequest;
+        class VerticesPaymentTransactionGetResponse;
 
         DECLARE_DELEGATE_OneParam(FVerticesGetaddressbalanceGetDelegate, const VerticesGetaddressbalanceGetResponse&);
-        DECLARE_DELEGATE_OneParam(FVerticesLoadaccountinfoGetDelegate, const VerticesLoadaccountinfoGetResponse&);
+        DECLARE_DELEGATE_OneParam(FVerticesPaymentTransactionGetDelegate, const VerticesPaymentTransactionGetResponse&);
 
         void VerticesGetaddressbalanceGet(const VerticesGetaddressbalanceGetRequest&, const FVerticesGetaddressbalanceGetDelegate&);
-        void VerticesLoadaccountinfoGet(const VerticesLoadaccountinfoGetRequest&, const FVerticesLoadaccountinfoGetDelegate&);
+        void VerticesPaymentTransactionGet(const VerticesPaymentTransactionGetRequest&, const FVerticesPaymentTransactionGetDelegate&);
     
     private:
         void* VerticesHandle;
         void* SodiumHandle;
         bool loaded_;
+        FString config_path;
     };
 
 }

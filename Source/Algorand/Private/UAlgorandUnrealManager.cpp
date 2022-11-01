@@ -49,7 +49,7 @@ void UAlgorandUnrealManager::getBalance(
     this->requestContextManager_
         .createContext<API::FAlgorandGetaddressbalanceGetDelegate,
                        Vertices::VerticesGetaddressbalanceGetRequest>(
-            request_builders::buildGetBalanceRequest(FString("QTYBYPJVSPT7SXSJQ5CLH2C5EQXXWEBBCKUWZUCGJGOGTODHYG43WQQSCM")),
+            request_builders::buildGetBalanceRequest(this->getAddress()),
             std::bind(&API::AlgorandGetaddressbalanceGet, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             [callback](const auto& response) {
@@ -64,21 +64,26 @@ void UAlgorandUnrealManager::getBalance(
             });
 }
 
-void UAlgorandUnrealManager::loadAccountInfo(const FLoadAccountInfoResponseReceivedDelegate& delegate,
+void UAlgorandUnrealManager::sendPaymentTransaction(
+    const FPaymentTransactionResponseReceivedDelegate& delegate,
     const FErrorReceivedDelegate& errorDelegate)
 {
 }
 
-void UAlgorandUnrealManager::loadAccountInfo(TFunction<void(const TResult<int64>&)> callback)
+void UAlgorandUnrealManager::sendPaymentTransaction(const FString& receiverAddress,
+                                                    const uint64_t& amount,
+                                                    TFunction<void(const TResult<int64>&)> callback)
 {
     this->requestContextManager_
-        .createContext<API::FAlgorandLoadaccountinfoGetDelegate,
-        Vertices::VerticesLoadaccountinfoGetRequest>(
-            request_builders::buildLoadAccountInfoRequest(FString("QTYBYPJVSPT7SXSJQ5CLH2C5EQXXWEBBCKUWZUCGJGOGTODHYG43WQQSCM")),
-            std::bind(&API::AlgorandLoadaccountinfoGet, unrealApi_.Get(),
+        .createContext<API::FAlgorandPaymentTransactionGetDelegate,
+        Vertices::VerticesPaymentTransactionGetRequest>(
+            request_builders::buildPaymentTransactionRequest(this->getAddress(),
+                                                             receiverAddress,
+                                                             amount),
+            std::bind(&API::AlgorandPaymentTransactionGet, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             [callback](const auto& response) {
-                FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Got Balance"));
+                FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Payment Transaction"));
                 if (response.IsSuccessful()) {
                     int64 balance = response.Amount;
                     callback(result::ok(balance));

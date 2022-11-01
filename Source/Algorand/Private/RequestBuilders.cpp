@@ -12,12 +12,16 @@ namespace request_builders {
 		request.Address = address;
 		return request;
 	}
-
-	Vertices::VerticesLoadaccountinfoGetRequest
-		buildLoadAccountInfoRequest(const FString& address)
+	
+	Vertices::VerticesPaymentTransactionGetRequest
+		buildPaymentTransactionRequest(const FString& sender, 
+									   const FString& receiver,
+									   const uint64_t& amount)
 	{
-		Vertices::VerticesLoadaccountinfoGetRequest request;
-		request.Address = address;
+		Vertices::VerticesPaymentTransactionGetRequest request;
+		request.senderAddress = sender;
+		request.receiverAddress = receiver;
+		request.amount = amount;
 		return request;
 	}
 }

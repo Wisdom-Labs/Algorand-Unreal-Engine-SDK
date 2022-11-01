@@ -51,25 +51,25 @@ void UnrealApi::OnAlgorandGetaddressbalanceGetResponse(const Vertices::VerticesG
     Delegate.ExecuteIfBound(response);
 }
 
-void UnrealApi::AlgorandLoadaccountinfoGet(const Vertices::VerticesLoadaccountinfoGetRequest& Request, const FAlgorandLoadaccountinfoGetDelegate& Delegate) const
+void UnrealApi::AlgorandPaymentTransactionGet(const Vertices::VerticesPaymentTransactionGetRequest& Request, const FAlgorandPaymentTransactionGetDelegate& Delegate) const
 {
     // IsValid Endpoint Url is not set ,  check this
 
-    this->threadContextManager_->createContext<Vertices::FVerticesLoadaccountinfoGetDelegate,
-        Vertices::VerticesLoadaccountinfoGetRequest>(
+    this->threadContextManager_->createContext<Vertices::FVerticesPaymentTransactionGetDelegate,
+        Vertices::VerticesPaymentTransactionGetRequest>(
             Request,
-            std::bind(&Vertices::VerticesLoadaccountinfoGet, threadContextManager_->getVertices().Get(),
+            std::bind(&Vertices::VerticesPaymentTransactionGet, threadContextManager_->getVertices().Get(),
                 std::placeholders::_1, std::placeholders::_2),
             [this, Delegate]
             (const auto& response) {
-                OnAlgorandLoadaccountinfoGetResponse(response, true, Delegate);
+                OnAlgorandPaymentTransactionGetResponse(response, true, Delegate);
             }
     );
 }
 
-void UnrealApi::OnAlgorandLoadaccountinfoGetResponse(const Vertices::VerticesLoadaccountinfoGetResponse& response, bool bSucceed, const FAlgorandLoadaccountinfoGetDelegate& Delegate) const
+void UnrealApi::OnAlgorandPaymentTransactionGetResponse(const Vertices::VerticesPaymentTransactionGetResponse& response, bool bSucceed, const FAlgorandPaymentTransactionGetDelegate& Delegate) const
 {
-    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "I am on UnrealAPI Load Account Info"));
+    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "I am on UnrealAPI Payment Transaction"));
     Delegate.ExecuteIfBound(response);
 }
 

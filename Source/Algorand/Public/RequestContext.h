@@ -7,7 +7,7 @@
 
 using ApiDelegate = TVariant<
 	algorand::api::UnrealApi::FAlgorandGetaddressbalanceGetDelegate,
-	algorand::api::UnrealApi::FAlgorandLoadaccountinfoGetDelegate
+	algorand::api::UnrealApi::FAlgorandPaymentTransactionGetDelegate
 >;
 
 struct RequestContext {
