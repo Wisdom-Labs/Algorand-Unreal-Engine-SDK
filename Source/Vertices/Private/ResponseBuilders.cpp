@@ -15,18 +15,18 @@ namespace response_builders {
 	}
 
 	Vertices::VerticesPaymentTransactionGetResponse
-		buildPaymentTransactionResponse(const int& amount)
+		buildPaymentTransactionResponse(const FString& txID)
 	{
 		Vertices::VerticesPaymentTransactionGetResponse response;
-		response.Amount = amount;
+		response.txID = txID;
 		return response;
 	}
 
 	Vertices::VerticesApplicationCallTransactionGetResponse
-		buildApplicationCallTransactionResponse(const int& amount)
+		buildApplicationCallTransactionResponse(const FString& txID)
 	{
 		Vertices::VerticesApplicationCallTransactionGetResponse response;
-		response.Amount = amount;
+		response.txID = txID;
 		return response;
 	}
 }

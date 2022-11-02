@@ -95,7 +95,7 @@ vertices_event_schedule(vtc_evt_t *evt);
 /// \param queue_size
 /// \return \c VTC_SUCCESS if event has correctly been processed
 VERTICES_IMPORT ret_code_t
-vertices_event_process(size_t *queue_size);
+vertices_event_process(size_t* queue_size, unsigned char* txID);
 
 /// Initialize Vertices SDK
 /// \param config Pass the configuration such as providers and user-defined event handler

@@ -355,21 +355,31 @@ namespace algorand {
                     notes);
             VTC_ASSERT(err_code);
 
+            unsigned char* txID = nullptr;
+            txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
+
             size_t queue_size = 1;
             while (queue_size && err_code == VTC_SUCCESS) {
-                err_code = vertices_event_process(&queue_size);
+                err_code = vertices_event_process(&queue_size, txID);
                 VTC_ASSERT(err_code);
             }
+
+            if (err_code == VTC_SUCCESS)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("err_code Payment TX ID Success, %s"), txID);
+            }
+
+            //free(txID);
 
             err_code = vertices_account_free(sender_account.vtc_account);
             VTC_ASSERT(err_code);
 
             UE_LOG(LogTemp, Warning, TEXT("err_code VerticesPaymentTransactionGetRequest Success"));
 
-            /*VerticesSDK::VerticesGetaddressbalanceGetResponse response;
+            VerticesSDK::VerticesPaymentTransactionGetResponse response;
 
             if (err_code == VTC_SUCCESS) {
-                response = response_builders::buildGetBalanceResponse(test_account.vtc_account->amount);
+                response = response_builders::buildPaymentTransactionResponse(FString(UTF8_TO_TCHAR(txID)));
                 response.SetSuccessful(true);
             }
             else
@@ -377,7 +387,7 @@ namespace algorand {
                 response.SetSuccessful(false);
                 response.SetResponseString("response failed");
             }
-            delegate.ExecuteIfBound(response);*/
+            delegate.ExecuteIfBound(response);
         }
 
         void VerticesSDK::VerticesApplicationCallTransactionGet(const VerticesApplicationCallTransactionGetRequest& Request, const FVerticesApplicationCallTransactionGetDelegate& delegate)
@@ -417,15 +427,34 @@ namespace algorand {
             kv.values[0].type = VALUE_TYPE_INTEGER;
             kv.values[0].value_uint = 32;
 
-            err_code = vertices_transaction_app_call(sender_account.vtc_account, APP_ID, &kv);
+            err_code = vertices_transaction_app_call(sender_account.vtc_account, Request.app_ID.GetValue(), &kv);
+            VTC_ASSERT(err_code);
+
+            unsigned char* txID = nullptr;
+            txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
+
+            size_t queue_size = 1;
+            while (queue_size && err_code == VTC_SUCCESS) {
+                err_code = vertices_event_process(&queue_size, txID);
+                VTC_ASSERT(err_code);
+            }
+
+            if (err_code == VTC_SUCCESS)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("err_code Application Call TX ID Success, %s"), txID);
+            }
+
+            //free(txID);
+
+            err_code = vertices_account_free(sender_account.vtc_account);
             VTC_ASSERT(err_code);
 
             UE_LOG(LogTemp, Warning, TEXT("err_code VerticesApplicationCallTransactionGetRequest Success"));
 
-            /*VerticesSDK::VerticesGetaddressbalanceGetResponse response;
+            VerticesSDK::VerticesApplicationCallTransactionGetResponse response;
 
             if (err_code == VTC_SUCCESS) {
-                response = response_builders::buildGetBalanceResponse(test_account.vtc_account->amount);
+                response = response_builders::buildApplicationCallTransactionResponse(FString(UTF8_TO_TCHAR(txID)));
                 response.SetSuccessful(true);
             }
             else
@@ -433,7 +462,7 @@ namespace algorand {
                 response.SetSuccessful(false);
                 response.SetResponseString("response failed");
             }
-            delegate.ExecuteIfBound(response);*/
+            delegate.ExecuteIfBound(response);
         }
 
         void VerticesSDK::setHTTPCURLs() 

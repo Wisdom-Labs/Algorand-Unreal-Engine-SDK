@@ -45,13 +45,13 @@ public:
                          const FErrorReceivedDelegate& errorDelegate);
     void sendPaymentTransaction(const FString& receiverAddress,
                                 const uint64_t& amount,
-                                TFunction<void(const TResult<int64>&)> callback);   
+                                TFunction<void(const TResult<FString>&)> callback);   
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
     void sendApplicationCallTransaction(const FApplicationCallTransactionResponseReceivedDelegate& delegate,
                          const FErrorReceivedDelegate& errorDelegate);
     void sendApplicationCallTransaction(const uint64_t& app_ID,
-                                TFunction<void(const TResult<int64>&)> callback);   
+                                TFunction<void(const TResult<FString>&)> callback);   
 
     UWorld* GetWorld() const override;
 

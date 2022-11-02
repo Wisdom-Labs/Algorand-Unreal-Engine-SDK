@@ -35,7 +35,7 @@ namespace algorand {
         {
         public:
             ~VerticesPaymentTransactionGetResponse() {}
-            int Amount;
+            FString txID;
         };
 
         class VerticesSDK::VerticesApplicationCallTransactionGetRequest : public Request
@@ -51,7 +51,7 @@ namespace algorand {
         {
         public:
             ~VerticesApplicationCallTransactionGetResponse() {}
-            int Amount;
+            FString txID;
         };
     }
 }

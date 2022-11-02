@@ -6,7 +6,7 @@ namespace response_builders {
 	algorand::vertices::VerticesSDK::VerticesGetaddressbalanceGetResponse
 		buildGetBalanceResponse(const int& amount);
 	algorand::vertices::VerticesSDK::VerticesPaymentTransactionGetResponse
-		buildPaymentTransactionResponse(const int& amount);
+		buildPaymentTransactionResponse(const FString& txID);
 	algorand::vertices::VerticesSDK::VerticesApplicationCallTransactionGetResponse
-		buildApplicationCallTransactionResponse(const int& amount);
+		buildApplicationCallTransactionResponse(const FString& txID);
 }
