@@ -7,6 +7,7 @@
 #include "VerticesApiOperations.h"
 #include "ResponseBuilers.h"
 #include "HAL/UnrealMemory.h"
+#include "AES.h"
 
 #include <cstring>
 
@@ -15,6 +16,8 @@ using namespace std;
 DECLARE_LOG_CATEGORY_EXTERN(LogMyAwesomeGame, Log, All);
 
 #define LOCTEXT_NAMESPACE "FVerticesModule"
+
+unsigned char user_password[] = "algorand-sdk";
 
 typedef struct {
     unsigned char private_key[ADDRESS_LENGTH];  //!< 32-bytes private key
@@ -129,7 +132,6 @@ namespace algorand {
     namespace vertices {
 
         VerticesSDK::VerticesSDK() {
-            ret_code_t err_code;
             loadVerticesLibrary();
 
             if (!loaded_)
@@ -140,30 +142,6 @@ namespace algorand {
 
             UE_LOG(LogTemp, Display, TEXT("Loaded C-Vertices-sdk.dll & libsodium.dll from Third Party Plugin sample."));
             setHTTPCURLs();
-            createNewVertices(SERVER_URL, SERVER_PORT, SERVER_TOKEN_HEADER, err_code);
-
-            if (err_code == VTC_SUCCESS) {
-                UE_LOG(LogTemp, Display, TEXT("Created Vertices Network"));
-            }
-            
-            vertices_ping_check(err_code);
-
-            if (err_code == VTC_SUCCESS) {
-                UE_LOG(LogTemp, Display, TEXT("Vertices ping checked!"));
-            }
-
-            vertices_version_check(err_code);
-
-            if (err_code == VTC_SUCCESS) {
-                UE_LOG(LogTemp, Display, TEXT("Vertices version checked."));
-            }
-
-            err_code = load_existing_account();
-
-            if (err_code == VTC_SUCCESS) {
-                UE_LOG(LogTemp, Display, TEXT("Loaded main account."));
-            }
-
         }
 
         VerticesSDK::~VerticesSDK () {
@@ -198,6 +176,32 @@ namespace algorand {
                 loaded_ = false;
         }
 
+        void VerticesSDK::InitVertices(ret_code_t& err_code) {
+            createNewVertices(SERVER_URL, SERVER_PORT, SERVER_TOKEN_HEADER, err_code);
+
+            if (err_code == VTC_SUCCESS) {
+                UE_LOG(LogTemp, Display, TEXT("Created Vertices Network"));
+            }
+
+            vertices_ping_check(err_code);
+
+            if (err_code == VTC_SUCCESS) {
+                UE_LOG(LogTemp, Display, TEXT("Vertices ping checked!"));
+            }
+
+            vertices_version_check(err_code);
+
+            if (err_code == VTC_SUCCESS) {
+                UE_LOG(LogTemp, Display, TEXT("Vertices version checked."));
+            }
+
+            err_code = load_existing_account();
+
+            if (err_code == VTC_SUCCESS) {
+                UE_LOG(LogTemp, Display, TEXT("Loaded main account."));
+            }
+        }
+
         void VerticesSDK::createNewVertices(char* sever_url, short port, char* server_token_header, ret_code_t& err_code) {
             providers.url = (char*)SERVER_URL;
             providers.port = SERVER_PORT;
@@ -214,6 +218,60 @@ namespace algorand {
             UE_LOG(LogTemp, Warning, TEXT("err_code vertices_new %d"), err_code);
         }
 
+        ret_code_t VerticesSDK::create_new_account() {
+            ret_code_t err_code = VTC_SUCCESS;
+
+            unsigned char seed[crypto_sign_ed25519_SEEDBYTES] = { 0 };
+            unsigned char ed25519_pk[crypto_sign_ed25519_PUBLICKEYBYTES];
+
+            UE_LOG(LogTemp, Display, TEXT("🧾 Creating new random account and storing it (path  config)"));
+
+            unsigned char ed25519_sk[crypto_sign_ed25519_SECRETKEYBYTES];
+            randombytes_buf(seed, sizeof(seed));
+
+            crypto_sign_ed25519_seed_keypair(ed25519_pk, ed25519_sk, seed);
+
+            memcpy(sender_account.private_key, ed25519_sk, sizeof(sender_account.private_key));
+
+            config_path = FPaths::ProjectPluginsDir() + "Algorand/Source/Algorand/config/";
+
+            char* config_file = TCHAR_TO_ANSI(*(config_path + "private_key.bin"));
+
+            // encrypting private key
+            AES aes(AESKeyLength::AES_128);
+            unsigned char* pk_out = aes.EncryptECB(sender_account.private_key, ADDRESS_LENGTH, user_password);
+
+            FILE* fw_priv = fopen(config_file, "wb");
+            if (fw_priv == nullptr) {
+                UE_LOG(LogTemp, Error, TEXT("Cannot create ./config/private_key.bin"));
+                return VTC_ERROR_NOT_FOUND;
+            }
+            else {
+                fwrite(pk_out, 1, 48, fw_priv);
+                fclose(fw_priv);
+            }
+
+            delete[] pk_out;
+            // encrypted
+            // adding account, account address will be computed from binary public key
+            err_code = vertices_account_new_from_bin((char*)ed25519_pk, &sender_account.vtc_account);
+            UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_bin %d"), err_code);
+            //VTC_ASSERT(err_code);
+
+            // we can now store the b32 address in a file
+            config_file = TCHAR_TO_ANSI(*(config_path + "public_b32.txt"));
+            FILE* fw_pub = fopen(config_file, "w");
+            if (fw_pub != nullptr) {
+                size_t len = strlen(sender_account.vtc_account->public_b32);
+
+                fwrite(sender_account.vtc_account->public_b32, 1, len, fw_pub);
+                fwrite("\n", 1, 1, fw_pub);
+                fclose(fw_pub);
+            }
+
+            return err_code;
+        }
+
         ret_code_t VerticesSDK::load_existing_account() {
             ret_code_t err_code;
 
@@ -228,21 +286,29 @@ namespace algorand {
             memset(sender_account.private_key, 0, 32);
             sender_account.vtc_account = nullptr;
 
+            // decrypting private key
+            unsigned char decrypted_pk[48];
+            AES aes(AESKeyLength::AES_128);
+
             FILE * f_priv = fopen(config_file, "rb");
             if (f_priv != nullptr) {
                 UE_LOG(LogTemp, Display, TEXT("🔑 Loading private key from %s"), config_file);
 
-                bytes_read = fread(sender_account.private_key, 1, ADDRESS_LENGTH, f_priv);
+                bytes_read = fread(decrypted_pk, 1, 48, f_priv);
                 fclose(f_priv);
             }
 
-            if (f_priv == nullptr || bytes_read != ADDRESS_LENGTH) {
+            if (f_priv == nullptr || bytes_read != 48) {
                 UE_LOG(LogTemp, Display, TEXT(
                     "🤔 private_key.bin does not exist or keys not found. You can pass the -n flag to create a new account"));
 
                 return VTC_ERROR_NOT_FOUND;
             }
 
+            unsigned char *plain_pk = aes.DecryptECB(decrypted_pk, 48, user_password);
+            memcpy(sender_account.private_key, plain_pk, ADDRESS_LENGTH);
+            delete[] plain_pk;
+            // decrypted private key
             config_file = TCHAR_TO_ANSI(*(config_path + "public_b32.txt"));
             FILE * f_pub = fopen(config_file, "r");
             if (f_pub != nullptr) {
@@ -303,9 +369,17 @@ namespace algorand {
         void VerticesSDK::VerticesGetaddressbalanceGet(const VerticesGetaddressbalanceGetRequest& Request, const FVerticesGetaddressbalanceGetDelegate& delegate)
         {
             ret_code_t err_code = VTC_SUCCESS;
+            /*createNewVertices(SERVER_URL, SERVER_PORT, SERVER_TOKEN_HEADER, err_code);
+            vertices_ping_check(err_code);
+            vertices_version_check(err_code);
+            create_new_account();
+            return;*/
+            
             FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Get Address Balance"));
             account_t test_account;
             
+            InitVertices(err_code);
+
             memset(test_account.private_key, 0, 32);
             test_account.vtc_account = nullptr;
 
@@ -335,6 +409,8 @@ namespace algorand {
         {
             ret_code_t err_code = VTC_SUCCESS;
             FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Sending Payment Transaction"));
+
+            InitVertices(err_code);
 
             if (sender_account.vtc_account->amount < 1001000) {
                 FFormatNamedArguments Arguments;
@@ -394,6 +470,8 @@ namespace algorand {
         {
             ret_code_t err_code = VTC_SUCCESS;
             FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Sending Application Call Transaction"));
+
+            InitVertices(err_code);
 
             if (sender_account.vtc_account->amount < 1001000) {
                 FFormatNamedArguments Arguments;

@@ -22,7 +22,9 @@ namespace vertices {
         ~VerticesSDK();
         void loadVerticesLibrary();
         void setHTTPCURLs();
+        void InitVertices(ret_code_t&);
         void createNewVertices(char* , short, char* , ret_code_t&);
+        ret_code_t create_new_account();
         ret_code_t load_existing_account();
         void vertices_ping_check(ret_code_t&);
         void vertices_version_check(ret_code_t&);
