@@ -6,7 +6,7 @@
 #pragma pack(push, 1)
 
 USTRUCT(BlueprintType)
-struct FUInt64 {
+struct ALGORAND_API FUInt64 {
     GENERATED_BODY()
 
     uint64 Value;
@@ -20,7 +20,7 @@ struct FUInt64 {
 #undef PACKED
 
 UCLASS(BlueprintType)
-class UUInt64Factory : public UObject
+class ALGORAND_API UUInt64Factory : public UObject
 {
     GENERATED_BODY()
 

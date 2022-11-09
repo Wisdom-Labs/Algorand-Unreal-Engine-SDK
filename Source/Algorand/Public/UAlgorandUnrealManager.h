@@ -29,7 +29,7 @@ class ALGORAND_API UAlgorandUnrealManager : public UObject
 public:
     UAlgorandUnrealManager();
 
-    UFUNCTION(BlueprintCallable, Category = "AlgorandManager")
+    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
         static UAlgorandUnrealManager* createInstance(UObject* outer);
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")

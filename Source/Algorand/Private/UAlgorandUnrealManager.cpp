@@ -40,7 +40,12 @@ void UAlgorandUnrealManager::getBalance(
     const FGetBalanceResponseReceivedDelegate& delegate,
     const FErrorReceivedDelegate& errorDelegate)
 {
-
+    this->getBalance([delegate, errorDelegate](const TResult<int64>& result) {
+        if (result::isSuccessful(result))
+            delegate.ExecuteIfBound(result::getValue(result));
+        else
+            errorDelegate.ExecuteIfBound(result::getErrorMessage(result));
+    });
 }
 
 void UAlgorandUnrealManager::getBalance(
