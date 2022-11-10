@@ -14,10 +14,14 @@
 
 #include "UAlgorandUnrealManager.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FGetBalanceResponseReceivedDelegate, const FUInt64&, money);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FPaymentTransactionResponseReceivedDelegate, const FUInt64&, money);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FApplicationCallTransactionResponseReceivedDelegate, const FUInt64&, money);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FErrorReceivedDelegate, const FError&, error);
+namespace {
+    using Vertices = algorand::vertices::VerticesSDK;
+}
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetBalanceDelegate, const FUInt64&, money);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPaymentTransactionDelegate, const FString&, txID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FApplicationCallTransactionDelegate, const FString&, txID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FErrorDelegate, const FError&, error);
 
 class TransactionBuilder;
 
@@ -33,25 +37,35 @@ public:
         static UAlgorandUnrealManager* createInstance(UObject* outer);
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
-    FString getAddress();
+        FString getAddress();
+
+    UPROPERTY(BlueprintAssignable)
+        FErrorDelegate ErrorDelegateCallback;
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
-    void getBalance(const FGetBalanceResponseReceivedDelegate& delegate,
-                    const FErrorReceivedDelegate& errorDelegate);
-    void getBalance(TFunction<void(const TResult<int64>&)> callback);
+    void getBalance();
+
+    UPROPERTY(BlueprintAssignable)
+        FGetBalanceDelegate GetBalanceCallback;
+
+    void OnGetBalanceCompleteCallback(const Vertices::VerticesGetaddressbalanceGetResponse& response);
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
-    void sendPaymentTransaction(const FPaymentTransactionResponseReceivedDelegate& delegate,
-                         const FErrorReceivedDelegate& errorDelegate);
     void sendPaymentTransaction(const FString& receiverAddress,
-                                const uint64_t& amount,
-                                TFunction<void(const TResult<FString>&)> callback);   
+                                const FUInt64& amount);   
+
+    UPROPERTY(BlueprintAssignable)
+        FPaymentTransactionDelegate SendPaymentTransactionCallback;
+
+    void OnSendPaymentTransactionCompleteCallback(const Vertices::VerticesPaymentTransactionGetResponse& response);
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
-    void sendApplicationCallTransaction(const FApplicationCallTransactionResponseReceivedDelegate& delegate,
-                         const FErrorReceivedDelegate& errorDelegate);
-    void sendApplicationCallTransaction(const uint64_t& app_ID,
-                                TFunction<void(const TResult<FString>&)> callback);   
+    void sendApplicationCallTransaction(const FUInt64& app_ID);
+
+    UPROPERTY(BlueprintAssignable)
+        FApplicationCallTransactionDelegate SendApplicationCallTransactionCallback;
+
+    void OnSendApplicationCallTransactionCompleteCallback(const Vertices::VerticesApplicationCallTransactionGetResponse& response);
 
     UWorld* GetWorld() const override;
 

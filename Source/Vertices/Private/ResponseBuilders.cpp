@@ -7,7 +7,7 @@ namespace {
 
 namespace response_builders {
 	Vertices::VerticesGetaddressbalanceGetResponse
-		buildGetBalanceResponse(const int& amount)
+		buildGetBalanceResponse(const uint64& amount)
 	{
 		Vertices::VerticesGetaddressbalanceGetResponse response;
 		response.Amount = amount;

@@ -300,7 +300,7 @@ namespace algorand {
 
             if (f_priv == nullptr || bytes_read != 48) {
                 UE_LOG(LogTemp, Display, TEXT(
-                    "🤔 private_key.bin does not exist or keys not found. You can pass the -n flag to create a new account"));
+                    "🤔 private_key.bin does not exist or keys not found."));
 
                 return VTC_ERROR_NOT_FOUND;
             }
@@ -326,7 +326,7 @@ namespace algorand {
 
             if (f_pub == nullptr || bytes_read < ADDRESS_LENGTH) {
                 UE_LOG(LogTemp, Warning, TEXT(
-                    "🤔 public_b32.txt does not exist or keys not found. You can pass the -n flag to create a new account"));
+                    "🤔 public_b32.txt does not exist"));
 
                 return VTC_ERROR_NOT_FOUND;
             }

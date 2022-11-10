@@ -36,48 +36,35 @@ FString UAlgorandUnrealManager::getAddress()
     return transactionBuilder_->paymentAddress();
 }
 
-void UAlgorandUnrealManager::getBalance(
-    const FGetBalanceResponseReceivedDelegate& delegate,
-    const FErrorReceivedDelegate& errorDelegate)
-{
-    this->getBalance([delegate, errorDelegate](const TResult<int64>& result) {
-        if (result::isSuccessful(result))
-            delegate.ExecuteIfBound(result::getValue(result));
-        else
-            errorDelegate.ExecuteIfBound(result::getErrorMessage(result));
-    });
-}
-
-void UAlgorandUnrealManager::getBalance(
-    TFunction<void(const TResult<int64>&)> callback)
+void UAlgorandUnrealManager::getBalance()
 {
     this->requestContextManager_
         .createContext<API::FAlgorandGetaddressbalanceGetDelegate,
-                       Vertices::VerticesGetaddressbalanceGetRequest>(
+        Vertices::VerticesGetaddressbalanceGetRequest>(
             request_builders::buildGetBalanceRequest(this->getAddress()),
             std::bind(&API::AlgorandGetaddressbalanceGet, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
-            [callback](const auto& response) {
-                FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Got Balance"));
-                if (response.IsSuccessful()) {
-                    int64 balance = response.Amount;
-                    callback(result::ok(balance));
-                }
-                else {
-                    callback(result::error<int64>(response.GetResponseString()));
-                }
-            });
+            std::bind(&UAlgorandUnrealManager::OnGetBalanceCompleteCallback, this , std::placeholders::_1)
+        );
 }
 
-void UAlgorandUnrealManager::sendPaymentTransaction(
-    const FPaymentTransactionResponseReceivedDelegate& delegate,
-    const FErrorReceivedDelegate& errorDelegate)
-{
+void UAlgorandUnrealManager::OnGetBalanceCompleteCallback(const Vertices::VerticesGetaddressbalanceGetResponse& response) {
+    
+    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Got Balance"));
+    if (response.IsSuccessful()) {
+        uint64 balance = response.Amount;
+        GetBalanceCallback.Broadcast(FUInt64(balance));
+
+    }
+    else {
+        if (!ErrorDelegateCallback.IsBound()) {
+            ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
+        }
+    }
 }
 
 void UAlgorandUnrealManager::sendPaymentTransaction(const FString& receiverAddress,
-                                                    const uint64_t& amount,
-                                                    TFunction<void(const TResult<FString>&)> callback)
+                                                    const FUInt64& amount)
 {
     this->requestContextManager_
         .createContext<API::FAlgorandPaymentTransactionGetDelegate,
@@ -87,27 +74,24 @@ void UAlgorandUnrealManager::sendPaymentTransaction(const FString& receiverAddre
                                                              amount),
             std::bind(&API::AlgorandPaymentTransactionGet, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
-            [callback](const auto& response) {
-                FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Payment Transaction"));
-                if (response.IsSuccessful()) {
-                    FString txID = response.txID;
-                    callback(result::ok(txID));
-                }
-                else {
-                    callback(result::error<FString>(response.GetResponseString()));
-                }
-            });
+            std::bind(&UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback, this, std::placeholders::_1)
+            );
 }
 
-void UAlgorandUnrealManager::sendApplicationCallTransaction(
-    const FApplicationCallTransactionResponseReceivedDelegate& delegate,
-    const FErrorReceivedDelegate& errorDelegate)
-{
-
+void UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback(const Vertices::VerticesPaymentTransactionGetResponse& response) {
+    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Got Balance"));
+    if (response.IsSuccessful()) {
+        FString txID = response.txID;
+        SendPaymentTransactionCallback.Broadcast(txID);
+    }
+    else {
+        if (!ErrorDelegateCallback.IsBound()) {
+            ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
+        }
+    }
 }
 
-void UAlgorandUnrealManager::sendApplicationCallTransaction(const uint64_t& app_ID,
-                                                    TFunction<void(const TResult<FString>&)> callback)
+void UAlgorandUnrealManager::sendApplicationCallTransaction(const FUInt64& app_ID)
 {
     this->requestContextManager_
         .createContext<API::FAlgorandApplicationCallTransactionGetDelegate,
@@ -116,16 +100,21 @@ void UAlgorandUnrealManager::sendApplicationCallTransaction(const uint64_t& app_
                                                                      app_ID),
             std::bind(&API::AlgorandApplicationCallTransactionGet, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
-            [callback](const auto& response) {
-                FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Application Call Transaction"));
-                if (response.IsSuccessful()) {
-                    FString txID = response.txID;
-                    callback(result::ok(txID));
-                }
-                else {
-                    callback(result::error<FString>(response.GetResponseString()));
-                }
-            });
+            std::bind(&UAlgorandUnrealManager::OnSendApplicationCallTransactionCompleteCallback, this, std::placeholders::_1)
+            );
+}
+
+void UAlgorandUnrealManager::OnSendApplicationCallTransactionCompleteCallback(const Vertices::VerticesApplicationCallTransactionGetResponse& response) {
+    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Got Balance"));
+    if (response.IsSuccessful()) {
+        FString txID = response.txID;
+        SendApplicationCallTransactionCallback.Broadcast(txID);
+    }
+    else {
+        if (!ErrorDelegateCallback.IsBound()) {
+            ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
+        }
+    }
 }
 
 UWorld* UAlgorandUnrealManager::GetWorld() const

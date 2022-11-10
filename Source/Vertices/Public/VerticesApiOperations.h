@@ -18,7 +18,7 @@ namespace algorand {
         {
         public:
             ~VerticesGetaddressbalanceGetResponse() {}
-            int Amount;
+            uint64 Amount;
         };
 
         class VerticesSDK::VerticesPaymentTransactionGetRequest : public Request

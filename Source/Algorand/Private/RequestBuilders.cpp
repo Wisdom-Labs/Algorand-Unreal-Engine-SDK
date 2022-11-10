@@ -16,7 +16,7 @@ namespace request_builders {
 	Vertices::VerticesPaymentTransactionGetRequest
 		buildPaymentTransactionRequest(const FString& sender, 
 									   const FString& receiver,
-									   const uint64_t& amount)
+									   const FUInt64& amount)
 	{
 		Vertices::VerticesPaymentTransactionGetRequest request;
 		request.senderAddress = sender;
@@ -27,7 +27,7 @@ namespace request_builders {
 
 	Vertices::VerticesApplicationCallTransactionGetRequest
 		buildApplicationCallTransactionRequest(const FString& sender, 
-									   const uint64_t& app_ID)
+									   const FUInt64& app_ID)
 	{
 		Vertices::VerticesApplicationCallTransactionGetRequest request;
 		request.senderAddress = sender;
