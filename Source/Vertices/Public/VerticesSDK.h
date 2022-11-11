@@ -26,6 +26,7 @@ namespace vertices {
         void createNewVertices(char* , short, char* , ret_code_t&);
         ret_code_t create_new_account();
         ret_code_t load_existing_account();
+        FString load_pub_key();
         void vertices_ping_check(ret_code_t&);
         void vertices_version_check(ret_code_t&);
 

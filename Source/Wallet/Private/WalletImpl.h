@@ -8,6 +8,7 @@ public:
     WalletImpl(const FString& address);
     
     FString getAddress() const override;
+    void setAddress(const FString& address_) override;
 
 private:
     FString address;

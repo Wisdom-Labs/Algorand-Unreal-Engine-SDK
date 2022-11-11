@@ -21,6 +21,7 @@ public:
 	*/
 
 	virtual FString getAddress() const = 0;
+	virtual void setAddress(const FString& address_) = 0;
 
 };
 

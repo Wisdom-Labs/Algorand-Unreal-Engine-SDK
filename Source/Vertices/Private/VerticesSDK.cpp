@@ -292,7 +292,7 @@ namespace algorand {
 
             FILE * f_priv = fopen(config_file, "rb");
             if (f_priv != nullptr) {
-                UE_LOG(LogTemp, Display, TEXT("🔑 Loading private key from %s"), config_file);
+                UE_LOG(LogTemp, Display, TEXT("🔑 Loading private key from %s"), *FString(config_file));
 
                 bytes_read = fread(decrypted_pk, 1, 48, f_priv);
                 fclose(f_priv);
@@ -338,6 +338,37 @@ namespace algorand {
             UE_LOG(LogTemp, Display, TEXT("💳 Created Alice's account: %s"), *FString(sender_account.vtc_account->public_b32));
 
             return VTC_SUCCESS;
+        }
+
+        FString VerticesSDK::load_pub_key() {
+            char public_b32[PUBLIC_B32_STR_MAX_LENGTH] = { 0 };
+
+            size_t bytes_read = 0;
+
+            config_path = FPaths::ProjectPluginsDir() + "Algorand/Source/Algorand/config/";
+
+            char* config_file = TCHAR_TO_ANSI(*(config_path + "public_b32.txt"));
+            FILE* f_pub = fopen(config_file, "r");
+            if (f_pub != nullptr) {
+                UE_LOG(LogTemp, Display, TEXT("🔑 Loading public key from: %s"), *FString(config_file));
+
+                bytes_read = fread(public_b32, 1, PUBLIC_B32_STR_MAX_LENGTH, f_pub);
+                fclose(f_pub);
+
+                size_t len = strlen(public_b32);
+                while (public_b32[len - 1] == '\n' || public_b32[len - 1] == '\r') {
+                    public_b32[len - 1] = '\0';
+                    len--;
+                }
+            }
+
+            if (f_pub == nullptr || bytes_read < ADDRESS_LENGTH) {
+                UE_LOG(LogTemp, Warning, TEXT("🤔 public_b32.txt does not exist"));
+
+                return "";
+            }
+
+            return FString(strlen(public_b32), public_b32);
         }
 
         void VerticesSDK::vertices_ping_check(ret_code_t& err_code) 

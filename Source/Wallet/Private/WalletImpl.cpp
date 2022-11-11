@@ -15,7 +15,12 @@ FString WalletImpl::getAddress() const
 	return this->address;
 }
 
+void WalletImpl::setAddress(const FString& address_)
+{
+	address = address_;
+}
+
 TSharedPtr<Wallet> createWallet(const FString& address)
 {
-		return MakeShared<WalletImpl>(address);
+	return MakeShared<WalletImpl>(address);
 }

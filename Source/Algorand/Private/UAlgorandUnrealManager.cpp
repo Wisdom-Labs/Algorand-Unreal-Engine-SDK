@@ -18,8 +18,15 @@ UAlgorandUnrealManager::UAlgorandUnrealManager()
 {
     // create Vertices library
     vertices_ = MakeShared<algorand::vertices::VerticesSDK>();
+    FString address;
+    // Load existing pub address from Vertices SDK
+    if (vertices_.IsValid()) {
+        address = vertices_->load_pub_key();
+    }
 
-    transactionBuilder_ = createTransactionBuilder("O6APBR3UNPVWH7ILBMCI6V53PDZAQQLMV47VKQWHH5753SQPRNDLSE7SWQ");       // default address
+    address = !address.IsEmpty() ? address : "O6APBR3UNPVWH7ILBMCI6V53PDZAQQLMV47VKQWHH5753SQPRNDLSE7SWQ";        // default address
+
+    transactionBuilder_ = createTransactionBuilder(address);       
     // create unreal api modules
     unrealApi_ = MakeShared<algorand::api::UnrealApi>(vertices_);
 }
@@ -27,12 +34,18 @@ UAlgorandUnrealManager::UAlgorandUnrealManager()
 UAlgorandUnrealManager* UAlgorandUnrealManager::createInstance(UObject* outer)
 {
     UAlgorandUnrealManager* manager = NewObject<UAlgorandUnrealManager>(outer);
+        
     return manager;
 }
 
 FString UAlgorandUnrealManager::getAddress()
 {
     return transactionBuilder_->paymentAddress();
+}
+
+void UAlgorandUnrealManager::setAddress(const FString& address)
+{
+    transactionBuilder_->setPaymentAddress(address);
 }
 
 void UAlgorandUnrealManager::getBalance()

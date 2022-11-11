@@ -38,6 +38,8 @@ public:
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
         FString getAddress();
 
+    void setAddress(const FString& address);
+
     UPROPERTY(BlueprintAssignable)
         FErrorDelegate ErrorDelegateCallback;
 

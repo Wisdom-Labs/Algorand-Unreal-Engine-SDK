@@ -12,6 +12,11 @@ FString TransactionBuilderImpl::paymentAddress() const
 	return this->wallet_->getAddress();
 }
 
+void TransactionBuilderImpl::setPaymentAddress(const FString& address) const
+{
+	return this->wallet_->setAddress(address);
+}
+
 TSharedPtr<TransactionBuilder>
 createTransactionBuilder(const FString& address)
 {

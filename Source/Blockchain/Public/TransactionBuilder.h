@@ -11,5 +11,5 @@ public:
 	virtual void setMnemonic(const FString& mnemonic) = 0;*/
 	
 	virtual FString paymentAddress() const = 0;
-
+	virtual void setPaymentAddress(const FString& address) const = 0;
 };

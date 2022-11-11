@@ -12,6 +12,7 @@ public:
 	virtual ~TransactionBuilderImpl() {}
 
 	FString paymentAddress() const override;
+	void setPaymentAddress(const FString& address) const override;
 
 private:
 	TSharedPtr<Wallet> wallet_;
