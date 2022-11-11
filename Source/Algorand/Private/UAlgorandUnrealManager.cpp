@@ -17,12 +17,11 @@ namespace {
 UAlgorandUnrealManager::UAlgorandUnrealManager()
 {
     // create Vertices library
-    threadContextManager_ = MakeShared<algorand::vertices::ThreadContextManager>();
-    threadContextManager_->createVertices();
+    vertices_ = MakeShared<algorand::vertices::VerticesSDK>();
 
     transactionBuilder_ = createTransactionBuilder("O6APBR3UNPVWH7ILBMCI6V53PDZAQQLMV47VKQWHH5753SQPRNDLSE7SWQ");       // default address
     // create unreal api modules
-    unrealApi_ = MakeShared<algorand::api::UnrealApi>(threadContextManager_);
+    unrealApi_ = MakeShared<algorand::api::UnrealApi>(vertices_);
 }
 
 UAlgorandUnrealManager* UAlgorandUnrealManager::createInstance(UObject* outer)
@@ -54,7 +53,6 @@ void UAlgorandUnrealManager::OnGetBalanceCompleteCallback(const Vertices::Vertic
     if (response.IsSuccessful()) {
         uint64 balance = response.Amount;
         GetBalanceCallback.Broadcast(FUInt64(balance));
-
     }
     else {
         if (!ErrorDelegateCallback.IsBound()) {

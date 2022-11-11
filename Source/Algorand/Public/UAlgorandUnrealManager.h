@@ -4,7 +4,6 @@
 #include "Engine/World.h"
 
 #include "RequestContextManager.h"
-#include "ThreadContextManager.h"
 #include "Wallet.h"
 #include "Models/FUInt64.h"
 #include "Models/FError.h"
@@ -25,7 +24,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FErrorDelegate, const FError&, error
 
 class TransactionBuilder;
 
-UCLASS(BlueprintType, Blueprintable)
+UCLASS(BlueprintType)
 class ALGORAND_API UAlgorandUnrealManager : public UObject
 {
     GENERATED_BODY()
@@ -73,7 +72,7 @@ private:
     TSharedPtr<TransactionBuilder> transactionBuilder_;
     TSharedPtr<algorand::api::UnrealApi> unrealApi_;
 
-    TSharedPtr<algorand::vertices::ThreadContextManager> threadContextManager_;
+    TSharedPtr<algorand::vertices::VerticesSDK> vertices_;
 
     RequestContextManager requestContextManager_;
      

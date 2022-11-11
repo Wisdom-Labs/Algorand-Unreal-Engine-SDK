@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "VerticesSDK.h"
-#include "ThreadContextManager.h"
 
 namespace {
     using Vertices = algorand::vertices::VerticesSDK;
@@ -14,7 +13,7 @@ namespace api{
 class ALGORANDAPI_API UnrealApi
 {
 public:
-    UnrealApi(TSharedPtr<algorand::vertices::ThreadContextManager>&);
+    UnrealApi(TSharedPtr<algorand::vertices::VerticesSDK>&);
     ~UnrealApi();
 
     /* Sets the URL Endpoint*/
@@ -30,11 +29,11 @@ public:
     void AlgorandApplicationCallTransactionGet(const Vertices::VerticesApplicationCallTransactionGetRequest& Request, const FAlgorandApplicationCallTransactionGetDelegate& Delegate = FAlgorandApplicationCallTransactionGetDelegate()) const;
 
 private:
-    void OnAlgorandGetaddressbalanceGetResponse(const Vertices::VerticesGetaddressbalanceGetResponse& response, bool bSucceed, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const;
-    void OnAlgorandPaymentTransactionGetResponse(const Vertices::VerticesPaymentTransactionGetResponse& response, bool bSucceed, const FAlgorandPaymentTransactionGetDelegate& Delegate) const;
-    void OnAlgorandApplicationCallTransactionGetResponse(const Vertices::VerticesApplicationCallTransactionGetResponse& response, bool bSucceed, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const;
+    void OnAlgorandGetaddressbalanceGetResponse(const Vertices::VerticesGetaddressbalanceGetResponse& response, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const;
+    void OnAlgorandPaymentTransactionGetResponse(const Vertices::VerticesPaymentTransactionGetResponse& response, const FAlgorandPaymentTransactionGetDelegate& Delegate) const;
+    void OnAlgorandApplicationCallTransactionGetResponse(const Vertices::VerticesApplicationCallTransactionGetResponse& response, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const;
 
-    TSharedPtr<algorand::vertices::ThreadContextManager> threadContextManager_;
+    TSharedPtr<algorand::vertices::VerticesSDK> vertices_;
 
     FString Url;
 };

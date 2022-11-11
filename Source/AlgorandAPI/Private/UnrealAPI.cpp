@@ -14,10 +14,10 @@ namespace {
 namespace algorand{
 namespace api {
 
-UnrealApi::UnrealApi(TSharedPtr<algorand::vertices::ThreadContextManager>& threadContextManager)
+UnrealApi::UnrealApi(TSharedPtr<algorand::vertices::VerticesSDK>& vertices)
     : Url(TEXT("http://localhost"))
 {
-    threadContextManager_ = threadContextManager;
+    vertices_ = vertices;
 }
 
 UnrealApi::~UnrealApi() {}
@@ -31,21 +31,16 @@ void UnrealApi::AlgorandGetaddressbalanceGet(const Vertices::VerticesGetaddressb
 {
     // IsValid Endpoint Url is not set ,  check this
 
-    this->threadContextManager_->createContext<Vertices::FVerticesGetaddressbalanceGetDelegate,
-                                               Vertices::VerticesGetaddressbalanceGetRequest>(
-            Request,
-            std::bind(&Vertices::VerticesGetaddressbalanceGet, threadContextManager_->getVertices().Get(),
-                std::placeholders::_1, std::placeholders::_2),
-            [this, Delegate]
-            (const auto& response) {
-                OnAlgorandGetaddressbalanceGetResponse(response, true, Delegate);
-            }
-            );
-    /*std::bind(&Vertices::VerticesGetaddressbalanceGet, threadContextManager_->getVertices().Get(),
-        std::placeholders::_1, std::placeholders::_2),*/
+    TSharedRef<Vertices::FVerticesGetaddressbalanceGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesGetaddressbalanceGetDelegate>());
+    
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesGetaddressbalanceGetResponse& response) {
+        OnAlgorandGetaddressbalanceGetResponse(response, Delegate);
+    });
+    vertices_->VerticesGetaddressbalanceGet( Request, delegatePtr.Get());
+    
 }
 
-void UnrealApi::OnAlgorandGetaddressbalanceGetResponse(const Vertices::VerticesGetaddressbalanceGetResponse& response, bool bSucceed, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const
+void UnrealApi::OnAlgorandGetaddressbalanceGetResponse(const Vertices::VerticesGetaddressbalanceGetResponse& response, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const
 {
     FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "I am on UnrealAPI"));
     Delegate.ExecuteIfBound(response);
@@ -55,19 +50,15 @@ void UnrealApi::AlgorandPaymentTransactionGet(const Vertices::VerticesPaymentTra
 {
     // IsValid Endpoint Url is not set ,  check this
 
-    this->threadContextManager_->createContext<Vertices::FVerticesPaymentTransactionGetDelegate,
-        Vertices::VerticesPaymentTransactionGetRequest>(
-            Request,
-            std::bind(&Vertices::VerticesPaymentTransactionGet, threadContextManager_->getVertices().Get(),
-                std::placeholders::_1, std::placeholders::_2),
-            [this, Delegate]
-            (const auto& response) {
-                OnAlgorandPaymentTransactionGetResponse(response, true, Delegate);
-            }
-    );
+    TSharedRef<Vertices::FVerticesPaymentTransactionGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesPaymentTransactionGetDelegate>());
+
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesPaymentTransactionGetResponse& response) {
+        OnAlgorandPaymentTransactionGetResponse(response, Delegate);
+        });
+    vertices_->VerticesPaymentTransactionGet(Request, delegatePtr.Get());
 }
 
-void UnrealApi::OnAlgorandPaymentTransactionGetResponse(const Vertices::VerticesPaymentTransactionGetResponse& response, bool bSucceed, const FAlgorandPaymentTransactionGetDelegate& Delegate) const
+void UnrealApi::OnAlgorandPaymentTransactionGetResponse(const Vertices::VerticesPaymentTransactionGetResponse& response, const FAlgorandPaymentTransactionGetDelegate& Delegate) const
 {
     FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "I am on UnrealAPI Payment Transaction"));
     Delegate.ExecuteIfBound(response);
@@ -76,20 +67,16 @@ void UnrealApi::OnAlgorandPaymentTransactionGetResponse(const Vertices::Vertices
 void UnrealApi::AlgorandApplicationCallTransactionGet(const Vertices::VerticesApplicationCallTransactionGetRequest& Request, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const
 {
     // IsValid Endpoint Url is not set ,  check this
+    TSharedRef<Vertices::FVerticesApplicationCallTransactionGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesApplicationCallTransactionGetDelegate>());
 
-    this->threadContextManager_->createContext<Vertices::FVerticesApplicationCallTransactionGetDelegate,
-        Vertices::VerticesApplicationCallTransactionGetRequest>(
-            Request,
-            std::bind(&Vertices::VerticesApplicationCallTransactionGet, threadContextManager_->getVertices().Get(),
-                std::placeholders::_1, std::placeholders::_2),
-            [this, Delegate]
-            (const auto& response) {
-                OnAlgorandApplicationCallTransactionGetResponse(response, true, Delegate);
-            }
-    );
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesApplicationCallTransactionGetResponse& response) {
+        OnAlgorandApplicationCallTransactionGetResponse(response, Delegate);
+    });
+
+    vertices_->VerticesApplicationCallTransactionGet(Request, delegatePtr.Get());
 }
 
-void UnrealApi::OnAlgorandApplicationCallTransactionGetResponse(const Vertices::VerticesApplicationCallTransactionGetResponse& response, bool bSucceed, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const
+void UnrealApi::OnAlgorandApplicationCallTransactionGetResponse(const Vertices::VerticesApplicationCallTransactionGetResponse& response, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const
 {
     FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "I am on UnrealAPI Application Call Transaction"));
     Delegate.ExecuteIfBound(response);
