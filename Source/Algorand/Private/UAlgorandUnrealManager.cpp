@@ -48,6 +48,33 @@ void UAlgorandUnrealManager::setAddress(const FString& address)
     transactionBuilder_->setPaymentAddress(address);
 }
 
+void UAlgorandUnrealManager::generateWallet()
+{
+    this->requestContextManager_
+        .createContext<API::FAlgorandGenerateWalletGetDelegate,
+        Vertices::VerticesGenerateWalletGetRequest>(
+            request_builders::buildGenerateWalletRequest(),
+            std::bind(&API::AlgorandGenerateWalletGet, unrealApi_.Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            std::bind(&UAlgorandUnrealManager::OnGenerateWalletCompleteCallback, this , std::placeholders::_1)
+        );
+}
+
+void UAlgorandUnrealManager::OnGenerateWalletCompleteCallback(const Vertices::VerticesGenerateWalletGetResponse& response) {
+    
+    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Got Balance"));
+    if (response.IsSuccessful()) {
+        FString address = response.Address;
+        GenerateWalletCallback.Broadcast(address);
+        setAddress(address);
+    }
+    else {
+        if (!ErrorDelegateCallback.IsBound()) {
+            ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
+        }
+    }
+}
+
 void UAlgorandUnrealManager::getBalance()
 {
     this->requestContextManager_

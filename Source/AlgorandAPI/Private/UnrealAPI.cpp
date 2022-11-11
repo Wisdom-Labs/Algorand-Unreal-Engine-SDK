@@ -27,6 +27,25 @@ void UnrealApi::SetURL(const FString& InUrl)
     Url = InUrl;
 }
 
+void UnrealApi::AlgorandGenerateWalletGet(const Vertices::VerticesGenerateWalletGetRequest& Request, const FAlgorandGenerateWalletGetDelegate& Delegate) const
+{
+    // IsValid Endpoint Url is not set ,  check this
+
+    TSharedRef<Vertices::FVerticesGenerateWalletGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesGenerateWalletGetDelegate>());
+    
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesGenerateWalletGetResponse& response) {
+        OnAlgorandGenerateWalletGetResponse(response, Delegate);
+    });
+    vertices_->VerticesGenerateWalletGet( Request, delegatePtr.Get());
+    
+}
+
+void UnrealApi::OnAlgorandGenerateWalletGetResponse(const Vertices::VerticesGenerateWalletGetResponse& response, const FAlgorandGenerateWalletGetDelegate& Delegate) const
+{
+    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "I am on UnrealAPI"));
+    Delegate.ExecuteIfBound(response);
+}
+
 void UnrealApi::AlgorandGetaddressbalanceGet(const Vertices::VerticesGetaddressbalanceGetRequest& Request, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const
 {
     // IsValid Endpoint Url is not set ,  check this

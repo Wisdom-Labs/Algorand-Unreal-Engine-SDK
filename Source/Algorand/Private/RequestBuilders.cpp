@@ -5,6 +5,13 @@ namespace {
 	using Vertices = algorand::vertices::VerticesSDK;
 }
 namespace request_builders {
+	Vertices::VerticesGenerateWalletGetRequest
+	buildGenerateWalletRequest()
+	{
+		Vertices::VerticesGenerateWalletGetRequest request;
+		return request;
+	}
+
 	Vertices::VerticesGetaddressbalanceGetRequest
 	buildGetBalanceRequest(const FString& address)
 	{

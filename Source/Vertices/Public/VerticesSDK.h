@@ -30,6 +30,8 @@ namespace vertices {
         void vertices_ping_check(ret_code_t&);
         void vertices_version_check(ret_code_t&);
 
+        class VerticesGenerateWalletGetRequest;
+        class VerticesGenerateWalletGetResponse;
         class VerticesGetaddressbalanceGetRequest;
         class VerticesGetaddressbalanceGetResponse;
         class VerticesPaymentTransactionGetRequest;
@@ -37,10 +39,12 @@ namespace vertices {
         class VerticesApplicationCallTransactionGetRequest;
         class VerticesApplicationCallTransactionGetResponse;
 
+        DECLARE_DELEGATE_OneParam(FVerticesGenerateWalletGetDelegate, const VerticesGenerateWalletGetResponse&);
         DECLARE_DELEGATE_OneParam(FVerticesGetaddressbalanceGetDelegate, const VerticesGetaddressbalanceGetResponse&);
         DECLARE_DELEGATE_OneParam(FVerticesPaymentTransactionGetDelegate, const VerticesPaymentTransactionGetResponse&);
         DECLARE_DELEGATE_OneParam(FVerticesApplicationCallTransactionGetDelegate, const VerticesApplicationCallTransactionGetResponse&);
 
+        void VerticesGenerateWalletGet(const VerticesGenerateWalletGetRequest&, const FVerticesGenerateWalletGetDelegate&);
         void VerticesGetaddressbalanceGet(const VerticesGetaddressbalanceGetRequest&, const FVerticesGetaddressbalanceGetDelegate&);
         void VerticesPaymentTransactionGet(const VerticesPaymentTransactionGetRequest&, const FVerticesPaymentTransactionGetDelegate&);
         void VerticesApplicationCallTransactionGet(const VerticesApplicationCallTransactionGetRequest&, const FVerticesApplicationCallTransactionGetDelegate&);

@@ -397,6 +397,62 @@ namespace algorand {
                 version.patch);
         }
 
+        void VerticesSDK::VerticesGenerateWalletGet(const VerticesGenerateWalletGetRequest& Request, const FVerticesGenerateWalletGetDelegate& delegate)
+        {            
+            FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Generating new account"));
+            
+            AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
+            {
+                ret_code_t err_code = VTC_SUCCESS;
+                while (1) {
+
+                    if (vertices_check_writable()) {
+                        createNewVertices(SERVER_URL, SERVER_PORT, SERVER_TOKEN_HEADER, err_code);
+
+                        if (err_code == VTC_SUCCESS) {
+                            UE_LOG(LogTemp, Display, TEXT("Created Vertices Network"));
+                        }
+
+                        vertices_ping_check(err_code);
+
+                        if (err_code == VTC_SUCCESS) {
+                            UE_LOG(LogTemp, Display, TEXT("Vertices ping checked!"));
+                        }
+
+                        vertices_version_check(err_code);
+
+                        if (err_code == VTC_SUCCESS) {
+                            UE_LOG(LogTemp, Display, TEXT("Vertices version checked."));
+                        }
+
+                        err_code = create_new_account();
+
+                        if (err_code == VTC_SUCCESS) {
+                            UE_LOG(LogTemp, Display, TEXT("Vertices created new account."));
+                        }
+
+                        VerticesSDK::VerticesGenerateWalletGetResponse response;
+                        if (err_code == VTC_SUCCESS) {
+                            response = response_builders::buildGenerateWalletResponse(FString(sender_account.vtc_account->public_b32));
+                            response.SetSuccessful(true);
+                        }
+                        else
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString("response failed");
+                        }
+
+                        AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+                        {
+                            delegate.ExecuteIfBound(response);
+                        });
+
+                        break;
+                    }
+                }
+            });
+        }
+
         void VerticesSDK::VerticesGetaddressbalanceGet(const VerticesGetaddressbalanceGetRequest& Request, const FVerticesGetaddressbalanceGetDelegate& delegate)
         {            
             FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Getting Address Balance"));

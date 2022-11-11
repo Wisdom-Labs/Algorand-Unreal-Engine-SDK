@@ -6,6 +6,7 @@
 #include "UnrealApi.h"
 
 using ApiDelegate = TVariant<
+	algorand::api::UnrealApi::FAlgorandGenerateWalletGetDelegate,
 	algorand::api::UnrealApi::FAlgorandGetaddressbalanceGetDelegate,
 	algorand::api::UnrealApi::FAlgorandPaymentTransactionGetDelegate,
 	algorand::api::UnrealApi::FAlgorandApplicationCallTransactionGetDelegate

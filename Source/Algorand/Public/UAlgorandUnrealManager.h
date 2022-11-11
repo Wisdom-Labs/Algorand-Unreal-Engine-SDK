@@ -17,6 +17,7 @@ namespace {
     using Vertices = algorand::vertices::VerticesSDK;
 }
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGenerateWalletDelegate, const FString&, address);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetBalanceDelegate, const FUInt64&, money);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPaymentTransactionDelegate, const FString&, txID);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FApplicationCallTransactionDelegate, const FString&, txID);
@@ -42,6 +43,14 @@ public:
 
     UPROPERTY(BlueprintAssignable)
         FErrorDelegate ErrorDelegateCallback;
+
+    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+    void generateWallet();
+
+    UPROPERTY(BlueprintAssignable)
+        FGenerateWalletDelegate GenerateWalletCallback;
+
+    void OnGenerateWalletCompleteCallback(const Vertices::VerticesGenerateWalletGetResponse& response);
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
     void getBalance();

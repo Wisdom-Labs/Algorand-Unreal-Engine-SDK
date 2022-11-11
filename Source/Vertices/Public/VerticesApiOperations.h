@@ -6,6 +6,20 @@
 namespace algorand {
     namespace vertices {
 
+        class VerticesSDK::VerticesGenerateWalletGetRequest : public Request
+        {
+        public:
+            virtual ~VerticesGenerateWalletGetRequest() {}
+
+        };
+
+        class VerticesSDK::VerticesGenerateWalletGetResponse : public Response
+        {
+        public:
+            ~VerticesGenerateWalletGetResponse() {}
+            FString Address;
+        };
+
         class VerticesSDK::VerticesGetaddressbalanceGetRequest : public Request
         {
         public:

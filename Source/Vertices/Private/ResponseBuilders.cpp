@@ -6,6 +6,14 @@ namespace {
 }
 
 namespace response_builders {
+	Vertices::VerticesGenerateWalletGetResponse
+		buildGenerateWalletResponse(const FString& address)
+	{
+		Vertices::VerticesGenerateWalletGetResponse response;
+		response.Address = address;
+		return response;
+	}
+
 	Vertices::VerticesGetaddressbalanceGetResponse
 		buildGetBalanceResponse(const uint64& amount)
 	{

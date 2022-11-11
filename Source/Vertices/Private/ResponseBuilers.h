@@ -3,6 +3,8 @@
 #include "VerticesSDK.h"
 
 namespace response_builders {
+	algorand::vertices::VerticesSDK::VerticesGenerateWalletGetResponse
+		buildGenerateWalletResponse(const FString& address);
 	algorand::vertices::VerticesSDK::VerticesGetaddressbalanceGetResponse
 		buildGetBalanceResponse(const uint64& amount);
 	algorand::vertices::VerticesSDK::VerticesPaymentTransactionGetResponse
