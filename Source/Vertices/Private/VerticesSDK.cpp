@@ -9,6 +9,7 @@
 #include "HAL/UnrealMemory.h"
 #include "AES.h"
 
+#include "Account.h"
 #include <cstring>
 
 using namespace std;
@@ -256,7 +257,6 @@ namespace algorand {
             // adding account, account address will be computed from binary public key
             err_code = vertices_account_new_from_bin((char*)ed25519_pk, &sender_account.vtc_account);
             UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_bin %d"), err_code);
-            //VTC_ASSERT(err_code);
 
             // we can now store the b32 address in a file
             config_file = TCHAR_TO_ANSI(*(config_path + "public_b32.txt"));
@@ -333,7 +333,6 @@ namespace algorand {
 
             err_code = vertices_account_new_from_b32(public_b32, &sender_account.vtc_account);
             UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_b32 %d"), err_code);
-            //VTC_ASSERT(err_code);
 
             UE_LOG(LogTemp, Display, TEXT("💳 Created Alice's account: %s"), *FString(sender_account.vtc_account->public_b32));
 
@@ -401,6 +400,12 @@ namespace algorand {
         {            
             FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Generating new account"));
             
+            auto mnemonic = R"(base giraffe believe make tone transfer wrap attend
+                     typical dirt grocery distance outside horn also abstract
+                     slim ecology island alter daring equal boil absent
+                     carpet)";
+            Account account = Account::from_mnemonic(mnemonic);
+
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
                 ret_code_t err_code = VTC_SUCCESS;
@@ -527,7 +532,6 @@ namespace algorand {
                                 TCHAR_TO_ANSI(*(Request.receiverAddress.GetValue())) /* or ACCOUNT_RECEIVER */,
                                 (uint64_t)Request.amount.GetValue(),
                                 notes);
-                        VTC_ASSERT(err_code);
 
                         unsigned char* txID = nullptr;
                         txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
@@ -535,7 +539,6 @@ namespace algorand {
                         size_t queue_size = 1;
                         while (queue_size && err_code == VTC_SUCCESS) {
                             err_code = vertices_event_process(&queue_size, txID);
-                            VTC_ASSERT(err_code);
                         }
 
                         if (err_code == VTC_SUCCESS)
@@ -546,7 +549,6 @@ namespace algorand {
                         //free(txID);
 
                         err_code = vertices_account_free(sender_account.vtc_account);
-                        VTC_ASSERT(err_code);
 
                         UE_LOG(LogTemp, Warning, TEXT("err_code VerticesPaymentTransactionGetRequest Success"));
 
