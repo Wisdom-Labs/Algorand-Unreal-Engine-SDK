@@ -15,10 +15,16 @@ namespace {
 }
 
 UAlgorandUnrealManager::UAlgorandUnrealManager()
+    :myAlgoRpc("https://node.testnet.algoexplorerapi.io") , myAlgoPort(0) , myAlgoTokenHeader("")
 {
+    FString address;
     // create Vertices library
     vertices_ = MakeShared<algorand::vertices::VerticesSDK>();
-    FString address;
+
+    setAlgoRpc(myAlgoRpc);
+    setAlgoPort(myAlgoPort);
+    setAlgoTokenHeader(myAlgoTokenHeader);
+
     // Load existing pub address from Vertices SDK
     if (vertices_.IsValid()) {
         address = vertices_->load_pub_key();
@@ -31,11 +37,29 @@ UAlgorandUnrealManager::UAlgorandUnrealManager()
     unrealApi_ = MakeShared<algorand::api::UnrealApi>(vertices_);
 }
 
-UAlgorandUnrealManager* UAlgorandUnrealManager::createInstance(UObject* outer)
+UAlgorandUnrealManager* UAlgorandUnrealManager::createInstance(const FString& algoRpc, const int& algoPort, const FString& algoTokenHeader, UObject* outer)
 {
     UAlgorandUnrealManager* manager = NewObject<UAlgorandUnrealManager>(outer);
+    manager->setAlgoRpc(algoRpc);
+    manager->setAlgoPort(algoPort);
+    manager->setAlgoTokenHeader(algoTokenHeader);
         
     return manager;
+}
+
+void UAlgorandUnrealManager::setAlgoRpc(const FString& algoRpc) {
+    myAlgoRpc = algoRpc;
+    vertices_->setAlgoRpc(myAlgoRpc);
+}
+
+void UAlgorandUnrealManager::setAlgoPort(const int& algoPort) {
+    myAlgoPort = algoPort;
+    vertices_->setAlgoPort(myAlgoPort);
+}
+
+void UAlgorandUnrealManager::setAlgoTokenHeader(const FString& algoTokenHeader) {
+    myAlgoTokenHeader = algoTokenHeader;
+    vertices_->setAlgoTokenHeader(myAlgoTokenHeader);
 }
 
 FString UAlgorandUnrealManager::getAddress()
@@ -117,7 +141,7 @@ void UAlgorandUnrealManager::sendPaymentTransaction(const FString& receiverAddre
 }
 
 void UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback(const Vertices::VerticesPaymentTransactionGetResponse& response) {
-    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Got Balance"));
+    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Payment TX Success"));
     if (response.IsSuccessful()) {
         FString txID = response.txID;
         SendPaymentTransactionCallback.Broadcast(txID);
@@ -143,7 +167,7 @@ void UAlgorandUnrealManager::sendApplicationCallTransaction(const FUInt64& app_I
 }
 
 void UAlgorandUnrealManager::OnSendApplicationCallTransactionCompleteCallback(const Vertices::VerticesApplicationCallTransactionGetResponse& response) {
-    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Got Balance"));
+    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Application Call TX Call"));
     if (response.IsSuccessful()) {
         FString txID = response.txID;
         SendApplicationCallTransactionCallback.Broadcast(txID);

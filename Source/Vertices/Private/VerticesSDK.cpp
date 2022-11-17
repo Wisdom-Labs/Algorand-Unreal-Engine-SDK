@@ -2,6 +2,7 @@
 #include "VerticesSDK.h"
 #include "Misc/Paths.h"
 #include "Misc/MessageDialog.h"
+#include "Containers/StringConv.h"
 #include "Internationalization/Text.h"
 #include "Interfaces/IPluginManager.h"
 #include "VerticesApiOperations.h"
@@ -143,6 +144,7 @@ namespace algorand {
 
             UE_LOG(LogTemp, Display, TEXT("Loaded C-Vertices-sdk.dll & libsodium.dll from Third Party Plugin sample."));
             setHTTPCURLs();
+            vertices_usable = true;
         }
 
         VerticesSDK::~VerticesSDK () {
@@ -152,6 +154,18 @@ namespace algorand {
 
             VerticesHandle = nullptr;
             SodiumHandle = nullptr;
+        }
+
+        void VerticesSDK::setAlgoRpc(const FString& algoRpc) {
+            myAlgoRpc = algoRpc;
+        }
+
+        void VerticesSDK::setAlgoPort(const int& algoPort) {
+            myAlgoPort = algoPort;
+        }
+
+        void VerticesSDK::setAlgoTokenHeader(const FString& algoTokenHeader) {
+            myAlgoTokenHeader = algoTokenHeader;
         }
 
         void VerticesSDK::loadVerticesLibrary() {
@@ -178,8 +192,9 @@ namespace algorand {
         }
 
         void VerticesSDK::InitVertices(ret_code_t& err_code) {
-            createNewVertices(SERVER_URL, SERVER_PORT, SERVER_TOKEN_HEADER, err_code);
-
+            FString str = "https://node.testnet.algoexplorerapi.io";    //(char*)TCHAR_TO_ANSI(*myAlgoRpc)
+            createNewVertices("https://node.testnet.algoexplorerapi.io", myAlgoPort, "", err_code);    //TCHAR_TO_UTF8(*myAlgoRpc)   TCHAR_TO_UTF8(*myAlgoTokenHeader)
+            
             if (err_code == VTC_SUCCESS) {
                 UE_LOG(LogTemp, Display, TEXT("Created Vertices Network"));
             }
@@ -196,17 +211,12 @@ namespace algorand {
                 UE_LOG(LogTemp, Display, TEXT("Vertices version checked."));
             }
 
-            err_code = load_existing_account();
-
-            if (err_code == VTC_SUCCESS) {
-                UE_LOG(LogTemp, Display, TEXT("Loaded main account."));
-            }
         }
 
         void VerticesSDK::createNewVertices(char* sever_url, short port, char* server_token_header, ret_code_t& err_code) {
-            providers.url = (char*)SERVER_URL;
-            providers.port = SERVER_PORT;
-            providers.header = (char*)SERVER_TOKEN_HEADER;
+            providers.url = sever_url;
+            providers.port = port;
+            providers.header = server_token_header;
 
             int ret = sodium_init();
             UE_LOG(LogTemp, Warning, TEXT("err_code sodium_init %d"), err_code);
@@ -410,25 +420,11 @@ namespace algorand {
             {
                 ret_code_t err_code = VTC_SUCCESS;
                 while (1) {
+                    FScopeLock lock(&m_Mutex);
 
-                    if (vertices_check_writable()) {
-                        createNewVertices(SERVER_URL, SERVER_PORT, SERVER_TOKEN_HEADER, err_code);
-
-                        if (err_code == VTC_SUCCESS) {
-                            UE_LOG(LogTemp, Display, TEXT("Created Vertices Network"));
-                        }
-
-                        vertices_ping_check(err_code);
-
-                        if (err_code == VTC_SUCCESS) {
-                            UE_LOG(LogTemp, Display, TEXT("Vertices ping checked!"));
-                        }
-
-                        vertices_version_check(err_code);
-
-                        if (err_code == VTC_SUCCESS) {
-                            UE_LOG(LogTemp, Display, TEXT("Vertices version checked."));
-                        }
+                    if (vertices_usable) {
+                        vertices_usable = false;
+                        InitVertices(err_code);
 
                         err_code = create_new_account();
 
@@ -452,6 +448,7 @@ namespace algorand {
                             delegate.ExecuteIfBound(response);
                         });
 
+                        vertices_usable = true;
                         break;
                     }
                 }
@@ -467,9 +464,17 @@ namespace algorand {
                 ret_code_t err_code = VTC_SUCCESS;
                 account_t test_account;
                 while (1) {
+                    FScopeLock lock(&m_Mutex);
 
-                    if (vertices_check_writable()) {
+                    if (vertices_usable) {
+                        vertices_usable = false;
                         InitVertices(err_code);
+
+                        err_code = load_existing_account();
+
+                        if (err_code == VTC_SUCCESS) {
+                            UE_LOG(LogTemp, Display, TEXT("Loaded main account."));
+                        }
 
                         memset(test_account.private_key, 0, 32);
                         test_account.vtc_account = nullptr;
@@ -498,8 +503,10 @@ namespace algorand {
                             delegate.ExecuteIfBound(response);
                         });
 
+                        vertices_usable = true;
                         break;
                     }
+                    
                 }
             });
         }
@@ -512,8 +519,17 @@ namespace algorand {
             {
                 ret_code_t err_code = VTC_SUCCESS;
                 while (1) {
-                    if (vertices_check_writable()) {
+                    FScopeLock lock(&m_Mutex);
+
+                    if (vertices_usable) {
+                        vertices_usable = false;
                         InitVertices(err_code);
+
+                        err_code = load_existing_account();
+
+                        if (err_code == VTC_SUCCESS) {
+                            UE_LOG(LogTemp, Display, TEXT("Loaded main account."));
+                        }
 
                         if (sender_account.vtc_account->amount < 1001000) {
                             FFormatNamedArguments Arguments;
@@ -569,6 +585,7 @@ namespace algorand {
                             delegate.ExecuteIfBound(response);
                         });
 
+                        vertices_usable = true;
                         break;
                     }
                 }
@@ -584,8 +601,17 @@ namespace algorand {
                 ret_code_t err_code = VTC_SUCCESS;
 
                 while (1) {
-                    if (vertices_check_writable()) {
+                    FScopeLock lock(&m_Mutex);
+
+                    if (vertices_usable) {
+                        vertices_usable = false;
                         InitVertices(err_code);
+
+                        err_code = load_existing_account();
+
+                        if (err_code == VTC_SUCCESS) {
+                            UE_LOG(LogTemp, Display, TEXT("Loaded main account."));
+                        }
 
                         if (sender_account.vtc_account->amount < 1001000) {
                             FFormatNamedArguments Arguments;
@@ -660,6 +686,7 @@ namespace algorand {
                             delegate.ExecuteIfBound(response);
                         });
 
+                        vertices_usable = true;
                         break;
                     }
                 }

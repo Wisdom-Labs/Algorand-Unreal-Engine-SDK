@@ -20,6 +20,11 @@ namespace vertices {
     public:
         VerticesSDK();
         ~VerticesSDK();
+
+        void setAlgoRpc(const FString& algoRpc);
+        void setAlgoPort(const int& algoPort);
+        void setAlgoTokenHeader(const FString& algoTokenHeader);
+
         void loadVerticesLibrary();
         void setHTTPCURLs();
         void InitVertices(ret_code_t&);
@@ -50,9 +55,16 @@ namespace vertices {
         void VerticesApplicationCallTransactionGet(const VerticesApplicationCallTransactionGetRequest&, const FVerticesApplicationCallTransactionGetDelegate&);
     
     private:
+        FString myAlgoRpc;
+        int myAlgoPort;
+        FString myAlgoTokenHeader;
+
+        FCriticalSection m_Mutex;
+
         void* VerticesHandle;
         void* SodiumHandle;
         bool loaded_;
+        bool vertices_usable;
         FString config_path;
     };
 

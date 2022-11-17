@@ -25,7 +25,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FErrorDelegate, const FError&, error
 
 class TransactionBuilder;
 
-UCLASS(BlueprintType)
+UCLASS(Blueprintable, BlueprintType)
 class ALGORAND_API UAlgorandUnrealManager : public UObject
 {
     GENERATED_BODY()
@@ -34,7 +34,16 @@ public:
     UAlgorandUnrealManager();
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
-        static UAlgorandUnrealManager* createInstance(UObject* outer);
+        static UAlgorandUnrealManager* createInstance(const FString& algoRpc, const int& algoPort, const FString& algoTokenHeader_, UObject* outer);
+
+    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+        void setAlgoRpc(const FString& algoRpc);
+
+    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+        void setAlgoPort(const int& algoPort);
+
+    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+        void setAlgoTokenHeader(const FString& algoTokenHeader);
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
         FString getAddress();
@@ -80,6 +89,10 @@ public:
     UWorld* GetWorld() const override;
 
 private:
+    FString myAlgoRpc;
+    int myAlgoPort;
+    FString myAlgoTokenHeader;
+
     TSharedPtr<TransactionBuilder> transactionBuilder_;
     TSharedPtr<algorand::api::UnrealApi> unrealApi_;
 
