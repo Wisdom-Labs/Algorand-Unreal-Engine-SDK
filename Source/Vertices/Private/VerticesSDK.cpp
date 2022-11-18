@@ -192,13 +192,21 @@ namespace algorand {
         }
 
         void VerticesSDK::InitVertices(ret_code_t& err_code) {
-            //char* str = "https://node.testnet.algoexplorerapi.io";    //(char*)TCHAR_TO_ANSI(*myAlgoRpc)
-            ////char* url = (char*)TCHAR_TO_ANSI(*myAlgoRpc);
-            //createNewVertices(TCHAR_TO_ANSI(*myAlgoRpc), myAlgoPort, "", err_code);    //TCHAR_TO_UTF8(*myAlgoRpc)   TCHAR_TO_UTF8(*myAlgoTokenHeader)
-            //
-            //if (err_code == VTC_SUCCESS) {
-            //    UE_LOG(LogTemp, Display, TEXT("Created Vertices Network"));
-            //}
+            /*setAlgoRpc("http://localhost");*/
+            setAlgoPort(8080);
+            //setAlgoTokenHeader("X-Algo-API-Token:77aa632e1a023e6b1c79bbb275645cb0ca7ac82cb9d4e92226d9c0029fe35c1c");
+            char* url = new char[myAlgoRpc.Len()];
+            char* tokenHeader = new char[myAlgoTokenHeader.Len()];
+            memcpy(url, TCHAR_TO_ANSI(*myAlgoRpc), myAlgoRpc.Len());
+            memcpy(tokenHeader, TCHAR_TO_ANSI(*myAlgoTokenHeader), myAlgoTokenHeader.Len());
+            url[myAlgoRpc.Len()] = 0;
+            tokenHeader[myAlgoTokenHeader.Len()] = 0;
+
+            createNewVertices(url, myAlgoPort, tokenHeader, err_code);
+            
+            if (err_code == VTC_SUCCESS) {
+                UE_LOG(LogTemp, Display, TEXT("Created Vertices Network"));
+            }
 
             vertices_ping_check(err_code);
 
@@ -426,12 +434,6 @@ namespace algorand {
                     if (vertices_usable) {
                         vertices_usable = false;
 
-                        createNewVertices(TCHAR_TO_ANSI(*myAlgoRpc), myAlgoPort, TCHAR_TO_ANSI(*myAlgoTokenHeader), err_code);    //TCHAR_TO_UTF8(*myAlgoRpc)   TCHAR_TO_UTF8(*myAlgoTokenHeader)
-
-                        if (err_code == VTC_SUCCESS) {
-                            UE_LOG(LogTemp, Display, TEXT("Created Vertices Network"));
-                        }
-
                         InitVertices(err_code);
 
                         err_code = create_new_account();
@@ -476,12 +478,6 @@ namespace algorand {
                     
                     if (vertices_usable) {
                         vertices_usable = false;
-
-                        createNewVertices(TCHAR_TO_ANSI(*myAlgoRpc), myAlgoPort, TCHAR_TO_ANSI(*myAlgoTokenHeader), err_code);    //TCHAR_TO_UTF8(*myAlgoRpc)   TCHAR_TO_UTF8(*myAlgoTokenHeader)
-
-                        if (err_code == VTC_SUCCESS) {
-                            UE_LOG(LogTemp, Display, TEXT("Created Vertices Network"));
-                        }
 
                         InitVertices(err_code);
 
@@ -532,12 +528,6 @@ namespace algorand {
 
                     if (vertices_usable) {
                         vertices_usable = false;
-
-                        createNewVertices(TCHAR_TO_ANSI(*myAlgoRpc), myAlgoPort, TCHAR_TO_ANSI(*myAlgoTokenHeader), err_code);    //TCHAR_TO_UTF8(*myAlgoRpc)   TCHAR_TO_UTF8(*myAlgoTokenHeader)
-
-                        if (err_code == VTC_SUCCESS) {
-                            UE_LOG(LogTemp, Display, TEXT("Created Vertices Network"));
-                        }
 
                         InitVertices(err_code);
 
@@ -621,12 +611,6 @@ namespace algorand {
 
                     if (vertices_usable) {
                         vertices_usable = false;
-                        
-                        createNewVertices(TCHAR_TO_ANSI(*myAlgoRpc), myAlgoPort, TCHAR_TO_ANSI(*myAlgoTokenHeader), err_code);    //TCHAR_TO_UTF8(*myAlgoRpc)   TCHAR_TO_UTF8(*myAlgoTokenHeader)
-
-                        if (err_code == VTC_SUCCESS) {
-                            UE_LOG(LogTemp, Display, TEXT("Created Vertices Network"));
-                        }
 
                         InitVertices(err_code);
 

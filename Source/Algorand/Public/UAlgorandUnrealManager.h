@@ -34,16 +34,25 @@ public:
     UAlgorandUnrealManager();
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
-        static UAlgorandUnrealManager* createInstance(const FString& algoRpc, const int& algoPort, const FString& algoTokenHeader_, UObject* outer);
+        static UAlgorandUnrealManager* createInstance(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader_, UObject* outer);
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
         void setAlgoRpc(const FString& algoRpc);
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
-        void setAlgoPort(const int& algoPort);
+        void setAlgoPort(const FUInt64& algoPort);
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
         void setAlgoTokenHeader(const FString& algoTokenHeader);
+
+    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+        FString getAlgoRpc();
+
+    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+        int getAlgoPort();
+
+    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+        FString getAlgoTokenHeader();
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
         FString getAddress();
