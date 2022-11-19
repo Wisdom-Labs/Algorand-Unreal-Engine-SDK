@@ -49,7 +49,7 @@ public:
         FString getAlgoRpc();
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
-        int getAlgoPort();
+        FUInt64 getAlgoPort();
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
         FString getAlgoTokenHeader();
@@ -99,7 +99,7 @@ public:
 
 private:
     FString myAlgoRpc;
-    int myAlgoPort;
+    FUInt64 myAlgoPort;
     FString myAlgoTokenHeader;
 
     TSharedPtr<TransactionBuilder> transactionBuilder_;

@@ -193,7 +193,7 @@ namespace algorand {
 
         void VerticesSDK::InitVertices(ret_code_t& err_code) {
             /*setAlgoRpc("http://localhost");*/
-            setAlgoPort(8080);
+            /*setAlgoPort(8080);*/
             //setAlgoTokenHeader("X-Algo-API-Token:77aa632e1a023e6b1c79bbb275645cb0ca7ac82cb9d4e92226d9c0029fe35c1c");
             char* url = new char[myAlgoRpc.Len()];
             char* tokenHeader = new char[myAlgoTokenHeader.Len()];

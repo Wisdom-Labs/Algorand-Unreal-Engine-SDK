@@ -37,7 +37,7 @@ UAlgorandUnrealManager::UAlgorandUnrealManager()
     unrealApi_ = MakeShared<algorand::api::UnrealApi>(vertices_);
 }
 
-UAlgorandUnrealManager* UAlgorandUnrealManager::createInstance(const FString& algoRpc, const int& algoPort, const FString& algoTokenHeader, UObject* outer)
+UAlgorandUnrealManager* UAlgorandUnrealManager::createInstance(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader, UObject* outer)
 {
     UAlgorandUnrealManager* manager = NewObject<UAlgorandUnrealManager>(outer);
     manager->setAlgoRpc(algoRpc);
@@ -52,14 +52,29 @@ void UAlgorandUnrealManager::setAlgoRpc(const FString& algoRpc) {
     vertices_->setAlgoRpc(myAlgoRpc);
 }
 
-void UAlgorandUnrealManager::setAlgoPort(const int& algoPort) {
-    myAlgoPort = algoPort;
-    vertices_->setAlgoPort(myAlgoPort);
+void UAlgorandUnrealManager::setAlgoPort(const FUInt64& algoPort) {
+    myAlgoPort = algoPort; 
+    vertices_->setAlgoPort(algoPort.Value);
 }
 
 void UAlgorandUnrealManager::setAlgoTokenHeader(const FString& algoTokenHeader) {
     myAlgoTokenHeader = algoTokenHeader;
     vertices_->setAlgoTokenHeader(myAlgoTokenHeader);
+}
+
+FString UAlgorandUnrealManager::getAlgoRpc()
+{
+    return myAlgoRpc;
+}
+
+FUInt64 UAlgorandUnrealManager::getAlgoPort()
+{
+    return myAlgoPort;
+}
+
+FString UAlgorandUnrealManager::getAlgoTokenHeader()
+{
+    return myAlgoTokenHeader;
 }
 
 FString UAlgorandUnrealManager::getAddress()
