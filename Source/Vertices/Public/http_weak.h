@@ -1,7 +1,6 @@
 #pragma once
 
 #include "include/vertices_log.h"
-#include "include/vertices/vertices_http.h"
 
 #ifdef __cplusplus
 extern "C" {
