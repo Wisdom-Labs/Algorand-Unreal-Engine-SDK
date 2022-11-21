@@ -14,15 +14,13 @@ public class AlgorandLibrary : ModuleRules
 			// Add the import library
 			//
 			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "x64", "Release", "vertices.lib"));
-			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "x64", "Release", "cjson.lib"));
+			/*PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "x64", "Release", "cjson.lib"));*/
 
 			// Delay-load the DLL, so we can load it from the right place first
 			PublicDelayLoadDLLs.Add("vertices.dll");
-			PublicDelayLoadDLLs.Add("cjson.dll");
 
 			// Ensure that the DLL is staged along with the executable
 			RuntimeDependencies.Add("$(PluginDir)/Binaries/ThirdParty/AlgorandLibrary/Win64/vertices.dll");
-			RuntimeDependencies.Add("$(PluginDir)/Binaries/ThirdParty/AlgorandLibrary/Win64/cjson.dll");
 		}
         else if (Target.Platform == UnrealTargetPlatform.Mac)
         {
