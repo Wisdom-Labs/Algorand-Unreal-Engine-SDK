@@ -13,6 +13,8 @@
 #include "Account.h"
 #include <cstring>
 
+#include "SDKException.h"
+
 using namespace std;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogMyAwesomeGame, Log, All);
@@ -85,18 +87,21 @@ ret_code_t vertices_evt_handler(vtc_evt_t* evt) {
         signed_transaction_t* tx = nullptr;
         err_code = vertices_event_tx_get(evt->bufid, &tx);
 
-        FILE* fstx = fopen("./config/../signed_tx.bin", "wb");
-
-        if (fstx == nullptr) {
+        FILE* fstx;
+        errno_t err_no;
+        err_no = fopen_s(&fstx, "./config/../signed_tx.bin", "wb");
+        
+        if (err_no != 0) {
             return VTC_ERROR_NOT_FOUND;
         }
 
         fwrite(tx->payload, tx->payload_header_length + tx->payload_body_length, 1, fstx);
         fclose(fstx);
 
-        FILE* ftx = fopen("./config/../tx.bin", "wb");
+        FILE* ftx;
+        err_no = fopen_s(&ftx, "./config/../tx.bin", "wb");
 
-        if (ftx == nullptr) {
+        if (err_no != 0) {
             return VTC_ERROR_NOT_FOUND;
         }
 
@@ -261,8 +266,12 @@ namespace algorand {
             AES aes(AESKeyLength::AES_128);
             unsigned char* pk_out = aes.EncryptECB(sender_account.private_key, ADDRESS_LENGTH, user_password);
 
-            FILE* fw_priv = fopen(config_file, "wb");
-            if (fw_priv == nullptr) {
+            FILE* fw_priv;
+            errno_t err_no;
+            
+            err_no = fopen_s(&fw_priv, config_file, "wb");
+            
+            if (err_no != 0) {
                 UE_LOG(LogTemp, Error, TEXT("Cannot create ./config/private_key.bin"));
                 return VTC_ERROR_NOT_FOUND;
             }
@@ -279,8 +288,10 @@ namespace algorand {
 
             // we can now store the b32 address in a file
             config_file = TCHAR_TO_ANSI(*(config_path + "public_b32.txt"));
-            FILE* fw_pub = fopen(config_file, "w");
-            if (fw_pub != nullptr) {
+            FILE* fw_pub;
+
+            err_no= fopen_s(&fw_pub, config_file, "w");
+            if (err_no != 0) {
                 size_t len = strlen(sender_account.vtc_account->public_b32);
 
                 fwrite(sender_account.vtc_account->public_b32, 1, len, fw_pub);
@@ -309,15 +320,19 @@ namespace algorand {
             unsigned char decrypted_pk[48];
             AES aes(AESKeyLength::AES_128);
 
-            FILE * f_priv = fopen(config_file, "rb");
-            if (f_priv != nullptr) {
+            FILE * f_priv;
+            errno_t err_no;
+            
+            err_no = fopen_s(&f_priv, config_file, "rb");
+            
+            if (err_no != 0) {
                 UE_LOG(LogTemp, Display, TEXT("🔑 Loading private key from %s"), *FString(config_file));
 
                 bytes_read = fread(decrypted_pk, 1, 48, f_priv);
                 fclose(f_priv);
             }
 
-            if (f_priv == nullptr || bytes_read != 48) {
+            if (err_no != 0 || bytes_read != 48) {
                 UE_LOG(LogTemp, Display, TEXT(
                     "🤔 private_key.bin does not exist or keys not found."));
 
@@ -329,8 +344,11 @@ namespace algorand {
             delete[] plain_pk;
             // decrypted private key
             config_file = TCHAR_TO_ANSI(*(config_path + "public_b32.txt"));
-            FILE * f_pub = fopen(config_file, "r");
-            if (f_pub != nullptr) {
+            FILE * f_pub;
+
+            err_no = fopen_s(&f_pub, config_file, "r");
+            
+            if (err_no == 0) {
                 UE_LOG(LogTemp, Display, TEXT("🔑 Loading public key from: %s"), config_file);
 
                 bytes_read = fread(public_b32, 1, PUBLIC_B32_STR_MAX_LENGTH, f_pub);
@@ -366,8 +384,11 @@ namespace algorand {
             config_path = FPaths::ProjectPluginsDir() + "Algorand/Source/Algorand/config/";
 
             char* config_file = TCHAR_TO_ANSI(*(config_path + "public_b32.txt"));
-            FILE* f_pub = fopen(config_file, "r");
-            if (f_pub != nullptr) {
+            FILE* f_pub;
+            errno_t err_no;
+
+            err_no = fopen_s(&f_pub, config_file, "r");
+            if (err_no == 0) {
                 UE_LOG(LogTemp, Display, TEXT("🔑 Loading public key from: %s"), *FString(config_file));
 
                 bytes_read = fread(public_b32, 1, PUBLIC_B32_STR_MAX_LENGTH, f_pub);
@@ -698,6 +719,12 @@ namespace algorand {
                     }
                 }
             });
+        }
+
+        void VerticesSDK::checkVTCSuccess(ret_code_t& err_code)
+        {
+            if(err_code != VTC_SUCCESS)
+                throw SDKException(err_code);
         }
 
         void VerticesSDK::setHTTPCURLs() 

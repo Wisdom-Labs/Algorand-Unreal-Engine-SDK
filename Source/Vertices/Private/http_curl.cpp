@@ -56,7 +56,7 @@ http_get(const provider_info_t *provider,
     long response;
 
     char url_full[512] = {0};
-    sprintf(url_full, "%s%s", provider->url, relative_path);
+    sprintf_s(url_full, "%s%s", provider->url, relative_path);
 
     if (m_curl)
     {
@@ -124,7 +124,7 @@ http_post(const provider_info_t *provider,
     CURLcode res;
 
     char url_full[256] = {0};
-    sprintf(url_full, "%s%s", provider->url, relative_path);
+    sprintf_s(url_full, "%s%s", provider->url, relative_path);
 
     if (m_curl)
     {

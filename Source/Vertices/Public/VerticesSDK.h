@@ -7,10 +7,10 @@
 #include "include/utils/base64.h"
 #include "http_weak.h"
 
-
-#include "unix_config.h"
 #include <cstring>
 #include "../Libs/include/sodium.h"
+
+#include "../Private/SDKException.h"
 
 namespace algorand {
 namespace vertices {
@@ -34,6 +34,8 @@ namespace vertices {
         FString load_pub_key();
         void vertices_ping_check(ret_code_t&);
         void vertices_version_check(ret_code_t&);
+
+        void checkVTCSuccess(ret_code_t& err_code); // error handling
 
         class VerticesGenerateWalletGetRequest;
         class VerticesGenerateWalletGetResponse;
