@@ -208,23 +208,8 @@ namespace algorand {
             tokenHeader[myAlgoTokenHeader.Len()] = 0;
 
             createNewVertices(url, myAlgoPort, tokenHeader, err_code);
-            
-            if (err_code == VTC_SUCCESS) {
-                UE_LOG(LogTemp, Display, TEXT("Created Vertices Network"));
-            }
-
             vertices_ping_check(err_code);
-
-            if (err_code == VTC_SUCCESS) {
-                UE_LOG(LogTemp, Display, TEXT("Vertices ping checked!"));
-            }
-
             vertices_version_check(err_code);
-
-            if (err_code == VTC_SUCCESS) {
-                UE_LOG(LogTemp, Display, TEXT("Vertices version checked."));
-            }
-
         }
 
         void VerticesSDK::createNewVertices(char* sever_url, short port, char* server_token_header, ret_code_t& err_code) {
@@ -233,7 +218,7 @@ namespace algorand {
             providers.header = server_token_header;
 
             int ret = sodium_init();
-            UE_LOG(LogTemp, Warning, TEXT("err_code sodium_init %d"), err_code);
+            UE_LOG(LogTemp, Warning, TEXT("err_code sodium_init %d"), ret);
 
             m_vertex.provider = &providers;
             m_vertex.vertices_evt_handler = &vertices_evt_handler;
@@ -241,6 +226,35 @@ namespace algorand {
             // create new vertex
             err_code = vertices_new(&m_vertex);
             UE_LOG(LogTemp, Warning, TEXT("err_code vertices_new %d"), err_code);
+            checkVTCSuccess(err_code);
+        }
+
+        void VerticesSDK::vertices_ping_check(ret_code_t& err_code) 
+        {
+            // making sure the provider is accessible
+            err_code = vertices_ping();
+            UE_LOG(LogTemp, Warning, TEXT("err_code vertices_ping %d"), err_code);
+            checkVTCSuccess(err_code);
+        }
+
+        void VerticesSDK::vertices_version_check(ret_code_t& err_code) 
+        {
+            // ask for provider version
+            provider_version_t version = { 0 };
+            err_code = vertices_version(&version);
+            if (err_code == VTC_ERROR_OFFLINE) {
+                UE_LOG(LogTemp, Warning, TEXT("Version might not be accurate : old value is being used %d"), err_code);
+            }
+            else {
+                UE_LOG(LogTemp, Warning, TEXT("err_code vertices_version %d"), err_code);
+            }
+
+            checkVTCSuccess(err_code);
+            UE_LOG(LogTemp, Warning, TEXT("🏎 Running on %s v.%u.%u.%u"),
+                version.network,
+                version.major,
+                version.minor,
+                version.patch);
         }
 
         ret_code_t VerticesSDK::create_new_account() {
@@ -299,6 +313,7 @@ namespace algorand {
                 fclose(fw_pub);
             }
 
+            checkVTCSuccess(err_code);
             return err_code;
         }
 
@@ -370,7 +385,7 @@ namespace algorand {
 
             err_code = vertices_account_new_from_b32(public_b32, &sender_account.vtc_account);
             UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_b32 %d"), err_code);
-
+            checkVTCSuccess(err_code);
             UE_LOG(LogTemp, Display, TEXT("💳 Created Alice's account: %s"), *FString(sender_account.vtc_account->public_b32));
 
             return VTC_SUCCESS;
@@ -410,32 +425,6 @@ namespace algorand {
             return FString(strlen(public_b32), public_b32);
         }
 
-        void VerticesSDK::vertices_ping_check(ret_code_t& err_code) 
-        {
-            // making sure the provider is accessible
-            err_code = vertices_ping();
-            UE_LOG(LogTemp, Warning, TEXT("err_code vertices_ping %d"), err_code);
-        }
-
-        void VerticesSDK::vertices_version_check(ret_code_t& err_code) 
-        {
-            // ask for provider version
-            provider_version_t version = { 0 };
-            err_code = vertices_version(&version);
-            if (err_code == VTC_ERROR_OFFLINE) {
-                UE_LOG(LogTemp, Warning, TEXT("Version might not be accurate : old value is being used %d"), err_code);
-            }
-            else {
-                UE_LOG(LogTemp, Warning, TEXT("err_code vertices_version %d"), err_code);
-            }
-
-            UE_LOG(LogTemp, Warning, TEXT("🏎 Running on %s v.%u.%u.%u"),
-                version.network,
-                version.major,
-                version.minor,
-                version.patch);
-        }
-
         void VerticesSDK::VerticesGenerateWalletGet(const VerticesGenerateWalletGetRequest& Request, const FVerticesGenerateWalletGetDelegate& delegate)
         {            
             FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Generating new account"));
@@ -453,25 +442,27 @@ namespace algorand {
                     FScopeLock lock(&m_Mutex);
 
                     if (vertices_usable) {
-                        vertices_usable = false;
-
-                        InitVertices(err_code);
-
-                        err_code = create_new_account();
-
-                        if (err_code == VTC_SUCCESS) {
-                            UE_LOG(LogTemp, Display, TEXT("Vertices created new account."));
-                        }
-
                         VerticesSDK::VerticesGenerateWalletGetResponse response;
-                        if (err_code == VTC_SUCCESS) {
+                        vertices_usable = false;
+                        
+                        try
+                        {
+                            InitVertices(err_code);
+                            err_code = create_new_account();
+                            UE_LOG(LogTemp, Display, TEXT("Vertices created new account."));
+                            
                             response = response_builders::buildGenerateWalletResponse(FString(sender_account.vtc_account->public_b32));
                             response.SetSuccessful(true);
                         }
-                        else
+                        catch(SDKException& e)
                         {
                             response.SetSuccessful(false);
-                            response.SetResponseString("response failed");
+                            response.SetResponseString(FString(e.what()));   
+                        }
+                        catch(std::exception& ex)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(ex.what()));
                         }
 
                         AsyncTask(ENamedThreads::GameThread, [delegate, response]()
@@ -498,31 +489,45 @@ namespace algorand {
                     FScopeLock lock(&m_Mutex);
                     
                     if (vertices_usable) {
+                        VerticesSDK::VerticesGetaddressbalanceGetResponse response;
                         vertices_usable = false;
 
-                        InitVertices(err_code);
+                        try
+                        {
+                            InitVertices(err_code);
 
-                        memset(test_account.private_key, 0, 32);
-                        test_account.vtc_account = nullptr;
+                            memset(test_account.private_key, 0, 32);
+                            test_account.vtc_account = nullptr;
 
-                        const FString& address = Request.Address.GetValue();
-                        err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*address), &test_account.vtc_account);
-                        UE_LOG(LogTemp, Warning, TEXT("err_code AlgorandGetaddressbalanceGet %d"), test_account.vtc_account->amount);
+                            const FString& address = Request.Address.GetValue();
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*address), &test_account.vtc_account);
+                            checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
+                            UE_LOG(LogTemp, Warning, TEXT("err_code AlgorandGetaddressbalanceGet %d"), test_account.vtc_account->amount);
 
-                        VerticesSDK::VerticesGetaddressbalanceGetResponse response;
-
-                        if (err_code == VTC_SUCCESS) {
                             response = response_builders::buildGetBalanceResponse(test_account.vtc_account->amount);
                             response.SetSuccessful(true);
-                        }
-                        else
-                        {
-                            response.SetSuccessful(false);
-                            response.SetResponseString("response failed");
-                        }
 
-                        err_code = vertices_account_free(test_account.vtc_account);
-                        VTC_ASSERT(err_code);
+                            err_code = vertices_account_free(test_account.vtc_account);
+                            checkVTCSuccess("vertices_account_free error occured.", err_code);
+                        }
+                        catch (SDKException& e)
+                        {
+                            FFormatNamedArguments Arguments;
+                            Arguments.Add(TEXT("MSG"), FText::FromString(e.what()));
+                            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+                            
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(e.what()));   
+                        }
+                        catch (std::exception& ex)
+                        {
+                            FFormatNamedArguments Arguments;
+                            Arguments.Add(TEXT("MSG"), FText::FromString(ex.what()));
+                            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+                            
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(ex.what()));
+                        }
 
                         AsyncTask(ENamedThreads::GameThread, [delegate, response]()
                         {
@@ -725,6 +730,12 @@ namespace algorand {
         {
             if(err_code != VTC_SUCCESS)
                 throw SDKException(err_code);
+        }
+
+        void VerticesSDK::checkVTCSuccess(char* msg_, ret_code_t& err_code)
+        {
+            if(err_code != VTC_SUCCESS)
+                throw SDKException(msg_, err_code);
         }
 
         void VerticesSDK::setHTTPCURLs() 
