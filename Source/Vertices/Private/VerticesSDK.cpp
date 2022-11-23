@@ -305,7 +305,7 @@ namespace algorand {
             FILE* fw_pub;
 
             err_no= fopen_s(&fw_pub, config_file, "w");
-            if (err_no != 0) {
+            if (err_no == 0) {
                 size_t len = strlen(sender_account.vtc_account->public_b32);
 
                 fwrite(sender_account.vtc_account->public_b32, 1, len, fw_pub);
@@ -340,7 +340,7 @@ namespace algorand {
             
             err_no = fopen_s(&f_priv, config_file, "rb");
             
-            if (err_no != 0) {
+            if (err_no == 0) {
                 UE_LOG(LogTemp, Display, TEXT("🔑 Loading private key from %s"), *FString(config_file));
 
                 bytes_read = fread(decrypted_pk, 1, 48, f_priv);
@@ -364,7 +364,7 @@ namespace algorand {
             err_no = fopen_s(&f_pub, config_file, "r");
             
             if (err_no == 0) {
-                UE_LOG(LogTemp, Display, TEXT("🔑 Loading public key from: %s"), config_file);
+                UE_LOG(LogTemp, Display, TEXT("🔑 Loading public key from: %s"), *FString(config_file));
 
                 bytes_read = fread(public_b32, 1, PUBLIC_B32_STR_MAX_LENGTH, f_pub);
                 fclose(f_pub);
@@ -426,9 +426,7 @@ namespace algorand {
         }
 
         void VerticesSDK::VerticesGenerateWalletGet(const VerticesGenerateWalletGetRequest& Request, const FVerticesGenerateWalletGetDelegate& delegate)
-        {            
-            FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Generating new account"));
-            
+        {           
             auto mnemonic = R"(base giraffe believe make tone transfer wrap attend
                      typical dirt grocery distance outside horn also abstract
                      slim ecology island alter daring equal boil absent
@@ -479,8 +477,6 @@ namespace algorand {
 
         void VerticesSDK::VerticesGetaddressbalanceGet(const VerticesGetaddressbalanceGetRequest& Request, const FVerticesGetaddressbalanceGetDelegate& delegate)
         {            
-            FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Getting Address Balance"));
-            
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
                 ret_code_t err_code = VTC_SUCCESS;
@@ -544,8 +540,6 @@ namespace algorand {
 
         void VerticesSDK::VerticesPaymentTransactionGet(const VerticesPaymentTransactionGetRequest& Request, const FVerticesPaymentTransactionGetDelegate& delegate)
         {
-            FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Sending Payment Transaction"));
-
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
                 ret_code_t err_code = VTC_SUCCESS;
@@ -553,63 +547,76 @@ namespace algorand {
                     FScopeLock lock(&m_Mutex);
 
                     if (vertices_usable) {
+                        VerticesSDK::VerticesPaymentTransactionGetResponse response;
                         vertices_usable = false;
 
-                        InitVertices(err_code);
-
-                        err_code = load_existing_account();
-
-                        if (err_code == VTC_SUCCESS) {
-                            UE_LOG(LogTemp, Display, TEXT("Loaded main account."));
-                        }
-
-                        if (sender_account.vtc_account->amount < 1001000) {
-                            FFormatNamedArguments Arguments;
-                            Arguments.Add(TEXT("Address"), FText::FromString(sender_account.vtc_account->public_b32));
-
-                            UE_LOG(LogTemp, Warning,
-                                TEXT("🙄 Amount available on account is too low to pass a transaction, consider adding Algos"));
-                            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
-                            UE_LOG(LogTemp, Warning, TEXT("😎 Then wait for a few seconds for transaction to pass..."));
-                            return;
-                        }
-
-                        char* notes = (char*)"Alice sent 1 Algo to Bob";
-                        err_code =
-                            vertices_transaction_pay_new(sender_account.vtc_account,
-                                TCHAR_TO_ANSI(*(Request.receiverAddress.GetValue())) /* or ACCOUNT_RECEIVER */,
-                                (uint64_t)Request.amount.GetValue(),
-                                notes);
-
-                        unsigned char* txID = nullptr;
-                        txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
-
-                        size_t queue_size = 1;
-                        while (queue_size && err_code == VTC_SUCCESS) {
-                            err_code = vertices_event_process(&queue_size, txID);
-                        }
-
-                        if (err_code == VTC_SUCCESS)
+                        try
                         {
+                            InitVertices(err_code);
+
+                            err_code = load_existing_account();
+                            checkVTCSuccess("load_existing_account error occured", err_code);
+                            UE_LOG(LogTemp, Display, TEXT("Loaded main account."));
+
+                            if (sender_account.vtc_account->amount < 1001000) {
+                                FFormatNamedArguments Arguments;
+                                Arguments.Add(TEXT("Address"), FText::FromString(sender_account.vtc_account->public_b32));
+                                FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
+
+                                UE_LOG(LogTemp, Warning, TEXT("👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: %s"), *FString(sender_account.vtc_account->public_b32));
+                                UE_LOG(LogTemp, Warning,
+                                    TEXT("🙄 Amount available on account is too low to pass a transaction, consider adding Algos"));
+                                UE_LOG(LogTemp, Warning, TEXT("😎 Then wait for a few seconds for transaction to pass..."));
+                                
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Amount available on account is too low to pass a transaction, consider adding Algos", err_code);
+                            }
+
+                            char* notes = (char*)"This is a note for payment transaction.";
+                            err_code =
+                                vertices_transaction_pay_new(sender_account.vtc_account,
+                                    TCHAR_TO_ANSI(*(Request.receiverAddress.GetValue())) /* or ACCOUNT_RECEIVER */,
+                                    (uint64_t)Request.amount.GetValue(),
+                                    notes);
+                            checkVTCSuccess("vertices_transaction_pay_new error occured", err_code);
+
+                            unsigned char* txID = nullptr;
+                            txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
+
+                            size_t queue_size = 1;
+                            while (queue_size && err_code == VTC_SUCCESS) {
+                                err_code = vertices_event_process(&queue_size, txID);
+                            }
+
+                            checkVTCSuccess("vertices_event_process error occured", err_code);
                             UE_LOG(LogTemp, Warning, TEXT("err_code Payment TX ID Success, %s"), txID);
-                        }
 
-                        //free(txID);
+                            err_code = vertices_account_free(sender_account.vtc_account);
+                            checkVTCSuccess("vertices_account_free error occured", err_code);
+                            UE_LOG(LogTemp, Warning, TEXT("VerticesPaymentTransactionGetRequest Success"));
 
-                        err_code = vertices_account_free(sender_account.vtc_account);
-
-                        UE_LOG(LogTemp, Warning, TEXT("err_code VerticesPaymentTransactionGetRequest Success"));
-
-                        VerticesSDK::VerticesPaymentTransactionGetResponse response;
-
-                        if (err_code == VTC_SUCCESS) {
                             response = response_builders::buildPaymentTransactionResponse(FString(UTF8_TO_TCHAR(txID)));
                             response.SetSuccessful(true);
+
+                            //free(txID);
                         }
-                        else
+                        catch(SDKException& e)
                         {
+                            FFormatNamedArguments Arguments;
+                            Arguments.Add(TEXT("MSG"), FText::FromString(e.what()));
+                            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+                            
                             response.SetSuccessful(false);
-                            response.SetResponseString("response failed");
+                            response.SetResponseString(FString(e.what()));
+                        }
+                        catch(std::exception& ex)
+                        {
+                            FFormatNamedArguments Arguments;
+                            Arguments.Add(TEXT("MSG"), FText::FromString(ex.what()));
+                            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+                            
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(ex.what()));
                         }
 
                         AsyncTask(ENamedThreads::GameThread, [delegate, response]()
@@ -626,8 +633,6 @@ namespace algorand {
 
         void VerticesSDK::VerticesApplicationCallTransactionGet(const VerticesApplicationCallTransactionGetRequest& Request, const FVerticesApplicationCallTransactionGetDelegate& delegate)
         {
-            FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Vertices", "Sending Application Call Transaction"));
-
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
                 ret_code_t err_code = VTC_SUCCESS;

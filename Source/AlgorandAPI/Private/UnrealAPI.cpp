@@ -42,7 +42,6 @@ void UnrealApi::AlgorandGenerateWalletGet(const Vertices::VerticesGenerateWallet
 
 void UnrealApi::OnAlgorandGenerateWalletGetResponse(const Vertices::VerticesGenerateWalletGetResponse& response, const FAlgorandGenerateWalletGetDelegate& Delegate) const
 {
-    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "I am on UnrealAPI"));
     Delegate.ExecuteIfBound(response);
 }
 
@@ -61,7 +60,6 @@ void UnrealApi::AlgorandGetaddressbalanceGet(const Vertices::VerticesGetaddressb
 
 void UnrealApi::OnAlgorandGetaddressbalanceGetResponse(const Vertices::VerticesGetaddressbalanceGetResponse& response, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const
 {
-    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "I am on UnrealAPI"));
     Delegate.ExecuteIfBound(response);
 }
 
@@ -79,7 +77,6 @@ void UnrealApi::AlgorandPaymentTransactionGet(const Vertices::VerticesPaymentTra
 
 void UnrealApi::OnAlgorandPaymentTransactionGetResponse(const Vertices::VerticesPaymentTransactionGetResponse& response, const FAlgorandPaymentTransactionGetDelegate& Delegate) const
 {
-    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "I am on UnrealAPI Payment Transaction"));
     Delegate.ExecuteIfBound(response);
 }
 
@@ -97,7 +94,6 @@ void UnrealApi::AlgorandApplicationCallTransactionGet(const Vertices::VerticesAp
 
 void UnrealApi::OnAlgorandApplicationCallTransactionGetResponse(const Vertices::VerticesApplicationCallTransactionGetResponse& response, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const
 {
-    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "I am on UnrealAPI Application Call Transaction"));
     Delegate.ExecuteIfBound(response);
 }
 

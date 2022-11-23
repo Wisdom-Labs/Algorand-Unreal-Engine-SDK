@@ -100,8 +100,6 @@ void UAlgorandUnrealManager::generateWallet()
 }
 
 void UAlgorandUnrealManager::OnGenerateWalletCompleteCallback(const Vertices::VerticesGenerateWalletGetResponse& response) {
-    
-    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Got Balance"));
     if (response.IsSuccessful()) {
         FString address = response.Address;
         GenerateWalletCallback.Broadcast(address);
@@ -127,8 +125,6 @@ void UAlgorandUnrealManager::getBalance()
 }
 
 void UAlgorandUnrealManager::OnGetBalanceCompleteCallback(const Vertices::VerticesGetaddressbalanceGetResponse& response) {
-    
-    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Got Balance"));
     if (response.IsSuccessful()) {
         uint64 balance = response.Amount;
         GetBalanceCallback.Broadcast(FUInt64(balance));
@@ -156,7 +152,6 @@ void UAlgorandUnrealManager::sendPaymentTransaction(const FString& receiverAddre
 }
 
 void UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback(const Vertices::VerticesPaymentTransactionGetResponse& response) {
-    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Payment TX Success"));
     if (response.IsSuccessful()) {
         FString txID = response.txID;
         SendPaymentTransactionCallback.Broadcast(txID);
@@ -182,7 +177,6 @@ void UAlgorandUnrealManager::sendApplicationCallTransaction(const FUInt64& app_I
 }
 
 void UAlgorandUnrealManager::OnSendApplicationCallTransactionCompleteCallback(const Vertices::VerticesApplicationCallTransactionGetResponse& response) {
-    FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Successes", "Application Call TX Call"));
     if (response.IsSuccessful()) {
         FString txID = response.txID;
         SendApplicationCallTransactionCallback.Broadcast(txID);
