@@ -37,93 +37,103 @@ extern "C++" {
 ret_code_t vertices_evt_handler(vtc_evt_t* evt) {
     ret_code_t err_code = VTC_SUCCESS;
 
-    switch (evt->type) {
-    case VTC_EVT_TX_READY_TO_SIGN: {
-        signed_transaction_t* tx = nullptr;
-        err_code = vertices_event_tx_get(evt->bufid, &tx);
-        if (err_code == VTC_SUCCESS) {
-            UE_LOG(LogTemp, Display, TEXT("event process About to sign tx: data length %lu"), (unsigned long)(tx->payload_body_length));
+    try
+    {
+        switch (evt->type) {
+            case VTC_EVT_TX_READY_TO_SIGN: {
+                signed_transaction_t* tx = nullptr;
+                err_code = vertices_event_tx_get(evt->bufid, &tx);
+                if (err_code == VTC_SUCCESS) { 
+                    UE_LOG(LogTemp, Display, TEXT("event process About to sign tx: data length %lu"), (unsigned long)(tx->payload_body_length));
 
-            // libsodium wants to have private and public keys concatenated
-            unsigned char keys[crypto_sign_ed25519_SECRETKEYBYTES] = { 0 };
-            memcpy(keys, sender_account.private_key, sizeof(sender_account.private_key));
-            memcpy(&keys[32],
-                sender_account.vtc_account->public_key,
-                ADDRESS_LENGTH);
+                    // libsodium wants to have private and public keys concatenated
+                    unsigned char keys[crypto_sign_ed25519_SECRETKEYBYTES] = { 0 };
+                    memcpy(keys, sender_account.private_key, sizeof(sender_account.private_key));
+                    memcpy(&keys[32],
+                        sender_account.vtc_account->public_key,
+                        ADDRESS_LENGTH);
 
-            // prepend "TX" to the payload before signing
-            unsigned char* to_be_signed = new unsigned char[tx->payload_body_length + 2];
-            to_be_signed[0] = 'T';
-            to_be_signed[1] = 'X';
+                    // prepend "TX" to the payload before signing
+                    unsigned char* to_be_signed = new unsigned char[tx->payload_body_length + 2];
+                    to_be_signed[0] = 'T';
+                    to_be_signed[1] = 'X';
 
-            // copy body
-            memcpy(&to_be_signed[2],
-                &tx->payload[tx->payload_header_length],
-                tx->payload_body_length);
+                    // copy body
+                    memcpy(&to_be_signed[2],
+                        &tx->payload[tx->payload_header_length],
+                        tx->payload_body_length);
 
-            // sign the payload
-            crypto_sign_ed25519_detached(tx->signature,
-                nullptr, to_be_signed, tx->payload_body_length + 2, keys);
+                    // sign the payload
+                    crypto_sign_ed25519_detached(tx->signature,
+                        nullptr, to_be_signed, tx->payload_body_length + 2, keys);
 
-            char b64_signature[128] = { 0 };
-            size_t b64_signature_len = sizeof(b64_signature);
-            b64_encode((const char*)tx->signature,
-                sizeof(tx->signature),
-                b64_signature,
-                &b64_signature_len);
-            UE_LOG(LogTemp, Display, TEXT("event processSignature %s (%zu bytes)"), b64_signature, b64_signature_len);
+                    char b64_signature[128] = { 0 };
+                    size_t b64_signature_len = sizeof(b64_signature);
+                    b64_encode((const char*)tx->signature,
+                        sizeof(tx->signature),
+                        b64_signature,
+                        &b64_signature_len);
+                    UE_LOG(LogTemp, Display, TEXT("event processSignature %s (%zu bytes)"), b64_signature, b64_signature_len);
 
-            // send event to send the signed TX
-            vtc_evt_t sched_evt;
-            sched_evt.type = VTC_EVT_TX_SENDING;
-            sched_evt.bufid = evt->bufid;
-            err_code = vertices_event_schedule(&sched_evt);
+                    // send event to send the signed TX
+                    vtc_evt_t sched_evt;
+                    sched_evt.type = VTC_EVT_TX_SENDING;
+                    sched_evt.bufid = evt->bufid;
+                    err_code = vertices_event_schedule(&sched_evt);
+                }
+            }
+                break;
+
+            case VTC_EVT_TX_SENDING: {
+                // let's create transaction files which can then be used with `goal clerk ...`
+                signed_transaction_t* tx = nullptr;
+                err_code = vertices_event_tx_get(evt->bufid, &tx);
+
+                FILE* fstx;
+                errno_t err_no;
+                err_no = fopen_s(&fstx, "./config/../signed_tx.bin", "wb");
+                
+                if (err_no != 0) {
+                    return VTC_ERROR_NOT_FOUND;
+                }
+
+                fwrite(tx->payload, tx->payload_header_length + tx->payload_body_length, 1, fstx);
+                fclose(fstx);
+
+                FILE* ftx;
+                err_no = fopen_s(&ftx, "./config/../tx.bin", "wb");
+
+                if (err_no != 0) {
+                    return VTC_ERROR_NOT_FOUND;
+                }
+
+                // goal-generated transaction files are packed into a map of one element: `txn`.
+                // the one-element map takes 4 bytes into our message packed payload <=> `txn`
+                // we also add the `map` type before
+                // which results in 5-bytes to be added before the payload at `payload_offset`
+                char* payload = new char[tx->payload_body_length + 5];
+                payload[0] = (char)(unsigned char)0x81; // starting flag for map of one element
+                memcpy(&payload[1],
+                    &tx->payload[tx->payload_header_length - 4],
+                    tx->payload_body_length + 4);
+
+                fwrite(payload, sizeof payload, 1, ftx);
+                fclose(ftx);
+            }
+                break;
+
+            default:
+                break;
         }
     }
-        break;
-
-    case VTC_EVT_TX_SENDING: {
-        // let's create transaction files which can then be used with `goal clerk ...`
-        signed_transaction_t* tx = nullptr;
-        err_code = vertices_event_tx_get(evt->bufid, &tx);
-
-        FILE* fstx;
-        errno_t err_no;
-        err_no = fopen_s(&fstx, "./config/../signed_tx.bin", "wb");
-        
-        if (err_no != 0) {
-            return VTC_ERROR_NOT_FOUND;
-        }
-
-        fwrite(tx->payload, tx->payload_header_length + tx->payload_body_length, 1, fstx);
-        fclose(fstx);
-
-        FILE* ftx;
-        err_no = fopen_s(&ftx, "./config/../tx.bin", "wb");
-
-        if (err_no != 0) {
-            return VTC_ERROR_NOT_FOUND;
-        }
-
-        // goal-generated transaction files are packed into a map of one element: `txn`.
-        // the one-element map takes 4 bytes into our message packed payload <=> `txn`
-        // we also add the `map` type before
-        // which results in 5-bytes to be added before the payload at `payload_offset`
-        char* payload = new char[tx->payload_body_length + 5];
-        payload[0] = (char)(unsigned char)0x81; // starting flag for map of one element
-        memcpy(&payload[1],
-            &tx->payload[tx->payload_header_length - 4],
-            tx->payload_body_length + 4);
-
-        fwrite(payload, sizeof payload, 1, ftx);
-        fclose(ftx);
+    catch (std::exception& ex)
+    {
+        FFormatNamedArguments Arguments;
+        Arguments.Add(TEXT("MSG"), FText::FromString(ex.what()));
+        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 vertices_evt_handler {MSG}"), Arguments));
+        err_code = VTC_ERROR_INVALID_PARAM;
     }
-        break;
-
-    default:
-        break;
-    }
-
+    
     return err_code;
 }
 
@@ -416,10 +426,14 @@ namespace algorand {
                 }
             }
 
-            if (f_pub == nullptr || bytes_read < ADDRESS_LENGTH) {
+            if (err_no != 0) {
                 UE_LOG(LogTemp, Warning, TEXT("🤔 public_b32.txt does not exist"));
+                throw "🤔 public_b32.txt does not exist";
+            }
 
-                return "";
+            if(bytes_read < ADDRESS_LENGTH) {
+                UE_LOG(LogTemp, Warning, TEXT("🤔 public_b32.txt format error occured"));
+                throw "🤔 public_b32.txt format error occured";
             }
 
             return FString(strlen(public_b32), public_b32);

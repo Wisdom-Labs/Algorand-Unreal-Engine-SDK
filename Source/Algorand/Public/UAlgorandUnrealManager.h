@@ -10,6 +10,7 @@
 #include "TResult.h"
 #include "UnrealApi.h"
 #include "VerticesSDK.h"
+#include <exception>
 
 #include "UAlgorandUnrealManager.generated.h"
 

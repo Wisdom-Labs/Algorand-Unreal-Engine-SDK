@@ -2,12 +2,14 @@
 
 #include "TransactionBuilder.h"
 #include "TransactionBuilderFactory.h"
-
 #include "RequestBuilders.h"
-
 #include <functional>
 
-#define LOCTEXT_NAMESPACE "FVerticesModule"
+#include "Misc/MessageDialog.h"
+
+DECLARE_LOG_CATEGORY_EXTERN(LogMyAwesomeGame, Log, All);
+
+#define LOCTEXT_NAMESPACE "FAlgorandManagerModule"
 
 namespace {
     using API = algorand::api::UnrealApi;
@@ -27,10 +29,18 @@ UAlgorandUnrealManager::UAlgorandUnrealManager()
 
     // Load existing pub address from Vertices SDK
     if (vertices_.IsValid()) {
-        address = vertices_->load_pub_key();
+        try
+        {
+            address = vertices_->load_pub_key();
+        }
+        catch (std::exception& ex)
+        {
+            address = !address.IsEmpty() ? address : "O6APBR3UNPVWH7ILBMCI6V53PDZAQQLMV47VKQWHH5753SQPRNDLSE7SWQ";        // default address
+            FFormatNamedArguments Arguments;
+            Arguments.Add(TEXT("MSG"), FText::FromString(ex.what()));
+            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+        }
     }
-
-    address = !address.IsEmpty() ? address : "O6APBR3UNPVWH7ILBMCI6V53PDZAQQLMV47VKQWHH5753SQPRNDLSE7SWQ";        // default address
 
     transactionBuilder_ = createTransactionBuilder(address);       
     // create unreal api modules
