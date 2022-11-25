@@ -211,6 +211,16 @@ namespace algorand {
             /*setAlgoRpc("http://localhost");*/
             /*setAlgoPort(8080);*/
             //setAlgoTokenHeader("X-Algo-API-Token:77aa632e1a023e6b1c79bbb275645cb0ca7ac82cb9d4e92226d9c0029fe35c1c");
+            if ( !myAlgoTokenHeader.Contains("X-Algo-API-Token") && !myAlgoTokenHeader.Contains("x-api-key") && !myAlgoTokenHeader.Equals(""))
+            {
+                err_code = VTC_ERROR_INVALID_PARAM;
+                FFormatNamedArguments Arguments;
+                
+                Arguments.Add(TEXT("MSG"), FText::FromString(myAlgoTokenHeader));
+                FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error","👉 this token header is invalid value: {MSG}"), Arguments));
+                checkVTCSuccess("Init Vertices", err_code);    
+            }
+            
             char* url = new char[myAlgoRpc.Len()];
             char* tokenHeader = new char[myAlgoTokenHeader.Len()];
             memcpy(url, TCHAR_TO_ANSI(*myAlgoRpc), myAlgoRpc.Len());
@@ -220,7 +230,7 @@ namespace algorand {
 
             createNewVertices(url, myAlgoPort, tokenHeader, err_code);
             vertices_ping_check(err_code);
-            vertices_version_check(err_code)
+            vertices_version_check(err_code);
 
             UE_LOG(LogTemp, Display, TEXT("Created new vertices net."));
         }
