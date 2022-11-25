@@ -5,6 +5,7 @@
 #include "RequestBuilders.h"
 #include <functional>
 
+#include "VerticesApiOperations.h"
 #include "Misc/MessageDialog.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogMyAwesomeGame, Log, All);
@@ -167,8 +168,13 @@ void UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback(const Vert
     if (response.IsSuccessful()) {
         FString txID = response.txID;
         SendPaymentTransactionCallback.Broadcast(txID);
+        FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Payment Transaction", "sent payment tx successfully."));
     }
     else {
+        FFormatNamedArguments Arguments;
+        Arguments.Add(TEXT("MSG"), FText::FromString(response.GetResponseString()));
+        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+        
         if (!ErrorDelegateCallback.IsBound()) {
             ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
         }
