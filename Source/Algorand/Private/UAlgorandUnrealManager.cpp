@@ -211,8 +211,13 @@ void UAlgorandUnrealManager::OnSendApplicationCallTransactionCompleteCallback(co
     if (response.IsSuccessful()) {
         FString txID = response.txID;
         SendApplicationCallTransactionCallback.Broadcast(txID);
+        FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Application Transaction", "sent application tx successfully."));
     }
     else {
+        FFormatNamedArguments Arguments;
+        Arguments.Add(TEXT("MSG"), FText::FromString(response.GetResponseString()));
+        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+        
         if (!ErrorDelegateCallback.IsBound()) {
             ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
         }

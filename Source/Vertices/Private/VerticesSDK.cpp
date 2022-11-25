@@ -730,18 +730,14 @@ namespace algorand {
                         }
                         catch(SDKException& e)
                         {
-                            FFormatNamedArguments Arguments;
-                            Arguments.Add(TEXT("MSG"), FText::FromString(e.what()));
-                            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+                            UE_LOG(LogTemp, Error, TEXT("👉 application tx error: %s"), e.what());
                             
                             response.SetSuccessful(false);
                             response.SetResponseString(FString(e.what()));
                         }
                         catch(std::exception& ex)
                         {
-                            FFormatNamedArguments Arguments;
-                            Arguments.Add(TEXT("MSG"), FText::FromString(ex.what()));
-                            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+                            UE_LOG(LogTemp, Error, TEXT("👉 application tx error: %s"), ex.what());
                             
                             response.SetSuccessful(false);
                             response.SetResponseString(FString(ex.what()));
