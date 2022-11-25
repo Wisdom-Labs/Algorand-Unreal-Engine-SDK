@@ -220,7 +220,9 @@ namespace algorand {
 
             createNewVertices(url, myAlgoPort, tokenHeader, err_code);
             vertices_ping_check(err_code);
-            vertices_version_check(err_code);
+            vertices_version_check(err_code)
+
+            UE_LOG(LogTemp, Display, TEXT("Created new vertices net."));
         }
 
         void VerticesSDK::createNewVertices(char* sever_url, short port, char* server_token_header, ret_code_t& err_code) {
@@ -229,23 +231,23 @@ namespace algorand {
             providers.header = server_token_header;
 
             int ret = sodium_init();
-            UE_LOG(LogTemp, Warning, TEXT("err_code sodium_init %d"), ret);
+            UE_LOG(LogTemp, Warning, TEXT("Vertices sodium_init err_code %d"), ret);
 
             m_vertex.provider = &providers;
             m_vertex.vertices_evt_handler = &vertices_evt_handler;
 
             // create new vertex
             err_code = vertices_new(&m_vertex);
-            UE_LOG(LogTemp, Warning, TEXT("err_code vertices_new %d"), err_code);
-            checkVTCSuccess(err_code);
+            UE_LOG(LogTemp, Warning, TEXT("Vertices new err_code %d"), err_code);
+            checkVTCSuccess("Vertices vertices_new", err_code);
         }
 
         void VerticesSDK::vertices_ping_check(ret_code_t& err_code) 
         {
             // making sure the provider is accessible
             err_code = vertices_ping();
-            UE_LOG(LogTemp, Warning, TEXT("err_code vertices_ping %d"), err_code);
-            checkVTCSuccess(err_code);
+            UE_LOG(LogTemp, Warning, TEXT("Vertices ping err_code %d"), err_code);
+            checkVTCSuccess("Vertices ping",err_code);
         }
 
         void VerticesSDK::vertices_version_check(ret_code_t& err_code) 
@@ -260,7 +262,7 @@ namespace algorand {
                 UE_LOG(LogTemp, Warning, TEXT("err_code vertices_version %d"), err_code);
             }
 
-            checkVTCSuccess(err_code);
+            checkVTCSuccess("Vertices version",err_code);
             UE_LOG(LogTemp, Warning, TEXT("🏎 Running on %s v.%u.%u.%u"),
                 version.network,
                 version.major,
@@ -324,7 +326,7 @@ namespace algorand {
                 fclose(fw_pub);
             }
 
-            checkVTCSuccess(err_code);
+            checkVTCSuccess("Vertices account_new_from_bin",err_code);
             return err_code;
         }
 
@@ -396,7 +398,7 @@ namespace algorand {
 
             err_code = vertices_account_new_from_b32(public_b32, &sender_account.vtc_account);
             UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_b32 %d"), err_code);
-            checkVTCSuccess(err_code);
+            checkVTCSuccess("Vertices account_new_from_b32", err_code);
             UE_LOG(LogTemp, Display, TEXT("💳 Created Alice's account: %s"), *FString(sender_account.vtc_account->public_b32));
 
             return VTC_SUCCESS;
