@@ -663,6 +663,12 @@ namespace algorand {
 
                         try
                         {
+                            if ( Request.app_ID.GetValue() == 0 )
+                            {
+                                err_code = VTC_ERROR_INVALID_ADDR;
+                                checkVTCSuccess("Please input correct app ID.", err_code);
+                            }
+                            
                             InitVertices(err_code);
 
                             load_existing_account();
@@ -680,7 +686,7 @@ namespace algorand {
                                 err_code = VTC_ERROR_ASSERT_FAILS;
                                 checkVTCSuccess("Amount available on account is too low to pass a transaction, consider adding Algos", err_code);
                             }
-
+                            
                             // get application information
                             UE_LOG(LogTemp, Warning, TEXT("Application %u, global states"), Request.app_ID.GetValue());
 
