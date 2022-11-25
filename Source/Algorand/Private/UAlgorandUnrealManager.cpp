@@ -147,14 +147,16 @@ void UAlgorandUnrealManager::OnGetBalanceCompleteCallback(const Vertices::Vertic
 }
 
 void UAlgorandUnrealManager::sendPaymentTransaction(const FString& receiverAddress,
-                                                    const FUInt64& amount)
+                                                    const FUInt64& amount,
+                                                    const FString& notes)
 {
     this->requestContextManager_
         .createContext<API::FAlgorandPaymentTransactionGetDelegate,
         Vertices::VerticesPaymentTransactionGetRequest>(
             request_builders::buildPaymentTransactionRequest(this->getAddress(),
                                                              receiverAddress,
-                                                             amount),
+                                                             amount,
+                                                             notes),
             std::bind(&API::AlgorandPaymentTransactionGet, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             std::bind(&UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback, this, std::placeholders::_1)

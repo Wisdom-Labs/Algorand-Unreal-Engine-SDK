@@ -19,6 +19,7 @@ using namespace std;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogMyAwesomeGame, Log, All);
 
+#define PUBLIC_ADDRESS_LENGTH 58
 #define LOCTEXT_NAMESPACE "FVerticesModule"
 
 unsigned char user_password[] = "algorand-sdk";
@@ -428,7 +429,7 @@ namespace algorand {
 
             if (err_no != 0) {
                 UE_LOG(LogTemp, Warning, TEXT("🤔 public_b32.txt does not exist"));
-                throw "🤔 public_b32.txt does not exist";
+                throw invalid_argument("🤔 public_b32.txt does not exist");
             }
 
             if(bytes_read < ADDRESS_LENGTH) {
@@ -566,6 +567,17 @@ namespace algorand {
 
                         try
                         {
+                            // validation Request
+                            char* notes = TCHAR_TO_ANSI(*(Request.notes.GetValue()));
+
+                            if(strlen(notes) == 0)
+                                notes = "Payment Transaction";
+                            
+                            if ( Request.receiverAddress.GetValue().Len() != PUBLIC_ADDRESS_LENGTH )
+                            {
+                                err_code = VTC_ERROR_INVALID_ADDR;
+                                checkVTCSuccess("Please input address with correct length.", err_code);
+                            }
                             InitVertices(err_code);
 
                             err_code = load_existing_account();
@@ -585,8 +597,7 @@ namespace algorand {
                                 err_code = VTC_ERROR_ASSERT_FAILS;
                                 checkVTCSuccess("Amount available on account is too low to pass a transaction, consider adding Algos", err_code);
                             }
-
-                            char* notes = (char*)"This is a note for payment transaction.";
+                            
                             err_code =
                                 vertices_transaction_pay_new(sender_account.vtc_account,
                                     TCHAR_TO_ANSI(*(Request.receiverAddress.GetValue())) /* or ACCOUNT_RECEIVER */,
@@ -772,4 +783,5 @@ namespace algorand {
     }
 }
 
+#undef PUBLIC_ADDRESS_LENGTH
 #undef LOCTEXT_NAMESPACE

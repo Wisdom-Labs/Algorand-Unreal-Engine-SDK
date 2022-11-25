@@ -81,7 +81,8 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
     void sendPaymentTransaction(const FString& receiverAddress,
-                                const FUInt64& amount);   
+                                const FUInt64& amount,
+                                const FString& notes);   
 
     UPROPERTY(BlueprintAssignable)
         FPaymentTransactionDelegate SendPaymentTransactionCallback;

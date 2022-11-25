@@ -23,12 +23,14 @@ namespace request_builders {
 	Vertices::VerticesPaymentTransactionGetRequest
 		buildPaymentTransactionRequest(const FString& sender, 
 									   const FString& receiver,
-									   const FUInt64& amount)
+									   const FUInt64& amount,
+									   const FString& notes)
 	{
 		Vertices::VerticesPaymentTransactionGetRequest request;
 		request.senderAddress = sender;
 		request.receiverAddress = receiver;
 		request.amount = amount;
+		request.notes = notes;
 		return request;
 	}
 

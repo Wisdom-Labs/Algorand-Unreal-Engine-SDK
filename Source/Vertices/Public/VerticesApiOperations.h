@@ -43,6 +43,7 @@ namespace algorand {
             TOptional<FString> senderAddress;
             TOptional<FString> receiverAddress;
             TOptional<uint64_t> amount;
+            TOptional<FString> notes;
         };
 
         class VerticesSDK::VerticesPaymentTransactionGetResponse : public Response
