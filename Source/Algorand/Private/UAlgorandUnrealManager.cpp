@@ -138,9 +138,22 @@ void UAlgorandUnrealManager::getBalance()
 void UAlgorandUnrealManager::OnGetBalanceCompleteCallback(const Vertices::VerticesGetaddressbalanceGetResponse& response) {
     if (response.IsSuccessful()) {
         uint64 balance = response.Amount;
+        
         GetBalanceCallback.Broadcast(FUInt64(balance));
+        FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Get Balance Action", "Got Balance successfully."));
+
+        if(balance < 1000)
+        {
+            FFormatNamedArguments Arguments;
+            Arguments.Add(TEXT("Address"), FText::FromString(getAddress()));
+            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
+        }
     }
     else {
+        FFormatNamedArguments Arguments;
+        Arguments.Add(TEXT("MSG"), FText::FromString(response.GetResponseString()));
+        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+        
         if (!ErrorDelegateCallback.IsBound()) {
             ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
         }

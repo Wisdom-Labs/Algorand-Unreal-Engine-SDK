@@ -523,18 +523,14 @@ namespace algorand {
                         }
                         catch (SDKException& e)
                         {
-                            FFormatNamedArguments Arguments;
-                            Arguments.Add(TEXT("MSG"), FText::FromString(e.what()));
-                            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+                            UE_LOG(LogTemp, Error, TEXT("👉 payment tx error: %s"), e.what());
                             
                             response.SetSuccessful(false);
                             response.SetResponseString(FString(e.what()));   
                         }
                         catch (std::exception& ex)
                         {
-                            FFormatNamedArguments Arguments;
-                            Arguments.Add(TEXT("MSG"), FText::FromString(ex.what()));
-                            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+                            UE_LOG(LogTemp, Error, TEXT("👉 payment tx error: %s"), ex.what());
                             
                             response.SetSuccessful(false);
                             response.SetResponseString(FString(ex.what()));
@@ -584,7 +580,7 @@ namespace algorand {
                             
                             UE_LOG(LogTemp, Display, TEXT("Loaded main account."));
 
-                            if (sender_account.vtc_account->amount < 1001000) {
+                            if (sender_account.vtc_account->amount < 1000) {
                                 FFormatNamedArguments Arguments;
                                 Arguments.Add(TEXT("Address"), FText::FromString(sender_account.vtc_account->public_b32));
                                 FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
@@ -635,6 +631,7 @@ namespace algorand {
                         catch(std::exception& ex)
                         {
                             UE_LOG(LogTemp, Error, TEXT("👉 payment tx error: %s"), ex.what());
+                            
                             response.SetSuccessful(false);
                             response.SetResponseString(FString(ex.what()));
                         }
@@ -670,7 +667,7 @@ namespace algorand {
 
                             load_existing_account();
 
-                            if (sender_account.vtc_account->amount < 1001000) {
+                            if (sender_account.vtc_account->amount < 1000) {
                                 FFormatNamedArguments Arguments;
                                 Arguments.Add(TEXT("Address"), FText::FromString(sender_account.vtc_account->public_b32));
                                 FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
