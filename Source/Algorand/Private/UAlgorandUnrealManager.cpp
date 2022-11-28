@@ -39,7 +39,7 @@ UAlgorandUnrealManager::UAlgorandUnrealManager()
             address = !address.IsEmpty() ? address : "O6APBR3UNPVWH7ILBMCI6V53PDZAQQLMV47VKQWHH5753SQPRNDLSE7SWQ";        // default address
             FFormatNamedArguments Arguments;
             Arguments.Add(TEXT("MSG"), FText::FromString(ex.what()));
-            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "{MSG}"), Arguments));
         }
     }
 
@@ -146,13 +146,13 @@ void UAlgorandUnrealManager::OnGetBalanceCompleteCallback(const Vertices::Vertic
         {
             FFormatNamedArguments Arguments;
             Arguments.Add(TEXT("Address"), FText::FromString(getAddress()));
-            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
+            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
         }
     }
     else {
         FFormatNamedArguments Arguments;
         Arguments.Add(TEXT("MSG"), FText::FromString(response.GetResponseString()));
-        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "{MSG}"), Arguments));
         
         if (!ErrorDelegateCallback.IsBound()) {
             ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
@@ -186,7 +186,7 @@ void UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback(const Vert
     else {
         FFormatNamedArguments Arguments;
         Arguments.Add(TEXT("MSG"), FText::FromString(response.GetResponseString()));
-        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "{MSG}"), Arguments));
         
         if (!ErrorDelegateCallback.IsBound()) {
             ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
@@ -216,7 +216,7 @@ void UAlgorandUnrealManager::OnSendApplicationCallTransactionCompleteCallback(co
     else {
         FFormatNamedArguments Arguments;
         Arguments.Add(TEXT("MSG"), FText::FromString(response.GetResponseString()));
-        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 {MSG}"), Arguments));
+        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "{MSG}"), Arguments));
         
         if (!ErrorDelegateCallback.IsBound()) {
             ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));

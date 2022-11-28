@@ -131,7 +131,7 @@ ret_code_t vertices_evt_handler(vtc_evt_t* evt) {
     {
         FFormatNamedArguments Arguments;
         Arguments.Add(TEXT("MSG"), FText::FromString(ex.what()));
-        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "👉 vertices_evt_handler {MSG}"), Arguments));
+        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "vertices_evt_handler {MSG}"), Arguments));
         err_code = VTC_ERROR_INVALID_PARAM;
     }
     
@@ -217,7 +217,7 @@ namespace algorand {
                 FFormatNamedArguments Arguments;
                 
                 Arguments.Add(TEXT("MSG"), FText::FromString(myAlgoTokenHeader));
-                FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error","👉 this token header is invalid value: {MSG}"), Arguments));
+                FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error","this token header is invalid value: {MSG}"), Arguments));
                 checkVTCSuccess("Init Vertices", err_code);    
             }
             
@@ -595,7 +595,7 @@ namespace algorand {
                             if (sender_account.vtc_account->amount < 1000) {
                                 FFormatNamedArguments Arguments;
                                 Arguments.Add(TEXT("Address"), FText::FromString(sender_account.vtc_account->public_b32));
-                                FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
+                                FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
 
                                 UE_LOG(LogTemp, Warning, TEXT("👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: %s"), *FString(sender_account.vtc_account->public_b32));
                                 UE_LOG(LogTemp, Warning,
@@ -688,7 +688,7 @@ namespace algorand {
                             if (sender_account.vtc_account->amount < 1000) {
                                 FFormatNamedArguments Arguments;
                                 Arguments.Add(TEXT("Address"), FText::FromString(sender_account.vtc_account->public_b32));
-                                FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
+                                FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
 
                                 UE_LOG(LogTemp, Warning, TEXT("👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: %s"), *FString(sender_account.vtc_account->public_b32));
                                 UE_LOG(LogTemp, Warning,
