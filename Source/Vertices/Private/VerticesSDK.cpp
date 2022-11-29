@@ -90,24 +90,6 @@ ret_code_t vertices_evt_handler(vtc_evt_t* evt) {
                 signed_transaction_t* tx = nullptr;
                 err_code = vertices_event_tx_get(evt->bufid, &tx);
 
-                FILE* fstx;
-                errno_t err_no;
-                err_no = fopen_s(&fstx, "./config/../signed_tx.bin", "wb");
-                
-                if (err_no != 0) {
-                    return VTC_ERROR_NOT_FOUND;
-                }
-
-                fwrite(tx->payload, tx->payload_header_length + tx->payload_body_length, 1, fstx);
-                fclose(fstx);
-
-                FILE* ftx;
-                err_no = fopen_s(&ftx, "./config/../tx.bin", "wb");
-
-                if (err_no != 0) {
-                    return VTC_ERROR_NOT_FOUND;
-                }
-
                 // goal-generated transaction files are packed into a map of one element: `txn`.
                 // the one-element map takes 4 bytes into our message packed payload <=> `txn`
                 // we also add the `map` type before
@@ -117,9 +99,6 @@ ret_code_t vertices_evt_handler(vtc_evt_t* evt) {
                 memcpy(&payload[1],
                     &tx->payload[tx->payload_header_length - 4],
                     tx->payload_body_length + 4);
-
-                fwrite(payload, sizeof payload, 1, ftx);
-                fclose(ftx);
             }
                 break;
 
@@ -208,9 +187,6 @@ namespace algorand {
         }
 
         void VerticesSDK::InitVertices(ret_code_t& err_code) {
-            /*setAlgoRpc("http://localhost");*/
-            /*setAlgoPort(8080);*/
-            //setAlgoTokenHeader("X-Algo-API-Token:77aa632e1a023e6b1c79bbb275645cb0ca7ac82cb9d4e92226d9c0029fe35c1c");
             if ( !myAlgoTokenHeader.Contains("X-Algo-API-Token") && !myAlgoTokenHeader.Contains("x-api-key") && !myAlgoTokenHeader.Equals(""))
             {
                 err_code = VTC_ERROR_INVALID_PARAM;
@@ -347,7 +323,7 @@ namespace algorand {
 
             size_t bytes_read = 0;
 
-            config_path = FPaths::ProjectPluginsDir() + "Algorand/Source/Algorand/config/";
+            config_path = FPaths::ProjectPluginsDir() + "Algorand/Source/Vertices/config/";
 
             char* config_file = TCHAR_TO_ANSI(*(config_path + "private_key.bin"));
 
@@ -419,7 +395,7 @@ namespace algorand {
 
             size_t bytes_read = 0;
 
-            config_path = FPaths::ProjectPluginsDir() + "Algorand/Source/Algorand/config/";
+            config_path = FPaths::ProjectPluginsDir() + "Algorand/Source/Vertices/config/";
 
             char* config_file = TCHAR_TO_ANSI(*(config_path + "public_b32.txt"));
             FILE* f_pub;
