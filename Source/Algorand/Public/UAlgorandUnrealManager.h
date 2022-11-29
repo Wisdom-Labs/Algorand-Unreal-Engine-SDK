@@ -7,7 +7,6 @@
 #include "Wallet.h"
 #include "Models/FUInt64.h"
 #include "Models/FError.h"
-#include "TResult.h"
 #include "UnrealApi.h"
 #include "VerticesSDK.h"
 #include <exception>
