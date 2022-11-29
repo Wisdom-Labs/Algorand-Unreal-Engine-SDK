@@ -6,7 +6,7 @@
 #include "include/utils/base32.h"
 #include "include/utils/base64.h"
 #include "http_weak.h"
-#include "../Libs/include/sodium.h"
+#include "../Private/include/sodium.h"
 
 #include <cstring>
 #include "../Private/SDKException.h"

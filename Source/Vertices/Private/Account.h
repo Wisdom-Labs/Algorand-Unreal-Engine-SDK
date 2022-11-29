@@ -5,7 +5,7 @@
 #include <cassert>
 #include <cstring>
 
-#include "../Libs/include/sodium.h"
+#include "../Private/include/sodium.h"
 
 using namespace std;
 
