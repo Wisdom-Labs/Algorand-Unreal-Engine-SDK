@@ -13,16 +13,19 @@ class WALLET_API Wallet
 public:
 	virtual ~Wallet() {};
 
-	/*
-	virtual std::string generateMnemonic() const = 0;
-
-    virtual std::string getMnemonic() const = 0;
-    virtual void setMnemonic(const std::string& mnemonic) = 0;
-	*/
-
+	/* Returns wallet address. */
 	virtual FString getAddress() const = 0;
+
+	/* Set wallet address. */
 	virtual void setAddress(const FString& address_) = 0;
 
 };
+
+
+/**
+ * Create wallet with address encoded by base32
+ * Returns instance pointer of Wallet class 
+ * @param address account address, encoded by base32
+ */
 
 WALLET_API TSharedPtr<Wallet> createWallet(const FString& address);
