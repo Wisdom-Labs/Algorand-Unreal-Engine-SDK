@@ -66,56 +66,73 @@ public:
      * @param outer root on level
      * @return AlgorandUnrealManager as a pointer
      */
-    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+    UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "CreateInstance", Keywords = "AlgorandManager"),
+			  Category = "AlgorandUnrealManager")
         static UAlgorandUnrealManager* createInstance(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader_, UObject* outer);
 
     /**
      * Set rpc url of algorand node
      * @param algoRpc algoRpc algorand rpc url
      */
-    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+    UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "setAlgoRpc", Keywords = "SetAlgo"),
+			  Category = "AlgorandUnrealManager")
         void setAlgoRpc(const FString& algoRpc);
 
     /**
      * Set rpc port of algorand node
      * @param algoPort algorand rpc port
      */
-    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+    UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "setAlgoPort", Keywords = "SetAlgo"),
+    		  Category = "AlgorandUnrealManager")
         void setAlgoPort(const FUInt64& algoPort);
 
     /**
      * Set rpc tokenHeader of algorand node
      * @param algoTokenHeader algorand rpc tokenHeader
      */
-    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+    UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "setAlgoTokenHeader", Keywords = "SetAlgo"),
+    		  Category = "AlgorandUnrealManager")
         void setAlgoTokenHeader(const FString& algoTokenHeader);
 
     /**
      * get rpc url of algorand node
      * @return algorand rpc url as string
      */
-    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+    UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "getAlgoRpc", Keywords = "GetAlgo"),
+    	      Category = "AlgorandUnrealManager")
         FString getAlgoRpc();
 
     /**
      * get rpc port of algorand node
      * @return algorand rpc port as uint64
      */
-    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+	
+    UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "getAlgoPort", Keywords = "GetAlgo"),
+    		  Category = "AlgorandUnrealManager")
         FUInt64 getAlgoPort();
 
     /**
      * get rpc token header of algorand node
      * @return algorand rpc token header as string
      */
-    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+    UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "getAlgoTokenHeader", Keywords = "GetAlgo"),
+    		  Category = "AlgorandUnrealManager")
         FString getAlgoTokenHeader();
 
     /**
      * get account address connected to algorand node
      * @return account address as string
      */
-    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+    UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "getAddress", Keywords = "Address"),
+    		  Category = "AlgorandUnrealManager")
         FString getAddress();
 
     /**
@@ -127,19 +144,21 @@ public:
     /**
      * error information callback
      */
-    UPROPERTY(BlueprintAssignable)
+    UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
         FErrorDelegate ErrorDelegateCallback;
 
 	/**
 	 * generate new account
 	 */
-    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+    UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "generateWallet", Keywords = "Wallet"),
+    		  Category = "AlgorandUnrealManager")
     void generateWallet();
 
 	/**
 	 * generate wallet information callback
 	 */
-    UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
         FGenerateWalletDelegate GenerateWalletCallback;
 
 	/**
@@ -152,13 +171,15 @@ public:
 	 * get balance by specific address
 	 * 
 	 */
-    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+    UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "getBalance", Keywords = "Balance"),
+    		  Category = "AlgorandUnrealManager")
     void getBalance();
 
 	/**
 	 * get balance information callback
 	 */
-    UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
         FGetBalanceDelegate GetBalanceCallback;
 
 	/**
@@ -173,14 +194,16 @@ public:
 	 * @param amount token amount to send
 	 * @param notes tx description when send payment tx
 	 */
-    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+    UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "sendPaymentTX", Keywords = "PaymentTX"),
+    		  Category = "AlgorandUnrealManager")
     void sendPaymentTransaction(const FString& receiverAddress,
                                 const FUInt64& amount,
                                 const FString& notes);   
 	/**
 	 * payment transaction information callback
 	 */ 
-    UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
         FPaymentTransactionDelegate SendPaymentTransactionCallback;
 
 	/**
@@ -193,13 +216,15 @@ public:
 	 * send application call TX to algorand node
 	 * @param app_ID application id created by algorand node
 	 */
-    UFUNCTION(BlueprintCallable, Category = "AlgorandUnrealManager")
+    UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "sendApplicationCallTX", Keywords = "ApplCallTX"),	
+    		  Category = "AlgorandUnrealManager")
     void sendApplicationCallTransaction(const FUInt64& app_ID);
 
 	/**
 	 * application transaction information callback
 	 */
-    UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
         FApplicationCallTransactionDelegate SendApplicationCallTransactionCallback;
 
 	/**
