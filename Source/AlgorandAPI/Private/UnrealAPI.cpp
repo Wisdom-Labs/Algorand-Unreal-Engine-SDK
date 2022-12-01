@@ -1,6 +1,4 @@
-/** 
-* Algorand Node API
-*/
+// Copyright 2022, Wisdom Labs. All Rights Reserved
 
 #include "UnrealApi.h"
 #include "Misc/MessageDialog.h"
@@ -14,23 +12,16 @@ namespace {
 namespace algorand{
 namespace api {
 
+// create vertices with its instance from Algorand module
 UnrealApi::UnrealApi(TSharedPtr<algorand::vertices::VerticesSDK>& vertices)
-    : Url(TEXT("http://localhost"))
 {
     vertices_ = vertices;
 }
 
 UnrealApi::~UnrealApi() {}
-
-void UnrealApi::SetURL(const FString& InUrl)
-{
-    Url = InUrl;
-}
-
+    
 void UnrealApi::AlgorandGenerateWalletGet(const Vertices::VerticesGenerateWalletGetRequest& Request, const FAlgorandGenerateWalletGetDelegate& Delegate) const
 {
-    // IsValid Endpoint Url is not set ,  check this
-
     TSharedRef<Vertices::FVerticesGenerateWalletGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesGenerateWalletGetDelegate>());
     
     delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesGenerateWalletGetResponse& response) {
@@ -40,6 +31,9 @@ void UnrealApi::AlgorandGenerateWalletGet(const Vertices::VerticesGenerateWallet
     
 }
 
+/**
+ * @brief callback after generate wallet
+ */
 void UnrealApi::OnAlgorandGenerateWalletGetResponse(const Vertices::VerticesGenerateWalletGetResponse& response, const FAlgorandGenerateWalletGetDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
@@ -47,8 +41,6 @@ void UnrealApi::OnAlgorandGenerateWalletGetResponse(const Vertices::VerticesGene
 
 void UnrealApi::AlgorandGetaddressbalanceGet(const Vertices::VerticesGetaddressbalanceGetRequest& Request, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const
 {
-    // IsValid Endpoint Url is not set ,  check this
-
     TSharedRef<Vertices::FVerticesGetaddressbalanceGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesGetaddressbalanceGetDelegate>());
     
     delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesGetaddressbalanceGetResponse& response) {
@@ -58,6 +50,9 @@ void UnrealApi::AlgorandGetaddressbalanceGet(const Vertices::VerticesGetaddressb
     
 }
 
+/**
+ * @brief callback after get balance
+ */
 void UnrealApi::OnAlgorandGetaddressbalanceGetResponse(const Vertices::VerticesGetaddressbalanceGetResponse& response, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
@@ -65,8 +60,6 @@ void UnrealApi::OnAlgorandGetaddressbalanceGetResponse(const Vertices::VerticesG
 
 void UnrealApi::AlgorandPaymentTransactionGet(const Vertices::VerticesPaymentTransactionGetRequest& Request, const FAlgorandPaymentTransactionGetDelegate& Delegate) const
 {
-    // IsValid Endpoint Url is not set ,  check this
-
     TSharedRef<Vertices::FVerticesPaymentTransactionGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesPaymentTransactionGetDelegate>());
 
     delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesPaymentTransactionGetResponse& response) {
@@ -75,6 +68,9 @@ void UnrealApi::AlgorandPaymentTransactionGet(const Vertices::VerticesPaymentTra
     vertices_->VerticesPaymentTransactionGet(Request, delegatePtr.Get());
 }
 
+/**
+ * @brief callback after payment tx
+ */
 void UnrealApi::OnAlgorandPaymentTransactionGetResponse(const Vertices::VerticesPaymentTransactionGetResponse& response, const FAlgorandPaymentTransactionGetDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
@@ -82,7 +78,6 @@ void UnrealApi::OnAlgorandPaymentTransactionGetResponse(const Vertices::Vertices
 
 void UnrealApi::AlgorandApplicationCallTransactionGet(const Vertices::VerticesApplicationCallTransactionGetRequest& Request, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const
 {
-    // IsValid Endpoint Url is not set ,  check this
     TSharedRef<Vertices::FVerticesApplicationCallTransactionGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesApplicationCallTransactionGetDelegate>());
 
     delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesApplicationCallTransactionGetResponse& response) {
@@ -92,6 +87,9 @@ void UnrealApi::AlgorandApplicationCallTransactionGet(const Vertices::VerticesAp
     vertices_->VerticesApplicationCallTransactionGet(Request, delegatePtr.Get());
 }
 
+/**
+ * @brief callback after application call tx
+ */
 void UnrealApi::OnAlgorandApplicationCallTransactionGetResponse(const Vertices::VerticesApplicationCallTransactionGetResponse& response, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
