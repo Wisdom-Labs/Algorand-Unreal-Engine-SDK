@@ -20,7 +20,7 @@
  */
 
 /**
- * Algorand Manger
+ * Algorand Manager
  * how callback works for c++ and blueprint events
  * dynamic and multicast delegates are used for c++ and blueprint callback
  * when c++ callback is called, it calls sendEvent to trigger the delegate.
