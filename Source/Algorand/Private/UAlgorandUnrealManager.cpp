@@ -1,10 +1,10 @@
-#include "UAlgorandUnrealManager.h"
+// Copyright 2022, Wisdom Labs. All Rights Reserved
 
+#include "UAlgorandUnrealManager.h"
 #include "TransactionBuilder.h"
 #include "TransactionBuilderFactory.h"
 #include "RequestBuilders.h"
 #include <functional>
-
 #include "VerticesApiOperations.h"
 #include "Misc/MessageDialog.h"
 
