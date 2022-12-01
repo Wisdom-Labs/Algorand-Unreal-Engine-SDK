@@ -17,11 +17,13 @@ namespace {
     using Vertices = algorand::vertices::VerticesSDK;
 }
 
+// create vertices_ , transactionBuilder_ , unrealApi_ and load payment address 
+// Sets default values
 UAlgorandUnrealManager::UAlgorandUnrealManager()
     :myAlgoRpc("https://node.testnet.algoexplorerapi.io") , myAlgoPort(0) , myAlgoTokenHeader("")
 {
     FString address;
-    // create Vertices library
+    // create instance of Vertices library
     vertices_ = MakeShared<algorand::vertices::VerticesSDK>();
 
     setAlgoRpc(myAlgoRpc);
@@ -44,19 +46,23 @@ UAlgorandUnrealManager::UAlgorandUnrealManager()
     }
 
     transactionBuilder_ = createTransactionBuilder(address);       
-    // create unreal api modules
+    // create instance of unreal api library
     unrealApi_ = MakeShared<algorand::api::UnrealApi>(vertices_);
 }
 
+// create instance of algorand manager using blueprint
 UAlgorandUnrealManager* UAlgorandUnrealManager::createInstance(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader, UObject* outer)
 {
     UAlgorandUnrealManager* manager = NewObject<UAlgorandUnrealManager>(outer);
+    
     manager->setAlgoRpc(algoRpc);
     manager->setAlgoPort(algoPort);
     manager->setAlgoTokenHeader(algoTokenHeader);
         
     return manager;
 }
+
+/// set rpc info from algorand manager to vertices instance
 
 void UAlgorandUnrealManager::setAlgoRpc(const FString& algoRpc) {
     myAlgoRpc = algoRpc;
@@ -72,6 +78,8 @@ void UAlgorandUnrealManager::setAlgoTokenHeader(const FString& algoTokenHeader) 
     myAlgoTokenHeader = algoTokenHeader;
     vertices_->setAlgoTokenHeader(myAlgoTokenHeader);
 }
+
+/// get alogrand rpc information
 
 FString UAlgorandUnrealManager::getAlgoRpc()
 {
@@ -98,7 +106,10 @@ void UAlgorandUnrealManager::setAddress(const FString& address)
     transactionBuilder_->setPaymentAddress(address);
 }
 
-void UAlgorandUnrealManager::generateWallet()
+/**
+ * @brief create its context to send the request to unreal api for generate wallet
+ */
+ void UAlgorandUnrealManager::generateWallet()
 {
     this->requestContextManager_
         .createContext<API::FAlgorandGenerateWalletGetDelegate,
@@ -110,6 +121,9 @@ void UAlgorandUnrealManager::generateWallet()
         );
 }
 
+/**
+ * @brief get response from unreal api after generate wallet and broadcast the result to binded functions
+ */
 void UAlgorandUnrealManager::OnGenerateWalletCompleteCallback(const Vertices::VerticesGenerateWalletGetResponse& response) {
     if (response.IsSuccessful()) {
         FString address = response.Address;
@@ -123,6 +137,9 @@ void UAlgorandUnrealManager::OnGenerateWalletCompleteCallback(const Vertices::Ve
     }
 }
 
+/**
+ * @brief create its context to send the request to unreal api for get balance
+ */
 void UAlgorandUnrealManager::getBalance()
 {
     this->requestContextManager_
@@ -135,6 +152,9 @@ void UAlgorandUnrealManager::getBalance()
         );
 }
 
+/**
+ * @brief get response from unreal api after get balance and broadcast the result to binded functions
+ */
 void UAlgorandUnrealManager::OnGetBalanceCompleteCallback(const Vertices::VerticesGetaddressbalanceGetResponse& response) {
     if (response.IsSuccessful()) {
         uint64 balance = response.Amount;
@@ -160,6 +180,9 @@ void UAlgorandUnrealManager::OnGetBalanceCompleteCallback(const Vertices::Vertic
     }
 }
 
+/**
+ * @brief create its context to send the request to unreal api for payment tx
+ */
 void UAlgorandUnrealManager::sendPaymentTransaction(const FString& receiverAddress,
                                                     const FUInt64& amount,
                                                     const FString& notes)
@@ -177,6 +200,9 @@ void UAlgorandUnrealManager::sendPaymentTransaction(const FString& receiverAddre
             );
 }
 
+/**
+ * @brief get response from unreal api after payment TX and broadcast the result to binded functions
+ */
 void UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback(const Vertices::VerticesPaymentTransactionGetResponse& response) {
     if (response.IsSuccessful()) {
         FString txID = response.txID;
@@ -194,6 +220,9 @@ void UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback(const Vert
     }
 }
 
+/**
+ * @brief create its context to send the request to unreal api for application call TX
+ */
 void UAlgorandUnrealManager::sendApplicationCallTransaction(const FUInt64& app_ID)
 {
     this->requestContextManager_
@@ -207,6 +236,9 @@ void UAlgorandUnrealManager::sendApplicationCallTransaction(const FUInt64& app_I
             );
 }
 
+/**
+ * @brief get response from unreal api after application call TX and broadcast the result to binded functions
+ */
 void UAlgorandUnrealManager::OnSendApplicationCallTransactionCompleteCallback(const Vertices::VerticesApplicationCallTransactionGetResponse& response) {
     if (response.IsSuccessful()) {
         FString txID = response.txID;
