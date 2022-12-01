@@ -2,6 +2,14 @@
 
 #include "Wallet.h"
 
+/**
+ * ToDo:
+ * for secure private key and flexible wallet connect
+ * add mnemonic private key
+ * add wallet connect provider like following status
+ * connecting, connected, disconnected, disconnecting, updated network, updated account
+ */
+
 class WalletImpl : public Wallet
 {
 public:
