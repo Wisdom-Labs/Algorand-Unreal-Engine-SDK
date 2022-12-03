@@ -1,4 +1,5 @@
-﻿
+﻿// Copyright 2022, Wisdom Labs. All Rights Reserved
+
 #include "VerticesSDK.h"
 #include "Misc/Paths.h"
 #include "Misc/MessageDialog.h"
@@ -9,10 +10,8 @@
 #include "ResponseBuilers.h"
 #include "HAL/UnrealMemory.h"
 #include "AES.h"
-
 #include "Account.h"
 #include <cstring>
-
 #include "SDKException.h"
 
 using namespace std;
@@ -24,6 +23,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogMyAwesomeGame, Log, All);
 
 unsigned char user_password[] = "algorand-sdk";
 
+// algo account struct 
 typedef struct {
     unsigned char private_key[ADDRESS_LENGTH];  //!< 32-bytes private key
     account_info_t* vtc_account;               //!< pointer to Vertices account data
@@ -121,13 +121,16 @@ ret_code_t vertices_evt_handler(vtc_evt_t* evt) {
 } /* extern "C" */
 #endif
 
+// provider to access vertices lib
 provider_info_t providers;
 
+// bridge witch connect vertices module to thirdparty lib
 vertex_t m_vertex;
 
 namespace algorand {
     namespace vertices {
 
+        // load thirdparty libs
         VerticesSDK::VerticesSDK() {
             loadVerticesLibrary();
 
@@ -211,6 +214,7 @@ namespace algorand {
             UE_LOG(LogTemp, Display, TEXT("Created new vertices net."));
         }
 
+        // pass m_vertex through vertices lib
         void VerticesSDK::createNewVertices(char* sever_url, short port, char* server_token_header, ret_code_t& err_code) {
             providers.url = sever_url;
             providers.port = port;
@@ -428,6 +432,7 @@ namespace algorand {
             return FString(strlen(public_b32), public_b32);
         }
 
+        // generate new account with mnemonic private keys and tested this action wtih mockup data
         void VerticesSDK::VerticesGenerateWalletGet(const VerticesGenerateWalletGetRequest& Request, const FVerticesGenerateWalletGetDelegate& delegate)
         {           
             auto mnemonic = R"(base giraffe believe make tone transfer wrap attend
@@ -524,6 +529,7 @@ namespace algorand {
                             response.SetResponseString(FString(ex.what()));
                         }
 
+                        // after build response, execute delegate to run callback with response
                         AsyncTask(ENamedThreads::GameThread, [delegate, response]()
                         {
                             delegate.ExecuteIfBound(response);
@@ -624,6 +630,7 @@ namespace algorand {
                             response.SetResponseString(FString(ex.what()));
                         }
 
+                        // after build response, execute delegate to run callback with response
                         AsyncTask(ENamedThreads::GameThread, [delegate, response]()
                         {
                             delegate.ExecuteIfBound(response);
@@ -731,6 +738,7 @@ namespace algorand {
                             response.SetResponseString(FString(ex.what()));
                         }
 
+                        // after build response, execute delegate to run callback with response
                         AsyncTask(ENamedThreads::GameThread, [delegate, response]()
                         {
                             delegate.ExecuteIfBound(response);
