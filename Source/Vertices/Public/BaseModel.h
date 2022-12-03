@@ -1,14 +1,18 @@
+// Copyright 2022, Wisdom Labs. All Rights Reserved
+
 #pragma once
 
 namespace algorand {
 namespace vertices {
 
+    // Base Request class
     class Request
     {
     public:
         virtual ~Request() {}
     };
 
+    // Base Response class
     class Response
     {
     public:

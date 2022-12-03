@@ -1,3 +1,5 @@
+// Copyright 2022, Wisdom Labs. All Rights Reserved
+
 #include "SDKException.h"
 
 SDKException::SDKException()
@@ -5,6 +7,7 @@ SDKException::SDKException()
 	msg = "Exception happened";
 }
 
+// VTC error cases supporting from vertices_errors.h
 SDKException::SDKException(ret_code_t& err_code) {
 	switch(err_code)
 	{

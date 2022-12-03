@@ -1,3 +1,5 @@
+// Copyright 2022, Wisdom Labs. All Rights Reserved
+
 #include "./ResponseBuilers.h"
 #include "VerticesApiOperations.h"
 

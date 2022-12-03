@@ -1,5 +1,6 @@
-#pragma once
+// Copyright 2022, Wisdom Labs. All Rights Reserved
 
+#pragma once
 #include "VerticesSDK.h"
 
 namespace response_builders {

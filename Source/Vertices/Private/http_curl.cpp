@@ -1,3 +1,4 @@
+// Copyright 2022, Wisdom Labs. All Rights Reserved
 
 #include "include/vertices/vertices_errors.h"
 #include "include/vertices/vertices_types.h"

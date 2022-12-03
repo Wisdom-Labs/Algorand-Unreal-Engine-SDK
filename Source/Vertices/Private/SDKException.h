@@ -1,5 +1,6 @@
-#pragma once
+// Copyright 2022, Wisdom Labs. All Rights Reserved
 
+#pragma once
 #include <iostream>
 #include <exception>
 #include "include/vertices/vertices_errors.h"
