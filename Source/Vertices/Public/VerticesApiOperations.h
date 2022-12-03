@@ -1,11 +1,13 @@
-#pragma once
+// Copyright 2022, Wisdom Labs. All Rights Reserved
 
+#pragma once
 #include "CoreMinimal.h"
 #include "BaseModel.h"
 
 namespace algorand {
     namespace vertices {
-
+        
+        // Request for Generate wallet
         class VerticesSDK::VerticesGenerateWalletGetRequest : public Request
         {
         public:
@@ -13,6 +15,7 @@ namespace algorand {
 
         };
 
+        // Response for Generate wallet
         class VerticesSDK::VerticesGenerateWalletGetResponse : public Response
         {
         public:
@@ -20,6 +23,7 @@ namespace algorand {
             FString Address;
         };
 
+        // Request for Get Address
         class VerticesSDK::VerticesGetaddressbalanceGetRequest : public Request
         {
         public:
@@ -28,6 +32,7 @@ namespace algorand {
             TOptional<FString> Address;
         };
 
+        // Response for Get Address
         class VerticesSDK::VerticesGetaddressbalanceGetResponse : public Response
         {
         public:
@@ -35,6 +40,7 @@ namespace algorand {
             uint64 Amount;
         };
 
+        // Request for Payment TX
         class VerticesSDK::VerticesPaymentTransactionGetRequest : public Request
         {
         public:
@@ -46,6 +52,7 @@ namespace algorand {
             TOptional<FString> notes;
         };
 
+        // Response for Payment TX
         class VerticesSDK::VerticesPaymentTransactionGetResponse : public Response
         {
         public:
@@ -53,6 +60,7 @@ namespace algorand {
             FString txID;
         };
 
+        // Request for Application Call TX
         class VerticesSDK::VerticesApplicationCallTransactionGetRequest : public Request
         {
         public:
@@ -62,6 +70,7 @@ namespace algorand {
             TOptional<uint64_t> app_ID;
         };
 
+        // Response for Application Call TX
         class VerticesSDK::VerticesApplicationCallTransactionGetResponse : public Response
         {
         public:
