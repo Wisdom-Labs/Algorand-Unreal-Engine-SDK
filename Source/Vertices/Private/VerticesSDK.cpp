@@ -174,8 +174,8 @@ namespace algorand {
             // Add on the relative location of the third party dll and load it
             FString VerticesPath, SodiumPath;
 
-            VerticesPath = FPaths::Combine(*BaseDir, TEXT("Source/ThirdParty/AlgorandLibrary/x64/vertices.dll"));
-            SodiumPath = FPaths::Combine(*BaseDir, TEXT("Source/ThirdParty/AlgorandLibrary/x64/libsodium.dll"));
+            VerticesPath = FPaths::Combine(*BaseDir, TEXT("Source/ThirdParty/AlgorandLibrary/x64/Release/vertices.dll"));
+            SodiumPath = FPaths::Combine(*BaseDir, TEXT("Source/ThirdParty/AlgorandLibrary/x64/Release/libsodium.dll"));
 
             VerticesHandle = !VerticesPath.IsEmpty() ? FPlatformProcess::GetDllHandle(*VerticesPath) : nullptr;
             SodiumHandle = !SodiumPath.IsEmpty() ? FPlatformProcess::GetDllHandle(*SodiumPath) : nullptr;
