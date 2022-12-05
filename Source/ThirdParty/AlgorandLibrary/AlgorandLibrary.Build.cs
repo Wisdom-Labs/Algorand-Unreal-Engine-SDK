@@ -19,7 +19,8 @@ public class AlgorandLibrary : ModuleRules
 			PublicDelayLoadDLLs.Add("vertices.dll");
 
 			// Ensure that the DLL is staged along with the executable
-			RuntimeDependencies.Add("$(PluginDir)/Binaries/ThirdParty/AlgorandLibrary/Win64/vertices.dll");
+			/*RuntimeDependencies.Add("$(PluginDir)/Binaries/ThirdParty/AlgorandLibrary/Win64/vertices.dll");*/
+			RuntimeDependencies.Add("$(PluginDir)/Source/ThirdParty/AlgorandLibrary/x64/Release/vertices.dll");
 		}
         else if (Target.Platform == UnrealTargetPlatform.Mac)
         {

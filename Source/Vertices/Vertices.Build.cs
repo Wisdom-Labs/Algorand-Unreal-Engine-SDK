@@ -21,7 +21,8 @@ public class Vertices : ModuleRules
 			PublicDelayLoadDLLs.Add("libsodium.dll");
 
 			// Ensure that the DLL is staged along with the executable
-			RuntimeDependencies.Add("$(PluginDir)/Binaries/ThirdParty/AlgorandLibrary/Win64/libsodium.dll");
+			/*RuntimeDependencies.Add("$(PluginDir)/Binaries/ThirdParty/AlgorandLibrary/Win64/libsodium.dll");*/
+			RuntimeDependencies.Add("$(PluginDir)/Source/Vertices/Libs/libsodium.dll");
 		}
 
 		PublicDependencyModuleNames.AddRange(
