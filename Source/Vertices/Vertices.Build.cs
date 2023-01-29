@@ -9,7 +9,7 @@ public class Vertices : ModuleRules
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        AddEngineThirdPartyPrivateStaticDependencies(Target, "libcurl");
+        AddEngineThirdPartyPrivateStaticDependencies(Target, new string[] { "libcurl", "nghttp2" , "OpenSSL", "zlib" });   // add 3rd party lib for libcurl
 
 		if (Target.Platform == UnrealTargetPlatform.Win64)
 		{

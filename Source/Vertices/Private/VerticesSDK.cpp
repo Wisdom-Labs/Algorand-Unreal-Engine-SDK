@@ -401,7 +401,9 @@ namespace algorand {
 
             config_path = FPaths::ProjectPluginsDir() + "Algorand/Source/Vertices/config/";
 
-            char* config_file = TCHAR_TO_ANSI(*(config_path + "public_b32.txt"));
+            // char* config_file = TCHAR_TO_ANSI(*(config_path + "public_b32.txt"));  TCHAR_TO_ANSI   limitation to 129 characters
+            auto auto_config = StringCast<ANSICHAR>(*(config_path + "public_b32.txt"));
+            const char* config_file = auto_config.Get();
             FILE* f_pub;
             errno_t err_no;
 
