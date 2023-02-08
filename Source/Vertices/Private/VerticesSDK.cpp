@@ -276,8 +276,10 @@ namespace algorand {
             memcpy(sender_account.private_key, ed25519_sk, sizeof(sender_account.private_key));
 
             config_path = FPaths::ProjectPluginsDir() + "Algorand/Source/Algorand/config/";
-
-            char* config_file = TCHAR_TO_ANSI(*(config_path + "private_key.bin"));
+            
+            // char* config_file = TCHAR_TO_ANSI(*(config_path + "private_key.bin"));
+            auto auto_config_prv = StringCast<ANSICHAR>(*(config_path + "private_key.bin"));
+            const char* config_file = auto_config_prv.Get();
 
             // encrypting private key
             AES aes(AESKeyLength::AES_128);
@@ -304,7 +306,9 @@ namespace algorand {
             UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_bin %d"), err_code);
 
             // we can now store the b32 address in a file
-            config_file = TCHAR_TO_ANSI(*(config_path + "public_b32.txt"));
+            // config_file = TCHAR_TO_ANSI(*(config_path + "public_b32.txt"));
+            auto auto_config_pub = StringCast<ANSICHAR>(*(config_path + "public_b32.txt"));
+            config_file = auto_config_pub.Get();
             FILE* fw_pub;
 
             err_no= fopen_s(&fw_pub, config_file, "w");
@@ -326,10 +330,12 @@ namespace algorand {
             char public_b32[PUBLIC_B32_STR_MAX_LENGTH] = { 0 };
 
             size_t bytes_read = 0;
-
+            
             config_path = FPaths::ProjectPluginsDir() + "Algorand/Source/Vertices/config/";
 
-            char* config_file = TCHAR_TO_ANSI(*(config_path + "private_key.bin"));
+            // char* config_file = TCHAR_TO_ANSI(*(config_path + "private_key.bin"));
+            auto auto_config_prv = StringCast<ANSICHAR>(*(config_path + "private_key.bin"));
+            const char* config_file = auto_config_prv.Get();
 
             memset(sender_account.private_key, 0, 32);
             sender_account.vtc_account = nullptr;
@@ -361,7 +367,10 @@ namespace algorand {
             memcpy(sender_account.private_key, plain_pk, ADDRESS_LENGTH);
             delete[] plain_pk;
             // decrypted private key
-            config_file = TCHAR_TO_ANSI(*(config_path + "public_b32.txt"));
+            // config_file = TCHAR_TO_ANSI(*(config_path + "public_b32.txt"));
+            auto auto_config_pub = StringCast<ANSICHAR>(*(config_path + "public_b32.txt"));
+            config_file = auto_config_pub.Get();
+            
             FILE * f_pub;
 
             err_no = fopen_s(&f_pub, config_file, "r");
@@ -456,6 +465,8 @@ namespace algorand {
                         try
                         {
                             InitVertices(err_code);
+                            checkVTCSuccess("When initing vertices network, an error occured", err_code);
+
                             err_code = create_new_account();
                             UE_LOG(LogTemp, Display, TEXT("Vertices created new account."));
                             
@@ -501,6 +512,7 @@ namespace algorand {
                         try
                         {
                             InitVertices(err_code);
+                            checkVTCSuccess("When initing vertices network, an error occured", err_code);
 
                             memset(test_account.private_key, 0, 32);
                             test_account.vtc_account = nullptr;
@@ -560,7 +572,9 @@ namespace algorand {
                         try
                         {
                             // validation Request
-                            char* notes = TCHAR_TO_ANSI(*(Request.notes.GetValue()));
+                            // char* notes = TCHAR_TO_ANSI(*(Request.notes.GetValue()));
+                            auto auto_notes = StringCast<ANSICHAR>(*(Request.notes.GetValue()));
+                            char* notes = (char *)auto_notes.Get();
 
                             if(strlen(notes) == 0)
                                 notes = "Payment Transaction";
@@ -571,8 +585,10 @@ namespace algorand {
                                 checkVTCSuccess("Please input address with correct length.", err_code);
                             }
                             InitVertices(err_code);
-
+                            checkVTCSuccess("When initing vertices network, an error occured", err_code);
+                            
                             err_code = load_existing_account();
+                            checkVTCSuccess("When loading an existing account, an error occured", err_code);
                             
                             UE_LOG(LogTemp, Display, TEXT("Loaded main account."));
 
@@ -667,8 +683,10 @@ namespace algorand {
                             }
                             
                             InitVertices(err_code);
-
-                            load_existing_account();
+                            checkVTCSuccess("When initing vertices network, an error occured", err_code);
+                            
+                            err_code = load_existing_account();
+                            checkVTCSuccess("When loading an existing account, an error occured", err_code);
 
                             if (sender_account.vtc_account->amount < 1000) {
                                 FFormatNamedArguments Arguments;
