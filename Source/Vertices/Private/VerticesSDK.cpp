@@ -456,6 +456,8 @@ namespace algorand {
                         try
                         {
                             InitVertices(err_code);
+                            checkVTCSuccess("When initing vertices network, an error occured", err_code);
+
                             err_code = create_new_account();
                             UE_LOG(LogTemp, Display, TEXT("Vertices created new account."));
                             
@@ -501,6 +503,7 @@ namespace algorand {
                         try
                         {
                             InitVertices(err_code);
+                            checkVTCSuccess("When initing vertices network, an error occured", err_code);
 
                             memset(test_account.private_key, 0, 32);
                             test_account.vtc_account = nullptr;
@@ -571,8 +574,10 @@ namespace algorand {
                                 checkVTCSuccess("Please input address with correct length.", err_code);
                             }
                             InitVertices(err_code);
-
+                            checkVTCSuccess("When initing vertices network, an error occured", err_code);
+                            
                             err_code = load_existing_account();
+                            checkVTCSuccess("When loading an existing account, an error occured", err_code);
                             
                             UE_LOG(LogTemp, Display, TEXT("Loaded main account."));
 
@@ -667,8 +672,10 @@ namespace algorand {
                             }
                             
                             InitVertices(err_code);
-
-                            load_existing_account();
+                            checkVTCSuccess("When initing vertices network, an error occured", err_code);
+                            
+                            err_code = load_existing_account();
+                            checkVTCSuccess("When loading an existing account, an error occured", err_code);
 
                             if (sender_account.vtc_account->amount < 1000) {
                                 FFormatNamedArguments Arguments;
