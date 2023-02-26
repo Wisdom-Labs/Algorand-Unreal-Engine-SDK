@@ -20,21 +20,74 @@ UnrealApi::UnrealApi(TSharedPtr<algorand::vertices::VerticesSDK>& vertices)
 
 UnrealApi::~UnrealApi() {}
     
-void UnrealApi::AlgorandGenerateWalletGet(const Vertices::VerticesGenerateWalletGetRequest& Request, const FAlgorandGenerateWalletGetDelegate& Delegate) const
+void UnrealApi::AlgorandRestoreWalletGet(const Vertices::VerticesRestoreWalletGetRequest& Request, const FAlgorandRestoreWalletGetDelegate& Delegate) const
 {
-    TSharedRef<Vertices::FVerticesGenerateWalletGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesGenerateWalletGetDelegate>());
+    TSharedRef<Vertices::FVerticesRestoreWalletGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesRestoreWalletGetDelegate>());
     
-    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesGenerateWalletGetResponse& response) {
-        OnAlgorandGenerateWalletGetResponse(response, Delegate);
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesRestoreWalletGetResponse& response) {
+        OnAlgorandRestoreWalletGetResponse(response, Delegate);
     });
-    vertices_->VerticesGenerateWalletGet( Request, delegatePtr.Get());
+    vertices_->VerticesRestoreWalletGet( Request, delegatePtr.Get());
+}
+ 
+/**
+ * @brief callback after restore wallet
+ */
+void UnrealApi::OnAlgorandRestoreWalletGetResponse(const Vertices::VerticesRestoreWalletGetResponse& response, const FAlgorandRestoreWalletGetDelegate& Delegate) const
+{
+    Delegate.ExecuteIfBound(response);
+}
+   
+void UnrealApi::AlgorandInitializeNewWalletGet(const Vertices::VerticesInitializeNewWalletGetRequest& Request, const FAlgorandInitializeNewWalletGetDelegate& Delegate) const
+{
+    TSharedRef<Vertices::FVerticesInitializeNewWalletGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesInitializeNewWalletGetDelegate>());
     
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesInitializeNewWalletGetResponse& response) {
+        OnAlgorandInitializeNewWalletGetResponse(response, Delegate);
+    });
+    vertices_->VerticesInitializeNewWalletGet( Request, delegatePtr.Get());
 }
 
 /**
- * @brief callback after generate wallet
+ * @brief callback after initialize new wallet
  */
-void UnrealApi::OnAlgorandGenerateWalletGetResponse(const Vertices::VerticesGenerateWalletGetResponse& response, const FAlgorandGenerateWalletGetDelegate& Delegate) const
+void UnrealApi::OnAlgorandInitializeNewWalletGetResponse(const Vertices::VerticesInitializeNewWalletGetResponse& response, const FAlgorandInitializeNewWalletGetDelegate& Delegate) const
+{
+    Delegate.ExecuteIfBound(response);
+}
+    
+void UnrealApi::AlgorandGetBackupMnemonicPhraseGet(const Vertices::VerticesGetBackupMnemonicPhraseGetRequest& Request, const FAlgorandGetBackupMnemonicPhraseGetDelegate& Delegate) const
+{
+    TSharedRef<Vertices::FVerticesGetBackupMnemonicPhraseGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesGetBackupMnemonicPhraseGetDelegate>());
+    
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesGetBackupMnemonicPhraseGetResponse& response) {
+        OnAlgorandGetBackupMnemonicPhraseGetResponse(response, Delegate);
+    });
+    vertices_->VerticesGetBackupMnemonicPhraseGet( Request, delegatePtr.Get());
+}
+
+/**
+ * @brief callback after get backup mnemonic phrase
+ */
+void UnrealApi::OnAlgorandGetBackupMnemonicPhraseGetResponse(const Vertices::VerticesGetBackupMnemonicPhraseGetResponse& response, const FAlgorandGetBackupMnemonicPhraseGetDelegate& Delegate) const
+{
+    Delegate.ExecuteIfBound(response);
+}
+    
+void UnrealApi::AlgorandGenerateMnemonicsGet(const Vertices::VerticesGenerateMnemonicsGetRequest& Request, const FAlgorandGenerateMnemonicsGetDelegate& Delegate) const
+{
+    TSharedRef<Vertices::FVerticesGenerateMnemonicsGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesGenerateMnemonicsGetDelegate>());
+    
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesGenerateMnemonicsGetResponse& response) {
+        OnAlgorandGenerateMnemonicsGetResponse(response, Delegate);
+    });
+    vertices_->VerticesGenerateMnemonicsGet( Request, delegatePtr.Get());
+}
+
+/**
+ * @brief callback after generate mnemonics
+ */
+void UnrealApi::OnAlgorandGenerateMnemonicsGetResponse(const Vertices::VerticesGenerateMnemonicsGetResponse& response, const FAlgorandGenerateMnemonicsGetDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
 }
