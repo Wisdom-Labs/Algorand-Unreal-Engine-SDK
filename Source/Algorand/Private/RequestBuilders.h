@@ -20,11 +20,32 @@
 namespace request_builders {
 	
 	/**
-	 * @brief build request for generate wallet 
+	 * @brief build request for restore wallet 
 	 * @return request
 	 */
-	algorand::vertices::VerticesSDK::VerticesGenerateWalletGetRequest
-	buildGenerateWalletRequest();
+	algorand::vertices::VerticesSDK::VerticesRestoreWalletGetRequest
+	buildRestoreWalletRequest();
+
+	/**
+	 * @brief build request for initialize new wallet 
+	 * @return request
+	 */
+	algorand::vertices::VerticesSDK::VerticesInitializeNewWalletGetRequest
+	buildInitializeNewWalletRequest();
+
+	/**
+	 * @brief build request for get backup mnemonic phrase
+	 * @return request
+	 */
+	algorand::vertices::VerticesSDK::VerticesGetBackupMnemonicPhraseGetRequest
+	buildGetBackupMnemonicPhraseRequest();
+
+	/**
+	 * @brief build request for generate mnemonics
+	 * @return request
+	 */
+	algorand::vertices::VerticesSDK::VerticesGenerateMnemonicsGetRequest
+	buildGenerateMnemonicsRequest();
 
 	/**
 	 * @brief build request for get balance with following params

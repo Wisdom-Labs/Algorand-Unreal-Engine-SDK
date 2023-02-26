@@ -107,28 +107,121 @@ void UAlgorandUnrealManager::setAddress(const FString& address)
 }
 
 /**
- * @brief create its context to send the request to unreal api for generate wallet
+ * @brief create its context to send the request to unreal api for restore wallet
  */
- void UAlgorandUnrealManager::generateWallet()
+ void UAlgorandUnrealManager::restoreWallet()
 {
     this->requestContextManager_
-        .createContext<API::FAlgorandGenerateWalletGetDelegate,
-        Vertices::VerticesGenerateWalletGetRequest>(
-            request_builders::buildGenerateWalletRequest(),
-            std::bind(&API::AlgorandGenerateWalletGet, unrealApi_.Get(),
+        .createContext<API::FAlgorandRestoreWalletGetDelegate,
+        Vertices::VerticesRestoreWalletGetRequest>(
+            request_builders::buildRestoreWalletRequest(),
+            std::bind(&API::AlgorandRestoreWalletGet, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
-            std::bind(&UAlgorandUnrealManager::OnGenerateWalletCompleteCallback, this , std::placeholders::_1)
+            std::bind(&UAlgorandUnrealManager::OnRestoreWalletCompleteCallback, this , std::placeholders::_1)
         );
 }
 
 /**
- * @brief get response from unreal api after generate wallet and broadcast the result to binded functions
+ * @brief get response from unreal api after restore wallet and broadcast the result to binded functions
  */
-void UAlgorandUnrealManager::OnGenerateWalletCompleteCallback(const Vertices::VerticesGenerateWalletGetResponse& response) {
+void UAlgorandUnrealManager::OnRestoreWalletCompleteCallback(const Vertices::VerticesRestoreWalletGetResponse& response) {
     if (response.IsSuccessful()) {
-        FString address = response.Address;
-        GenerateWalletCallback.Broadcast(address);
-        setAddress(address);
+        FString output = response.output;
+        RestoreWalletCallback.Broadcast(output);
+        setAddress(output);
+    }
+    else {
+        if (!ErrorDelegateCallback.IsBound()) {
+            ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
+        }
+    }
+}
+
+/**
+ * @brief create its context to send the request to unreal api for initialize new wallet
+ */
+ void UAlgorandUnrealManager::initializeNewWallet()
+{
+    this->requestContextManager_
+        .createContext<API::FAlgorandInitializeNewWalletGetDelegate,
+        Vertices::VerticesInitializeNewWalletGetRequest>(
+            request_builders::buildInitializeNewWalletRequest(),
+            std::bind(&API::AlgorandInitializeNewWalletGet, unrealApi_.Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            std::bind(&UAlgorandUnrealManager::OnInitializeNewWalletCompleteCallback, this , std::placeholders::_1)
+        );
+}
+
+/**
+ * @brief get response from unreal api after initialize new wallet and broadcast the result to binded functions
+ */
+void UAlgorandUnrealManager::OnInitializeNewWalletCompleteCallback(const Vertices::VerticesInitializeNewWalletGetResponse& response) {
+    if (response.IsSuccessful()) {
+        FString output = response.output;
+        InitializeNewWalletCallback.Broadcast(output);
+        setAddress(output);
+    }
+    else {
+        if (!ErrorDelegateCallback.IsBound()) {
+            ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
+        }
+    }
+}
+
+/**
+ * @brief create its context to send the request to unreal api for get backup mnemonic phrase
+ */
+ void UAlgorandUnrealManager::getBackupMnemonicPhrase()
+{
+    this->requestContextManager_
+        .createContext<API::FAlgorandGetBackupMnemonicPhraseGetDelegate,
+        Vertices::VerticesGetBackupMnemonicPhraseGetRequest>(
+            request_builders::buildGetBackupMnemonicPhraseRequest(),
+            std::bind(&API::AlgorandGetBackupMnemonicPhraseGet, unrealApi_.Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            std::bind(&UAlgorandUnrealManager::OnGetBackupMnemonicPhraseCompleteCallback, this , std::placeholders::_1)
+        );
+}
+
+/**
+ * @brief get response from unreal api after get backup mnemonic phrase and broadcast the result to binded functions
+ */
+void UAlgorandUnrealManager::OnGetBackupMnemonicPhraseCompleteCallback(const Vertices::VerticesGetBackupMnemonicPhraseGetResponse& response) {
+    if (response.IsSuccessful()) {
+        FString output = response.output;
+        GetBackupMnemonicPhraseCallback.Broadcast(output);
+        setAddress(output);
+    }
+    else {
+        if (!ErrorDelegateCallback.IsBound()) {
+            ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
+        }
+    }
+}
+
+/**
+ * @brief create its context to send the request to unreal api for generate mnemonics
+ */
+ void UAlgorandUnrealManager::generateMnemonics()
+{
+    this->requestContextManager_
+        .createContext<API::FAlgorandGenerateMnemonicsGetDelegate,
+        Vertices::VerticesGenerateMnemonicsGetRequest>(
+            request_builders::buildGenerateMnemonicsRequest(),
+            std::bind(&API::AlgorandGenerateMnemonicsGet, unrealApi_.Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            std::bind(&UAlgorandUnrealManager::OnGenerateMnemonicsCompleteCallback, this , std::placeholders::_1)
+        );
+}
+
+/**
+ * @brief get response from unreal api after generate mnemonics and broadcast the result to binded functions
+ */
+void UAlgorandUnrealManager::OnGenerateMnemonicsCompleteCallback(const Vertices::VerticesGenerateMnemonicsGetResponse& response) {
+    if (response.IsSuccessful()) {
+        FString output = response.output;
+        GenerateMnemonicsCallback.Broadcast(output);
+        setAddress(output);
     }
     else {
         if (!ErrorDelegateCallback.IsBound()) {
