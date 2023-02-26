@@ -116,8 +116,14 @@ namespace vertices {
         /**
          * @brief set Request and Response for building api request and its result
          */
-        class VerticesGenerateWalletGetRequest;
-        class VerticesGenerateWalletGetResponse;
+        class VerticesRestoreWalletGetRequest;
+        class VerticesRestoreWalletGetResponse;
+        class VerticesInitializeNewWalletGetRequest;
+        class VerticesInitializeNewWalletGetResponse;
+        class VerticesGetBackupMnemonicPhraseGetRequest;
+        class VerticesGetBackupMnemonicPhraseGetResponse;
+        class VerticesGenerateMnemonicsGetRequest;
+        class VerticesGenerateMnemonicsGetResponse;
         class VerticesGetaddressbalanceGetRequest;
         class VerticesGetaddressbalanceGetResponse;
         class VerticesPaymentTransactionGetRequest;
@@ -125,8 +131,17 @@ namespace vertices {
         class VerticesApplicationCallTransactionGetRequest;
         class VerticesApplicationCallTransactionGetResponse;
 
-        /// generate wallet callback
-        DECLARE_DELEGATE_OneParam(FVerticesGenerateWalletGetDelegate, const VerticesGenerateWalletGetResponse&);
+        /// restore wallet callback
+        DECLARE_DELEGATE_OneParam(FVerticesRestoreWalletGetDelegate, const VerticesRestoreWalletGetResponse&);
+
+        /// initialize new wallet callback
+        DECLARE_DELEGATE_OneParam(FVerticesInitializeNewWalletGetDelegate, const VerticesInitializeNewWalletGetResponse&);
+
+        /// get backup mnemonic phrase callback
+        DECLARE_DELEGATE_OneParam(FVerticesGetBackupMnemonicPhraseGetDelegate, const VerticesGetBackupMnemonicPhraseGetResponse&);
+
+        /// generate mnemonics callback
+        DECLARE_DELEGATE_OneParam(FVerticesGenerateMnemonicsGetDelegate, const VerticesGenerateMnemonicsGetResponse&);
 
         /// get balance callabck
         DECLARE_DELEGATE_OneParam(FVerticesGetaddressbalanceGetDelegate, const VerticesGetaddressbalanceGetResponse&);
@@ -137,7 +152,10 @@ namespace vertices {
         /// application call tx callback
         DECLARE_DELEGATE_OneParam(FVerticesApplicationCallTransactionGetDelegate, const VerticesApplicationCallTransactionGetResponse&);
 
-        void VerticesGenerateWalletGet(const VerticesGenerateWalletGetRequest&, const FVerticesGenerateWalletGetDelegate&);
+        void VerticesRestoreWalletGet(const VerticesRestoreWalletGetRequest&, const FVerticesRestoreWalletGetDelegate&);
+        void VerticesInitializeNewWalletGet(const VerticesInitializeNewWalletGetRequest&, const FVerticesInitializeNewWalletGetDelegate&);
+        void VerticesGetBackupMnemonicPhraseGet(const VerticesGetBackupMnemonicPhraseGetRequest&, const FVerticesGetBackupMnemonicPhraseGetDelegate&);
+        void VerticesGenerateMnemonicsGet(const VerticesGenerateMnemonicsGetRequest&, const FVerticesGenerateMnemonicsGetDelegate&);
         void VerticesGetaddressbalanceGet(const VerticesGetaddressbalanceGetRequest&, const FVerticesGetaddressbalanceGetDelegate&);
         void VerticesPaymentTransactionGet(const VerticesPaymentTransactionGetRequest&, const FVerticesPaymentTransactionGetDelegate&);
         void VerticesApplicationCallTransactionGet(const VerticesApplicationCallTransactionGetRequest&, const FVerticesApplicationCallTransactionGetDelegate&);

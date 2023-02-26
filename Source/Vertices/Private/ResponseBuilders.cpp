@@ -8,11 +8,35 @@ namespace {
 }
 
 namespace response_builders {
-	Vertices::VerticesGenerateWalletGetResponse
-		buildGenerateWalletResponse(const FString& address)
+	Vertices::VerticesRestoreWalletGetResponse
+		buildRestoreWalletResponse(const FString& output)
 	{
-		Vertices::VerticesGenerateWalletGetResponse response;
-		response.Address = address;
+		Vertices::VerticesRestoreWalletGetResponse response;
+		response.output = output;
+		return response;
+	}
+
+	Vertices::VerticesInitializeNewWalletGetResponse
+		buildInitializeNewWalletResponse(const FString& output)
+	{
+		Vertices::VerticesInitializeNewWalletGetResponse response;
+		response.output = output;
+		return response;
+	}
+
+	Vertices::VerticesGetBackupMnemonicPhraseGetResponse
+		buildGetBackupMnemonicPhraseResponse(const FString& output)
+	{
+		Vertices::VerticesGetBackupMnemonicPhraseGetResponse response;
+		response.output = output;
+		return response;
+	}
+
+	Vertices::VerticesGenerateMnemonicsGetResponse
+		buildGenerateMnemonicsResponse(const FString& output)
+	{
+		Vertices::VerticesGenerateMnemonicsGetResponse response;
+		response.output = output;
 		return response;
 	}
 

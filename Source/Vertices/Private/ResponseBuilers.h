@@ -4,8 +4,14 @@
 #include "VerticesSDK.h"
 
 namespace response_builders {
-	algorand::vertices::VerticesSDK::VerticesGenerateWalletGetResponse
-		buildGenerateWalletResponse(const FString& address);
+	algorand::vertices::VerticesSDK::VerticesRestoreWalletGetResponse
+		buildRestoreWalletResponse(const FString& output);
+	algorand::vertices::VerticesSDK::VerticesInitializeNewWalletGetResponse
+		buildInitializeNewWalletResponse(const FString& output);
+	algorand::vertices::VerticesSDK::VerticesGetBackupMnemonicPhraseGetResponse
+		buildGetBackupMnemonicPhraseResponse(const FString& output);
+	algorand::vertices::VerticesSDK::VerticesGenerateMnemonicsGetResponse
+		buildGenerateMnemonicsResponse(const FString& output);
 	algorand::vertices::VerticesSDK::VerticesGetaddressbalanceGetResponse
 		buildGetBalanceResponse(const uint64& amount);
 	algorand::vertices::VerticesSDK::VerticesPaymentTransactionGetResponse

@@ -443,8 +443,8 @@ namespace algorand {
             return FString(strlen(public_b32), public_b32);
         }
 
-        // generate new account with mnemonic private keys and tested this action wtih mockup data
-        void VerticesSDK::VerticesGenerateWalletGet(const VerticesGenerateWalletGetRequest& Request, const FVerticesGenerateWalletGetDelegate& delegate)
+        // restore account with mnemonic private keys
+        void VerticesSDK::VerticesRestoreWalletGet(const VerticesRestoreWalletGetRequest& Request, const FVerticesRestoreWalletGetDelegate& delegate)
         {           
             auto mnemonic = R"(base giraffe believe make tone transfer wrap attend
                      typical dirt grocery distance outside horn also abstract
@@ -459,7 +459,7 @@ namespace algorand {
                     FScopeLock lock(&m_Mutex);
 
                     if (vertices_usable) {
-                        VerticesSDK::VerticesGenerateWalletGetResponse response;
+                        VerticesSDK::VerticesRestoreWalletGetResponse response;
                         vertices_usable = false;
                         
                         try
@@ -467,10 +467,132 @@ namespace algorand {
                             InitVertices(err_code);
                             checkVTCSuccess("When initing vertices network, an error occured", err_code);
 
-                            err_code = create_new_account();
-                            UE_LOG(LogTemp, Display, TEXT("Vertices created new account."));
+                            // check _coreAccount 
                             
-                            response = response_builders::buildGenerateWalletResponse(FString(sender_account.vtc_account->public_b32));
+                            response = response_builders::buildRestoreWalletResponse(FString(sender_account.vtc_account->public_b32));
+                            response.SetSuccessful(true);
+                        }
+                        catch(SDKException& e)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(e.what()));   
+                        }
+                        catch(std::exception& ex)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(ex.what()));
+                        }
+
+                        AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+                        {
+                            delegate.ExecuteIfBound(response);
+                        });
+
+                        vertices_usable = true;
+                        break;
+                    }
+                }
+            });
+        }
+
+        // initialize new account
+        void VerticesSDK::VerticesInitializeNewWalletGet(const VerticesInitializeNewWalletGetRequest& Request, const FVerticesInitializeNewWalletGetDelegate& delegate)
+        {           
+            AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
+            {
+                ret_code_t err_code = VTC_SUCCESS;
+                while (1) {
+                    FScopeLock lock(&m_Mutex);
+
+                    if (vertices_usable) {
+                        VerticesSDK::VerticesInitializeNewWalletGetResponse response;
+                        vertices_usable = false;
+                        
+                        try
+                        {   
+                            response = response_builders::buildInitializeNewWalletResponse(FString(sender_account.vtc_account->public_b32));
+                            response.SetSuccessful(true);
+                        }
+                        catch(SDKException& e)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(e.what()));   
+                        }
+                        catch(std::exception& ex)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(ex.what()));
+                        }
+
+                        AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+                        {
+                            delegate.ExecuteIfBound(response);
+                        });
+
+                        vertices_usable = true;
+                        break;
+                    }
+                }
+            });
+        }
+
+        // get backup mnemonic phrase
+        void VerticesSDK::VerticesGetBackupMnemonicPhraseGet(const VerticesGetBackupMnemonicPhraseGetRequest& Request, const FVerticesGetBackupMnemonicPhraseGetDelegate& delegate)
+        {           
+            AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
+            {
+                ret_code_t err_code = VTC_SUCCESS;
+                while (1) {
+                    FScopeLock lock(&m_Mutex);
+
+                    if (vertices_usable) {
+                        VerticesSDK::VerticesGetBackupMnemonicPhraseGetResponse response;
+                        vertices_usable = false;
+                        
+                        try
+                        {   
+                            response = response_builders::buildGetBackupMnemonicPhraseResponse(FString(sender_account.vtc_account->public_b32));
+                            response.SetSuccessful(true);
+                        }
+                        catch(SDKException& e)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(e.what()));   
+                        }
+                        catch(std::exception& ex)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(ex.what()));
+                        }
+
+                        AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+                        {
+                            delegate.ExecuteIfBound(response);
+                        });
+
+                        vertices_usable = true;
+                        break;
+                    }
+                }
+            });
+        }
+
+        // generate mnemonics
+        void VerticesSDK::VerticesGenerateMnemonicsGet(const VerticesGenerateMnemonicsGetRequest& Request, const FVerticesGenerateMnemonicsGetDelegate& delegate)
+        {           
+            AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
+            {
+                ret_code_t err_code = VTC_SUCCESS;
+                while (1) {
+                    FScopeLock lock(&m_Mutex);
+
+                    if (vertices_usable) {
+                        VerticesSDK::VerticesGenerateMnemonicsGetResponse response;
+                        vertices_usable = false;
+                        
+                        try
+                        {   
+                            response = response_builders::buildGenerateMnemonicsResponse(FString(sender_account.vtc_account->public_b32));
                             response.SetSuccessful(true);
                         }
                         catch(SDKException& e)
