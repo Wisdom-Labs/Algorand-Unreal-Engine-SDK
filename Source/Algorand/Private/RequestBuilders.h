@@ -24,7 +24,7 @@ namespace request_builders {
 	 * @return request
 	 */
 	algorand::vertices::VerticesSDK::VerticesRestoreWalletGetRequest
-	buildRestoreWalletRequest();
+	buildRestoreWalletRequest(const FString& mnemonics);
 
 	/**
 	 * @brief build request for initialize new wallet 

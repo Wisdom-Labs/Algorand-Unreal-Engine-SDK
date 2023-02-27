@@ -55,6 +55,11 @@ Account Account::from_mnemonic(std::string m) {
 	return Account(keys.first, keys.second);
 }
 
+Account Account::initialize_new() {
+	auto keys = generate_keys();
+	return Account(keys.first, keys.second);
+}
+
 std::string Account::mnemonic() const {
 	return mnemonic_from_seed(seed());
 }

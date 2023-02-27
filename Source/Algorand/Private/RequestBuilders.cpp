@@ -8,9 +8,10 @@ namespace {
 }
 namespace request_builders {
 	Vertices::VerticesRestoreWalletGetRequest
-	buildRestoreWalletRequest()
+	buildRestoreWalletRequest(const FString& mnemonics)
 	{
 		Vertices::VerticesRestoreWalletGetRequest request;
+		request.Mnemonics = mnemonics;
 		return request;
 	}
 

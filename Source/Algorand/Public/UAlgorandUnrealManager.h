@@ -186,7 +186,7 @@ public:
     UFUNCTION(BlueprintCallable,
 			  meta = (DisplayName = "RestoreWallet", Keywords = "Wallet"),
     		  Category = "AlgorandUnrealManager")
-    void restoreWallet();
+    void restoreWallet(const FString& mnemonics);
 
 	/**
 	 * restore wallet callback

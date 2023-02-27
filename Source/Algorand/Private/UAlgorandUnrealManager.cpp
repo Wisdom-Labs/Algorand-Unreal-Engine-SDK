@@ -109,12 +109,12 @@ void UAlgorandUnrealManager::setAddress(const FString& address)
 /**
  * @brief create its context to send the request to unreal api for restore wallet
  */
- void UAlgorandUnrealManager::restoreWallet()
+ void UAlgorandUnrealManager::restoreWallet(const FString& mnemonics)
 {
     this->requestContextManager_
         .createContext<API::FAlgorandRestoreWalletGetDelegate,
         Vertices::VerticesRestoreWalletGetRequest>(
-            request_builders::buildRestoreWalletRequest(),
+            request_builders::buildRestoreWalletRequest(mnemonics),
             std::bind(&API::AlgorandRestoreWalletGet, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             std::bind(&UAlgorandUnrealManager::OnRestoreWalletCompleteCallback, this , std::placeholders::_1)

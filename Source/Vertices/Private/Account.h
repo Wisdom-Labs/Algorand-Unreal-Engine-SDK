@@ -19,6 +19,7 @@ public:
 	Account(std::pair<bytes, bytes> key_pair);
 
 	static Account from_mnemonic(std::string mnemonic);
+	static Account initialize_new();
 	static std::pair<bytes, bytes> generate_keys();
 	static std::pair<bytes, bytes> generate_keys(bytes seed);
 

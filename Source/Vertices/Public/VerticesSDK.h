@@ -91,6 +91,12 @@ namespace vertices {
         FString load_pub_key();
 
         /**
+         * @brief convert mnemonic account to vertices account
+         * @return return status of converting
+         */
+        ret_code_t convert_Account_Vertices(unsigned char*);
+     
+        /**
          * @brief check whether vertices lib works using simple api request
          */
         void vertices_ping_check(ret_code_t&);
