@@ -100,9 +100,32 @@ public:
      * @return AlgorandUnrealManager as a pointer
      */
     UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "createInstanceWithParams", Keywords = "AlgorandManager"),
+			  Category = "AlgorandUnrealManager")
+        static UAlgorandUnrealManager* createInstanceWithParams(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader_, UObject* outer);
+
+	/**
+	 * Create Instance of Algorand manager
+	 * @param outer root on level
+	 * @return AlgorandUnrealManager as a pointer
+	 * 
+	 */
+	UFUNCTION(BlueprintCallable,
 			  meta = (DisplayName = "CreateInstance", Keywords = "AlgorandManager"),
 			  Category = "AlgorandUnrealManager")
-        static UAlgorandUnrealManager* createInstance(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader_, UObject* outer);
+		static UAlgorandUnrealManager* createInstance(UObject* outer);
+
+	/**
+	 * Create Instance of Algorand manager
+	 * @param algoRpc algorand rpc url https://node.testnet.algoexplorerapi.io
+	 * @param algoPort algorand rpc port 0
+	 * @param algoTokenHeader algorand rpc token header "" , if localhost, X-Algo-API-Token: , if using purestake api, x-api-key:
+	 * @return AlgorandUnrealManager as a pointer
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "setAlgoRpcInfo", Keywords = "AlgorandManager"),
+			  Category = "AlgorandUnrealManager")
+		void setAlgoRpcInfo(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader_);
 
     /**
      * Set rpc url of algorand node

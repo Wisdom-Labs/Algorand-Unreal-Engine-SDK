@@ -524,7 +524,7 @@ namespace algorand {
                 ret_code_t err_code = VTC_SUCCESS;
                 while (1) {
                     FScopeLock lock(&m_Mutex);
-
+                    
                     if (vertices_usable) {
                         VerticesSDK::VerticesInitializeNewWalletGetResponse response;
                         vertices_usable = false;
@@ -545,21 +545,21 @@ namespace algorand {
                             unsigned char pub_key[ADDRESS_LENGTH]; 
                             memset(pub_key, 0 , ADDRESS_LENGTH);
                             memcpy(pub_key, account.public_key().data(), ADDRESS_LENGTH);
-                        
+
                             err_code = vertices_account_new_from_bin((char *)pub_key, &sender_account.vtc_account);
                             UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_bin %d"), err_code);
                             checkVTCSuccess("Vertices account_new_from_bin", err_code);
                             UE_LOG(LogTemp, Display, TEXT("💳 Created Core account: %s"), *FString(sender_account.vtc_account->public_b32));
                             
                             UE_LOG(LogTemp, Warning, TEXT("VerticesRestoreWalletGet amount of sender %d"), sender_account.vtc_account->amount);
-                                
+                            
                             response = response_builders::buildInitializeNewWalletResponse(FString(sender_account.vtc_account->public_b32));
                             response.SetSuccessful(true);
                         }
                         catch(SDKException& e)
                         {
                             response.SetSuccessful(false);
-                            response.SetResponseString(FString(e.what()));   
+                            response.SetResponseString(FString(e.what()));
                         }
                         catch(std::exception& ex)
                         {
@@ -702,8 +702,9 @@ namespace algorand {
 
                             memset(test_account.private_key, 0, 32);
                             test_account.vtc_account = nullptr;
-
+                            
                             const FString& address = Request.Address.GetValue();
+                            
                             err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*address), &test_account.vtc_account);
                             checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
                             UE_LOG(LogTemp, Warning, TEXT("err_code AlgorandGetaddressbalanceGet %d"), test_account.vtc_account->amount);
@@ -716,14 +717,14 @@ namespace algorand {
                         }
                         catch (SDKException& e)
                         {
-                            UE_LOG(LogTemp, Error, TEXT("👉 payment tx error: %s"), e.what());
+                            UE_LOG(LogTemp, Error, TEXT("👉 get balance error: %s"), e.what());
                             
                             response.SetSuccessful(false);
                             response.SetResponseString(FString(e.what()));   
                         }
                         catch (std::exception& ex)
                         {
-                            UE_LOG(LogTemp, Error, TEXT("👉 payment tx error: %s"), ex.what());
+                            UE_LOG(LogTemp, Error, TEXT("👉 get balance error: %s"), ex.what());
                             
                             response.SetSuccessful(false);
                             response.SetResponseString(FString(ex.what()));
@@ -772,11 +773,6 @@ namespace algorand {
                             }
                             InitVertices(err_code);
                             checkVTCSuccess("When initing vertices network, an error occured", err_code);
-                            
-                            err_code = load_existing_account();
-                            checkVTCSuccess("When loading an existing account, an error occured", err_code);
-                            
-                            UE_LOG(LogTemp, Display, TEXT("Loaded main account."));
 
                             if (sender_account.vtc_account->amount < 1000) {
                                 FFormatNamedArguments Arguments;
@@ -870,9 +866,6 @@ namespace algorand {
                             
                             InitVertices(err_code);
                             checkVTCSuccess("When initing vertices network, an error occured", err_code);
-                            
-                            err_code = load_existing_account();
-                            checkVTCSuccess("When loading an existing account, an error occured", err_code);
 
                             if (sender_account.vtc_account->amount < 1000) {
                                 FFormatNamedArguments Arguments;

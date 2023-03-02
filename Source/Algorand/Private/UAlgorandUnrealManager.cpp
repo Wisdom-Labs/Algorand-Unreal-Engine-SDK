@@ -30,28 +30,13 @@ UAlgorandUnrealManager::UAlgorandUnrealManager()
     setAlgoPort(myAlgoPort);
     setAlgoTokenHeader(myAlgoTokenHeader);
 
-    // Load existing pub address from Vertices SDK
-    if (vertices_.IsValid()) {
-        try
-        {
-            address = vertices_->load_pub_key();
-        }
-        catch (std::exception& ex)
-        {
-            address = !address.IsEmpty() ? address : "O6APBR3UNPVWH7ILBMCI6V53PDZAQQLMV47VKQWHH5753SQPRNDLSE7SWQ";        // default address
-            FFormatNamedArguments Arguments;
-            Arguments.Add(TEXT("MSG"), FText::FromString(ex.what()));
-            FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "{MSG}"), Arguments));
-        }
-    }
-
-    transactionBuilder_ = createTransactionBuilder(address);       
+    transactionBuilder_ = createTransactionBuilder("");       
     // create instance of unreal api library
     unrealApi_ = MakeShared<algorand::api::UnrealApi>(vertices_);
 }
 
 // create instance of algorand manager using blueprint
-UAlgorandUnrealManager* UAlgorandUnrealManager::createInstance(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader, UObject* outer)
+UAlgorandUnrealManager* UAlgorandUnrealManager::createInstanceWithParams(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader, UObject* outer)
 {
     UAlgorandUnrealManager* manager = NewObject<UAlgorandUnrealManager>(outer);
     
@@ -60,6 +45,22 @@ UAlgorandUnrealManager* UAlgorandUnrealManager::createInstance(const FString& al
     manager->setAlgoTokenHeader(algoTokenHeader);
         
     return manager;
+}
+
+// create instance of algorand manager using blueprint
+UAlgorandUnrealManager* UAlgorandUnrealManager::createInstance(UObject* outer)
+{
+    UAlgorandUnrealManager* manager = NewObject<UAlgorandUnrealManager>(outer);
+        
+    return manager;
+}
+
+/// set rpc info from algorand manager to vertices instance
+void UAlgorandUnrealManager::setAlgoRpcInfo(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader)
+{
+    this->setAlgoRpc(algoRpc);
+    this->setAlgoPort(algoPort);
+    this->setAlgoTokenHeader(algoTokenHeader);
 }
 
 /// set rpc info from algorand manager to vertices instance
@@ -127,8 +128,8 @@ void UAlgorandUnrealManager::setAddress(const FString& address)
 void UAlgorandUnrealManager::OnRestoreWalletCompleteCallback(const Vertices::VerticesRestoreWalletGetResponse& response) {
     if (response.IsSuccessful()) {
         FString output = response.output;
-        RestoreWalletCallback.Broadcast(output);
         setAddress(output);
+        RestoreWalletCallback.Broadcast(output);
     }
     else {
         if (!ErrorDelegateCallback.IsBound()) {
@@ -158,8 +159,10 @@ void UAlgorandUnrealManager::OnRestoreWalletCompleteCallback(const Vertices::Ver
 void UAlgorandUnrealManager::OnInitializeNewWalletCompleteCallback(const Vertices::VerticesInitializeNewWalletGetResponse& response) {
     if (response.IsSuccessful()) {
         FString output = response.output;
-        InitializeNewWalletCallback.Broadcast(output);
+        UE_LOG(LogTemp, Display, TEXT("get address: %s"),*output);
         setAddress(output);
+        UE_LOG(LogTemp, Display, TEXT("get address: %s"),*this->getAddress());
+        InitializeNewWalletCallback.Broadcast(output);
     }
     else {
         if (!ErrorDelegateCallback.IsBound()) {
@@ -190,7 +193,6 @@ void UAlgorandUnrealManager::OnGetBackupMnemonicPhraseCompleteCallback(const Ver
     if (response.IsSuccessful()) {
         FString output = response.output;
         GetBackupMnemonicPhraseCallback.Broadcast(output);
-        setAddress(output);
     }
     else {
         if (!ErrorDelegateCallback.IsBound()) {
@@ -221,7 +223,6 @@ void UAlgorandUnrealManager::OnGenerateMnemonicsCompleteCallback(const Vertices:
     if (response.IsSuccessful()) {
         FString output = response.output;
         GenerateMnemonicsCallback.Broadcast(output);
-        setAddress(output);
     }
     else {
         if (!ErrorDelegateCallback.IsBound()) {
