@@ -49,6 +49,16 @@ Account::Account(std::pair<bytes, bytes> key_pair) :
 	Account(key_pair.first, key_pair.second) {
 }
 
+Account& Account::operator=(const Account& other)
+{
+	if (this != &other) // check for self-assignment
+	{
+		secret_key.assign(other.secret_key.begin(), other.secret_key.end());
+		address = other.address;
+	}
+	return *this;
+}
+
 Account Account::from_mnemonic(std::string m) {
 	auto seed = seed_from_mnemonic(m);
 	auto keys = generate_keys(seed);

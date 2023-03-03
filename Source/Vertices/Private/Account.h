@@ -13,6 +13,8 @@ typedef std::vector<unsigned char> bytes;
 
 class Account {
 public:
+	Account() {}
+	Account& operator=(const Account& other);
 	Account(std::string address);
 	Account(Address address);
 	Account(bytes public_key, bytes secret_key);
@@ -29,6 +31,6 @@ public:
 	bytes sign(bytes msg) const;
 
 	const bytes public_key() const { return address.public_key; }
-	const Address address;
-	const bytes secret_key;       // empty() if created from an address, not key
+	Address address;
+	bytes secret_key;       // empty() if created from an address, not key
 };

@@ -8,6 +8,7 @@
 #include "http_weak.h"
 #include "../Private/include/sodium.h"
 #include <cstring>
+#include "../Private/Account.h"
 #include "../Private/SDKException.h"
 
 /**
@@ -94,7 +95,7 @@ namespace vertices {
          * @brief convert mnemonic account to vertices account
          * @return return status of converting
          */
-        ret_code_t convert_Account_Vertices(unsigned char*);
+        ret_code_t convert_Account_Vertices();
      
         /**
          * @brief check whether vertices lib works using simple api request
@@ -172,6 +173,9 @@ namespace vertices {
         int myAlgoPort;
         FString myAlgoTokenHeader;
 
+        // main algo account
+        Account main_account;
+     
         // mutex for multi-threads
         FCriticalSection m_Mutex;
 

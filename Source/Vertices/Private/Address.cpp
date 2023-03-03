@@ -21,6 +21,16 @@ Address::Address(std::string address, bytes with_checksum) :
     assert(public_key.size() == 32);
 }
 
+Address& Address::operator=(const Address& other)
+{
+    if (this != &other) // check for self-assignment
+    {
+        as_string.assign(other.as_string.begin(), other.as_string.end());
+        public_key.assign(other.public_key.begin(), other.public_key.end());
+    }
+    return *this;
+}
+
 static bytes
 checksummed(bytes public_key) {
     bytes copy(public_key);
