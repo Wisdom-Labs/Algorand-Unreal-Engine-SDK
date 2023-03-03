@@ -10,7 +10,6 @@
 #include "ResponseBuilers.h"
 #include "HAL/UnrealMemory.h"
 #include "AES.h"
-#include "Account.h"
 #include <cstring>
 #include "SDKException.h"
 
@@ -443,15 +442,28 @@ namespace algorand {
             return FString(strlen(public_b32), public_b32);
         }
 
-        ret_code_t VerticesSDK::convert_Account_Vertices(unsigned char* secret_key)
+        ret_code_t VerticesSDK::convert_Account_Vertices()
         {
-            ret_code_t err_code = VTC_SUCCESS;
-            
+            ret_code_t err_code;
+            // copy private key to vertices account
+            if(main_account.secret_key.size() != ADDRESS_LENGTH)
+                checkVTCSuccess("Secret key length is not 32 byte", err_code);
+
             memset(sender_account.private_key, 0 , ADDRESS_LENGTH);
-            memcpy(sender_account.private_key, secret_key, ADDRESS_LENGTH);
+            memcpy(sender_account.private_key, (unsigned char*)main_account.secret_key.data(), ADDRESS_LENGTH);
+
+            // copy public key to vertices account
+            unsigned char pub_key[ADDRESS_LENGTH]; 
+            memset(pub_key, 0 , ADDRESS_LENGTH);
+            memcpy(pub_key, main_account.public_key().data(), ADDRESS_LENGTH);
+
+            err_code = vertices_account_new_from_bin((char *)pub_key, &sender_account.vtc_account);
+            UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_bin %d"), err_code);
+            checkVTCSuccess("Vertices account_new_from_bin", err_code);
 
             return err_code;
         }
+
         // restore account with mnemonic private keys
         void VerticesSDK::VerticesRestoreWalletGet(const VerticesRestoreWalletGetRequest& Request, const FVerticesRestoreWalletGetDelegate& delegate)
         {           
@@ -467,31 +479,17 @@ namespace algorand {
             
                     try
                     {
-                        InitVertices(err_code);
-                        checkVTCSuccess("When initing vertices network, an error occured", err_code);
-                        
                         auto mnemonics = StringCast<ANSICHAR>(*(Request.Mnemonics.GetValue()));
-                        const char* s_mnemonics = mnemonics.Get();
-                        Account account = Account::from_mnemonic(s_mnemonics);
-
+                        auto s_mnemonics = mnemonics.Get();
+                        main_account = Account::from_mnemonic(s_mnemonics);
+                        
                         // copy private key to vertices account
-                        if(account.secret_key.size() != ADDRESS_LENGTH)
+                        if(main_account.secret_key.size() != ADDRESS_LENGTH)
                             checkVTCSuccess("Secret key length is not 32 byte", err_code);
-                        convert_Account_Vertices((unsigned char*)account.secret_key.data());
-
-                        // copy public key to vertices account
-                        unsigned char pub_key[ADDRESS_LENGTH]; 
-                        memset(pub_key, 0 , ADDRESS_LENGTH);
-                        memcpy(pub_key, account.public_key().data(), ADDRESS_LENGTH);
-                    
-                        err_code = vertices_account_new_from_bin((char *)pub_key, &sender_account.vtc_account);
-                        UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_bin %d"), err_code);
-                        checkVTCSuccess("Vertices account_new_from_bin", err_code);
-                        UE_LOG(LogTemp, Display, TEXT("💳 Created Core account: %s"), *FString(sender_account.vtc_account->public_b32));
                         
-                        UE_LOG(LogTemp, Warning, TEXT("VerticesRestoreWalletGet amount of sender %d"), sender_account.vtc_account->amount);
+                        UE_LOG(LogTemp, Display, TEXT("💳 Created Core account: %s"), *FString(main_account.address.as_string.data()));
                         
-                        response = response_builders::buildRestoreWalletResponse(FString(sender_account.vtc_account->public_b32));
+                        response = response_builders::buildRestoreWalletResponse(FString(main_account.address.as_string.data()));
                         response.SetSuccessful(true);
                     }
                     catch(SDKException& e)
@@ -531,29 +529,15 @@ namespace algorand {
                         
                         try
                         {
-                            InitVertices(err_code);
-                            checkVTCSuccess("When initing vertices network, an error occured", err_code);
-                            
-                            Account account = Account::initialize_new();
+                            main_account = Account::initialize_new();
 
                             // copy private key to vertices account
-                            if(account.secret_key.size() != ADDRESS_LENGTH)
+                            if(main_account.secret_key.size() != ADDRESS_LENGTH)
                                 checkVTCSuccess("Secret key length is not 32 byte", err_code);
-                            convert_Account_Vertices((unsigned char*)account.secret_key.data());
-
-                            // copy public key to vertices account
-                            unsigned char pub_key[ADDRESS_LENGTH]; 
-                            memset(pub_key, 0 , ADDRESS_LENGTH);
-                            memcpy(pub_key, account.public_key().data(), ADDRESS_LENGTH);
-
-                            err_code = vertices_account_new_from_bin((char *)pub_key, &sender_account.vtc_account);
-                            UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_bin %d"), err_code);
-                            checkVTCSuccess("Vertices account_new_from_bin", err_code);
-                            UE_LOG(LogTemp, Display, TEXT("💳 Created Core account: %s"), *FString(sender_account.vtc_account->public_b32));
                             
-                            UE_LOG(LogTemp, Warning, TEXT("VerticesRestoreWalletGet amount of sender %d"), sender_account.vtc_account->amount);
+                            UE_LOG(LogTemp, Display, TEXT("💳 Created Core account: %s"), *FString(main_account.address.as_string.data()));
                             
-                            response = response_builders::buildInitializeNewWalletResponse(FString(sender_account.vtc_account->public_b32));
+                            response = response_builders::buildInitializeNewWalletResponse(FString(main_account.address.as_string.data()));
                             response.SetSuccessful(true);
                         }
                         catch(SDKException& e)
@@ -697,6 +681,14 @@ namespace algorand {
 
                         try
                         {
+                            // validation Request
+                            auto auto_address = StringCast<ANSICHAR>(*(Request.Address.GetValue()));
+                            if ( auto_address.Length() == 0 )
+                            {
+                                err_code = VTC_ERROR_INVALID_PARAM;
+                                checkVTCSuccess("When loading address from request , an error occured", err_code);   
+                            }
+                            
                             InitVertices(err_code);
                             checkVTCSuccess("When initing vertices network, an error occured", err_code);
 
@@ -759,7 +751,6 @@ namespace algorand {
                         try
                         {
                             // validation Request
-                            // char* notes = TCHAR_TO_ANSI(*(Request.notes.GetValue()));
                             auto auto_notes = StringCast<ANSICHAR>(*(Request.notes.GetValue()));
                             char* notes = (char *)auto_notes.Get();
 
@@ -773,6 +764,8 @@ namespace algorand {
                             }
                             InitVertices(err_code);
                             checkVTCSuccess("When initing vertices network, an error occured", err_code);
+
+                            convert_Account_Vertices();
 
                             if (sender_account.vtc_account->amount < 1000) {
                                 FFormatNamedArguments Arguments;
@@ -858,6 +851,7 @@ namespace algorand {
 
                         try
                         {
+                            // validation request   
                             if ( Request.app_ID.GetValue() == 0 )
                             {
                                 err_code = VTC_ERROR_INVALID_ADDR;
@@ -866,6 +860,8 @@ namespace algorand {
                             
                             InitVertices(err_code);
                             checkVTCSuccess("When initing vertices network, an error occured", err_code);
+
+                            convert_Account_Vertices();
 
                             if (sender_account.vtc_account->amount < 1000) {
                                 FFormatNamedArguments Arguments;

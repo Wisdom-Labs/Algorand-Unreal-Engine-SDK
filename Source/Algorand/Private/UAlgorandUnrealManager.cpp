@@ -159,9 +159,7 @@ void UAlgorandUnrealManager::OnRestoreWalletCompleteCallback(const Vertices::Ver
 void UAlgorandUnrealManager::OnInitializeNewWalletCompleteCallback(const Vertices::VerticesInitializeNewWalletGetResponse& response) {
     if (response.IsSuccessful()) {
         FString output = response.output;
-        UE_LOG(LogTemp, Display, TEXT("get address: %s"),*output);
         setAddress(output);
-        UE_LOG(LogTemp, Display, TEXT("get address: %s"),*this->getAddress());
         InitializeNewWalletCallback.Broadcast(output);
     }
     else {
