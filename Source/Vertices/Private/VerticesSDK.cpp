@@ -12,6 +12,7 @@
 #include "AES.h"
 #include <cstring>
 #include "SDKException.h"
+#include "Windows/AllowWindowsPlatformTypes.h"
 
 using namespace std;
 
@@ -446,8 +447,9 @@ namespace algorand {
         {
             ret_code_t err_code;
             // copy private key to vertices account
-            if(main_account.secret_key.size() != ADDRESS_LENGTH)
-                checkVTCSuccess("Secret key length is not 32 byte", err_code);
+            // if(main_account.secret_key.size() != ADDRESS_LENGTH)
+            //     err_code = VTC_ERROR_INVALID_PARAM;
+            // checkVTCSuccess("Secret key length is not 32 byte", err_code);
 
             memset(sender_account.private_key, 0 , ADDRESS_LENGTH);
             memcpy(sender_account.private_key, (unsigned char*)main_account.secret_key.data(), ADDRESS_LENGTH);
