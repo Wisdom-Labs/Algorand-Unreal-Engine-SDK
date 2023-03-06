@@ -8,6 +8,8 @@ This plugin provides functionallity for building different types of transactions
 ## 📙 1. Overview:
 ALgorand Unreal Engine Plugin
 
+We made a [Doc](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/blob/master/Algorand-Unreal-SDK-Documentation.pdf) which shows overview of our plugin usage and you can check this doc at start of dev with this plugin.
+ 
 This UE plugin includes:
 - Root Folder: Unreal-Plugin - Put this plugin in your new or existing project to utilize.
 - Example Folder: Unreal Plugin Example Project - Use this project to start your new game or demo/test Algorand System
