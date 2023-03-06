@@ -23,23 +23,38 @@ This sdk contains a setting option to set RPC Info.
 
 RPC types you can select are like following:
 * Algoexplorerapi
+  + mainnet: https://node.mainnet.algoexplorerapi.io
+  + testnet: https://node.testnet.algoexplorerapi.io
+  + betanet: https://node.betanet.algoexplorerapi.io
 * Purestake
+  + mainnet: https://mainnet-algorand.api.purestake.io/ps2
+  + testnet: https://testnet-algorand.api.purestake.io/ps2
+  + betanet: https://betanet-algorand.api.purestake.io/ps2
+* Sandbox Algorand Node
+  + algod: http://localhost:4001 
+  + kmd: http://localhost:4002
+  + indexer: http://localhost:8980
 * Local Algorand Node, (You should install new algorand node on your local)
+
+ 👔 You should add token for above some urls and can reference this [link](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/tree/master/example/unreal-algorand-demo#how-to-set-rpc-info).
 
 ## 📑 2. Prerequisites:
 
 To use this UE plugin : ✅
 - Unreal Engine 5.x is supported.
+  https://docs.unrealengine.com/5.1/en-US/installing-unreal-engine/
 - Windows: Visual Studio 2019 or newer, JetBrains Rider 2020.x
 - macOS: Xcode 13.2.1
 > In order to build project using Unreal Engine 5.0+, use a branch `master`.
 
 ## ⚙️ 3. Installation:
-1. In this Github repository, clone this repo with `git` command or download as a zip file type.
-2. You can copy AlgorandUnrealEngineSDK folder to the `Plugins/Algorand` of your UE project directory.
-> In this example, the project directory is `C:\Unreal Projects\MyGameProject\Plugins\Algorand`
-3. You should register the plugin name (Algorand) into Build.cs on the Source 
-directory of your project and rebuild your project.
+1. In this Github repository, clone this repo with `git` command or download as a zip file type and rename cloned folder name `AlgorandUnrealEngineSDK`.
+2. You can find a folder called example, which is our test project.
+3. Then you should create a folder called `Plugins/Algorand` on `example/unreal-algorand-demo` folder.
+4. You should copy all except for example folder on `AlgorandUnrealEngineSDK` folder to the `Plugins/Algorand` folder of our test project.
+> After you complete above action, this plugin path is `example\unreal-algorand-demo\Plugins\Algorand`.
+5. You should register the plugin name (Algorand) into Build.cs on the Source 
+directory of out test project (`example\unreal-algorand-demo`) and rebuild your project.
     ```csharp  
     public UnrealAlgorandPlugin(ReadOnlyTargetRules Target) : base(Target)
     {
@@ -50,8 +65,8 @@ directory of your project and rebuild your project.
         PrivateDependencyModuleNames.AddRange(new string[] {  });
     }
     ```
-4. Right click on YourProject.uproject, and "Generate Visual Studio project files" - This process may take some time.
-5. Once finished, open your *.sln project or *.uproject file with Visual Studio or JetBrains Rider.
+>Right click on UnrealAlgorandPlugin.uproject on `example/unreal-algorand-demo` folder, and "Generate Visual Studio project files" - This process may take some time.
+6. Once finished, open your *.sln project or *.uproject file with Visual Studio or JetBrains Rider.
 
 ## 🧭 4. Modules reference
 * **Algorand** - entrypoint module, provides `C++`- & `Blueprints`- friendly interfaces for plugin's users. This module should be considered as the only module you need to depend on.

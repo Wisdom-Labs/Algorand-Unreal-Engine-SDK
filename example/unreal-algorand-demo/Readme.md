@@ -39,11 +39,24 @@ This repository contains a sample project that uses the Algorand Play Unreal SDK
         + You can get purestake api key using [Reference](##Reference)
         > C++ Usage
         + ```setAlgoTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1");```
+  - Sandbox Algorand Node
+
+    You can access any algorand network using sandbox. (`mainnet`, `testnet`, `betanet`, or ... )
+    > Thing that you should know
+    + key value of tokenHeader should be started with `X-Algo-API-Token:`
+    + You can see reference Doc to install sandbox. [Reference](##Reference)
+    > C++ Usage
+    ```c++
+    setAlgoRpc("http://localhost");
+    setAlgoPort(4001);
+    setAlgoTokenHeader("X-Algo-API-Token:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    ```
  - Local Algorand Node
+ 
     After installation of algorand node on local, You should set some rpc info.
     > Thing that you should know
     + key value of tokenHeader should be started with `X-Algo-API-Token:`
-    + You can see reference Doc. [Reference](##Reference)
+    + You can see reference Doc to install local algorand node. [Reference](##Reference)
     > C++ Usage
     ```c++
     setAlgoRpc("http://localhost");
@@ -60,6 +73,7 @@ This repository contains a sample project that uses the Algorand Play Unreal SDK
     + App ID: `16037129`
 ## Reference
  - If you are a game developer, please check this doc.  [How to get purestake key](https://developer.algorand.org/tutorials/getting-started-purestake-api-service/)
+ - If you want to run sandbox algorand node, check this tutorial [Access BetaNet Network using Sandbox](https://developer.algorand.org/tutorials/betanet-sandbox/)
  - Also if you want to run local algorand node on `windows`, check this [How to compile and rn the algorand node natively windows](https://developer.algorand.org/tutorials/compile-and-run-the-algorand-node-natively-windows/)
 
     
