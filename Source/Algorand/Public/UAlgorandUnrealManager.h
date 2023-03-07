@@ -33,19 +33,52 @@ namespace {
     using Vertices = algorand::vertices::VerticesSDK;
 }
 
-/// generate wallet callback
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGenerateWalletDelegate, const FString&, address);
+/**
+ * restore wallet callback 
+ * @param output generated address
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRestoreWalletDelegate, const FString&, output);
 
-/// get balance callback
+/**
+ * initialize new wallet callback 
+ * @param output generated address
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInitializeNewWalletDelegate, const FString&, output);
+
+/**
+ * get backup mnemonics phrase callback 
+ * @param output backup mnemonics
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetBackupMnemonicPhraseDelegate, const FString&, output);
+
+/**
+ * generate mnemonics callback 
+ * @param output generated mnemonics
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGenerateMnemonicsDelegate, const FString&, output);
+
+/**
+ * get balance callback
+ * @param money account balance
+*/
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetBalanceDelegate, const FUInt64&, money);
 
-/// payment tx callback
+/**
+ * payment tx callback
+ * @param txID transaction hash
+*/
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPaymentTransactionDelegate, const FString&, txID);
 
-/// application call tx callback
+/**
+ * application call tx callback
+ * @param txID transaction hash
+*/
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FApplicationCallTransactionDelegate, const FString&, txID);
 
-/// error callback
+/**
+ * error callback
+ * @param error 
+*/
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FErrorDelegate, const FError&, error);
 
 class TransactionBuilder;
@@ -67,9 +100,32 @@ public:
      * @return AlgorandUnrealManager as a pointer
      */
     UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "createInstanceWithParams", Keywords = "AlgorandManager"),
+			  Category = "AlgorandUnrealManager")
+        static UAlgorandUnrealManager* createInstanceWithParams(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader_, UObject* outer);
+
+	/**
+	 * Create Instance of Algorand manager
+	 * @param outer root on level
+	 * @return AlgorandUnrealManager as a pointer
+	 * 
+	 */
+	UFUNCTION(BlueprintCallable,
 			  meta = (DisplayName = "CreateInstance", Keywords = "AlgorandManager"),
 			  Category = "AlgorandUnrealManager")
-        static UAlgorandUnrealManager* createInstance(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader_, UObject* outer);
+		static UAlgorandUnrealManager* createInstance(UObject* outer);
+
+	/**
+	 * Create Instance of Algorand manager
+	 * @param algoRpc algorand rpc url https://node.testnet.algoexplorerapi.io
+	 * @param algoPort algorand rpc port 0
+	 * @param algoTokenHeader algorand rpc token header "" , if localhost, X-Algo-API-Token: , if using purestake api, x-api-key:
+	 * @return AlgorandUnrealManager as a pointer
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "setAlgoRpcInfo", Keywords = "AlgorandManager"),
+			  Category = "AlgorandUnrealManager")
+		void setAlgoRpcInfo(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader_);
 
     /**
      * Set rpc url of algorand node
@@ -148,25 +204,85 @@ public:
         FErrorDelegate ErrorDelegateCallback;
 
 	/**
-	 * generate new account
+	 * Restore Wallet
 	 */
     UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "generateWallet", Keywords = "Wallet"),
+			  meta = (DisplayName = "RestoreWallet", Keywords = "Wallet"),
     		  Category = "AlgorandUnrealManager")
-    void generateWallet();
+    void restoreWallet(const FString& mnemonics);
 
 	/**
-	 * generate wallet information callback
+	 * restore wallet callback
 	 */
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
-        FGenerateWalletDelegate GenerateWalletCallback;
+        FRestoreWalletDelegate RestoreWalletCallback;
 
 	/**
-	 * get response after generate new account
-	 * @param response address got by generating new account
+	 * get response after restore wallet with mnemonics
+	 * @param response address got by restoring wallet
 	 */
-    void OnGenerateWalletCompleteCallback(const Vertices::VerticesGenerateWalletGetResponse& response);
+    void OnRestoreWalletCompleteCallback(const Vertices::VerticesRestoreWalletGetResponse& response);
+    
+    /**
+	 * Initialize New Wallet
+	 */
+    UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "InitializeNewWallet", Keywords = "Wallet"),
+    		  Category = "AlgorandUnrealManager")
+    void initializeNewWallet();
 
+	/**
+	 * initialize new wallet callback
+	 */
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+        FInitializeNewWalletDelegate InitializeNewWalletCallback;
+
+	/**
+	 * get response after initialize new wallet
+	 * @param response address got by initializing new wallet
+	 */
+    void OnInitializeNewWalletCompleteCallback(const Vertices::VerticesInitializeNewWalletGetResponse& response);
+
+	/**
+	 * Get Backup Mnemonics Phrase
+	 */
+    UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "GetBackupMnemonicsPhrase", Keywords = "Wallet"),
+    		  Category = "AlgorandUnrealManager")
+    void getBackupMnemonicPhrase();
+
+	/**
+	 * get backup mnemonic phrase
+	 */
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+        FGetBackupMnemonicPhraseDelegate GetBackupMnemonicPhraseCallback;
+
+	/**
+	 * get response of backup mnemonics phrase
+	 * @param response mnemonics phrase of backup
+	 */
+    void OnGetBackupMnemonicPhraseCompleteCallback(const Vertices::VerticesGetBackupMnemonicPhraseGetResponse& response);
+    
+	/**
+	 * Generate Mnemonics
+	 */
+    UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "GenerateMnemonics", Keywords = "Wallet"),
+    		  Category = "AlgorandUnrealManager")
+    void generateMnemonics();
+
+	/**
+	 * generate mnemonics callback
+	 */
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+        FGenerateMnemonicsDelegate GenerateMnemonicsCallback;
+
+	/**
+	 * get response after generating mnemonics
+	 * @param response mnemonics got by generating mnemonics
+	 */
+    void OnGenerateMnemonicsCompleteCallback(const Vertices::VerticesGenerateMnemonicsGetResponse& response);
+    
 	/**
 	 * get balance by specific address
 	 * 

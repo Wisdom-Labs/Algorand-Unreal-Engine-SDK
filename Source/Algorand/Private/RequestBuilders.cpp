@@ -7,10 +7,32 @@ namespace {
 	using Vertices = algorand::vertices::VerticesSDK;
 }
 namespace request_builders {
-	Vertices::VerticesGenerateWalletGetRequest
-	buildGenerateWalletRequest()
+	Vertices::VerticesRestoreWalletGetRequest
+	buildRestoreWalletRequest(const FString& mnemonics)
 	{
-		Vertices::VerticesGenerateWalletGetRequest request;
+		Vertices::VerticesRestoreWalletGetRequest request;
+		request.Mnemonics = mnemonics;
+		return request;
+	}
+
+	Vertices::VerticesInitializeNewWalletGetRequest
+	buildInitializeNewWalletRequest()
+	{
+		Vertices::VerticesInitializeNewWalletGetRequest request;
+		return request;
+	}
+
+	Vertices::VerticesGetBackupMnemonicPhraseGetRequest
+	buildGetBackupMnemonicPhraseRequest()
+	{
+		Vertices::VerticesGetBackupMnemonicPhraseGetRequest request;
+		return request;
+	}
+
+	Vertices::VerticesGenerateMnemonicsGetRequest
+	buildGenerateMnemonicsRequest()
+	{
+		Vertices::VerticesGenerateMnemonicsGetRequest request;
 		return request;
 	}
 

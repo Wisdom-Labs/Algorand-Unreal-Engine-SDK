@@ -7,20 +7,65 @@
 namespace algorand {
     namespace vertices {
         
-        // Request for Generate wallet
-        class VerticesSDK::VerticesGenerateWalletGetRequest : public Request
+        // Request for Restore wallet
+        class VerticesSDK::VerticesRestoreWalletGetRequest : public Request
         {
         public:
-            virtual ~VerticesGenerateWalletGetRequest() {}
-
+            virtual ~VerticesRestoreWalletGetRequest() {}
+            TOptional<FString> Mnemonics;
         };
 
-        // Response for Generate wallet
-        class VerticesSDK::VerticesGenerateWalletGetResponse : public Response
+        // Response for Restore wallet
+        class VerticesSDK::VerticesRestoreWalletGetResponse : public Response
         {
         public:
-            ~VerticesGenerateWalletGetResponse() {}
-            FString Address;
+            ~VerticesRestoreWalletGetResponse() {}
+            FString output;
+        };
+
+        // Request for Initialize New wallet
+        class VerticesSDK::VerticesInitializeNewWalletGetRequest : public Request
+        {
+        public:
+            virtual ~VerticesInitializeNewWalletGetRequest() {}
+        };
+
+        // Response for Initialize New wallet
+        class VerticesSDK::VerticesInitializeNewWalletGetResponse : public Response
+        {
+        public:
+            ~VerticesInitializeNewWalletGetResponse() {}
+            FString output;
+        };
+
+        // Request for Get Backup Mnemonic Phrase
+        class VerticesSDK::VerticesGetBackupMnemonicPhraseGetRequest : public Request
+        {
+        public:
+            virtual ~VerticesGetBackupMnemonicPhraseGetRequest() {}
+        };
+
+        // Response for Get Backup Mnemonic Phrase
+        class VerticesSDK::VerticesGetBackupMnemonicPhraseGetResponse : public Response
+        {
+        public:
+            ~VerticesGetBackupMnemonicPhraseGetResponse() {}
+            FString output;
+        };
+
+        // Request for Generate Mnemonics
+        class VerticesSDK::VerticesGenerateMnemonicsGetRequest : public Request
+        {
+        public:
+            virtual ~VerticesGenerateMnemonicsGetRequest() {}
+        };
+
+        // Response for Generate Mnemonics
+        class VerticesSDK::VerticesGenerateMnemonicsGetResponse : public Response
+        {
+        public:
+            ~VerticesGenerateMnemonicsGetResponse() {}
+            FString output;
         };
 
         // Request for Get Address

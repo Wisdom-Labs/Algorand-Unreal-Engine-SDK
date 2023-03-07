@@ -10,9 +10,9 @@
 #include "ResponseBuilers.h"
 #include "HAL/UnrealMemory.h"
 #include "AES.h"
-#include "Account.h"
 #include <cstring>
 #include "SDKException.h"
+#include "Windows/AllowWindowsPlatformTypes.h"
 
 using namespace std;
 
@@ -443,15 +443,131 @@ namespace algorand {
             return FString(strlen(public_b32), public_b32);
         }
 
-        // generate new account with mnemonic private keys and tested this action wtih mockup data
-        void VerticesSDK::VerticesGenerateWalletGet(const VerticesGenerateWalletGetRequest& Request, const FVerticesGenerateWalletGetDelegate& delegate)
-        {           
-            auto mnemonic = R"(base giraffe believe make tone transfer wrap attend
-                     typical dirt grocery distance outside horn also abstract
-                     slim ecology island alter daring equal boil absent
-                     carpet)";
-            Account account = Account::from_mnemonic(mnemonic);
+        ret_code_t VerticesSDK::convert_Account_Vertices()
+        {
+            ret_code_t err_code;
+            // copy private key to vertices account
+            // if(main_account.secret_key.size() != ADDRESS_LENGTH)
+            //     err_code = VTC_ERROR_INVALID_PARAM;
+            // checkVTCSuccess("Secret key length is not 32 byte", err_code);
 
+            memset(sender_account.private_key, 0 , ADDRESS_LENGTH);
+            memcpy(sender_account.private_key, (unsigned char*)main_account.secret_key.data(), ADDRESS_LENGTH);
+
+            // copy public key to vertices account
+            unsigned char pub_key[ADDRESS_LENGTH]; 
+            memset(pub_key, 0 , ADDRESS_LENGTH);
+            memcpy(pub_key, main_account.public_key().data(), ADDRESS_LENGTH);
+
+            err_code = vertices_account_new_from_bin((char *)pub_key, &sender_account.vtc_account);
+            UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_bin %d"), err_code);
+            checkVTCSuccess("Vertices account_new_from_bin", err_code);
+
+            return err_code;
+        }
+
+        // restore account with mnemonic private keys
+        void VerticesSDK::VerticesRestoreWalletGet(const VerticesRestoreWalletGetRequest& Request, const FVerticesRestoreWalletGetDelegate& delegate)
+        {           
+            ret_code_t err_code = VTC_SUCCESS;
+            while (1)
+            {
+                FScopeLock lock(&m_Mutex);
+
+                if (vertices_usable)
+                {
+                    VerticesSDK::VerticesRestoreWalletGetResponse response;
+                    vertices_usable = false;
+            
+                    try
+                    {
+                        auto mnemonics = StringCast<ANSICHAR>(*(Request.Mnemonics.GetValue()));
+                        auto s_mnemonics = mnemonics.Get();
+                        main_account = Account::from_mnemonic(s_mnemonics);
+                        
+                        // copy private key to vertices account
+                        if(main_account.secret_key.size() != ADDRESS_LENGTH)
+                            checkVTCSuccess("Secret key length is not 32 byte", err_code);
+                        
+                        UE_LOG(LogTemp, Display, TEXT("💳 Created Core account: %s"), *FString(main_account.address.as_string.data()));
+                        
+                        response = response_builders::buildRestoreWalletResponse(FString(main_account.address.as_string.data()));
+                        response.SetSuccessful(true);
+                    }
+                    catch(SDKException& e)
+                    {
+                        response.SetSuccessful(false);
+                        response.SetResponseString(FString(e.what()));   
+                    }
+                    catch(std::exception& ex)
+                    {
+                        response.SetSuccessful(false);
+                        response.SetResponseString(FString(ex.what()));
+                    }
+
+                    AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+                        {
+                            delegate.ExecuteIfBound(response);
+                        });
+
+                    vertices_usable = true;
+                    break;
+                }
+            };
+        }
+
+        // initialize new account
+        void VerticesSDK::VerticesInitializeNewWalletGet(const VerticesInitializeNewWalletGetRequest& Request, const FVerticesInitializeNewWalletGetDelegate& delegate)
+        {           
+            AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
+            {
+                ret_code_t err_code = VTC_SUCCESS;
+                while (1) {
+                    FScopeLock lock(&m_Mutex);
+                    
+                    if (vertices_usable) {
+                        VerticesSDK::VerticesInitializeNewWalletGetResponse response;
+                        vertices_usable = false;
+                        
+                        try
+                        {
+                            main_account = Account::initialize_new();
+
+                            // copy private key to vertices account
+                            if(main_account.secret_key.size() != ADDRESS_LENGTH)
+                                checkVTCSuccess("Secret key length is not 32 byte", err_code);
+                            
+                            UE_LOG(LogTemp, Display, TEXT("💳 Created Core account: %s"), *FString(main_account.address.as_string.data()));
+                            
+                            response = response_builders::buildInitializeNewWalletResponse(FString(main_account.address.as_string.data()));
+                            response.SetSuccessful(true);
+                        }
+                        catch(SDKException& e)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(e.what()));
+                        }
+                        catch(std::exception& ex)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(ex.what()));
+                        }
+
+                        AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+                        {
+                            delegate.ExecuteIfBound(response);
+                        });
+
+                        vertices_usable = true;
+                        break;
+                    }
+                }
+            });
+        }
+
+        // get backup mnemonic phrase
+        void VerticesSDK::VerticesGetBackupMnemonicPhraseGet(const VerticesGetBackupMnemonicPhraseGetRequest& Request, const FVerticesGetBackupMnemonicPhraseGetDelegate& delegate)
+        {           
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
                 ret_code_t err_code = VTC_SUCCESS;
@@ -459,18 +575,74 @@ namespace algorand {
                     FScopeLock lock(&m_Mutex);
 
                     if (vertices_usable) {
-                        VerticesSDK::VerticesGenerateWalletGetResponse response;
+                        VerticesSDK::VerticesGetBackupMnemonicPhraseGetResponse response;
                         vertices_usable = false;
                         
                         try
                         {
-                            InitVertices(err_code);
-                            checkVTCSuccess("When initing vertices network, an error occured", err_code);
+                            bytes secret_key, pub_key;
 
-                            err_code = create_new_account();
-                            UE_LOG(LogTemp, Display, TEXT("Vertices created new account."));
+                            if(sender_account.vtc_account->public_key == nullptr || sender_account.private_key == nullptr)
+                            {
+                                err_code = VTC_ERROR_INVALID_STATE;
+                                checkVTCSuccess("Secret key and public key aren't on vertices", err_code);
+                            }
+                             
+                            pub_key = bytes(sender_account.vtc_account->public_key, sender_account.vtc_account->public_key + ADDRESS_LENGTH);
+                            secret_key = bytes(sender_account.private_key, sender_account.private_key + ADDRESS_LENGTH);
                             
-                            response = response_builders::buildGenerateWalletResponse(FString(sender_account.vtc_account->public_b32));
+                            Account account{pub_key, secret_key};
+
+                            std::string mnemonics = account.mnemonic();
+                            UE_LOG(LogTemp, Warning, TEXT("VerticesGetBackupMnemonicPhraseGet mnemonics of backup %s"), *FString(mnemonics.data()));
+                            
+                            response = response_builders::buildGetBackupMnemonicPhraseResponse(FString(mnemonics.data()));
+                            response.SetSuccessful(true);
+                        }
+                        catch(SDKException& e)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(e.what()));   
+                        }
+                        catch(std::exception& ex)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(ex.what()));
+                        }
+
+                        AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+                        {
+                            delegate.ExecuteIfBound(response);
+                        });
+
+                        vertices_usable = true;
+                        break;
+                    }
+                }
+            });
+        }
+
+        // generate mnemonics
+        void VerticesSDK::VerticesGenerateMnemonicsGet(const VerticesGenerateMnemonicsGetRequest& Request, const FVerticesGenerateMnemonicsGetDelegate& delegate)
+        {           
+            AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
+            {
+                ret_code_t err_code = VTC_SUCCESS;
+                while (1) {
+                    FScopeLock lock(&m_Mutex);
+
+                    if (vertices_usable) {
+                        VerticesSDK::VerticesGenerateMnemonicsGetResponse response;
+                        vertices_usable = false;
+                        
+                        try
+                        {
+                            Account account = Account::initialize_new();
+                            
+                            std::string mnemonics = account.mnemonic();
+                            UE_LOG(LogTemp, Warning, TEXT("VerticesGetBackupMnemonicPhraseGet mnemonics of backup %s"), *FString(mnemonics.data()));
+                            
+                            response = response_builders::buildGenerateMnemonicsResponse(FString(mnemonics.data()));
                             response.SetSuccessful(true);
                         }
                         catch(SDKException& e)
@@ -511,13 +683,22 @@ namespace algorand {
 
                         try
                         {
+                            // validation Request
+                            auto auto_address = StringCast<ANSICHAR>(*(Request.Address.GetValue()));
+                            if ( auto_address.Length() == 0 )
+                            {
+                                err_code = VTC_ERROR_INVALID_PARAM;
+                                checkVTCSuccess("When loading address from request , an error occured", err_code);   
+                            }
+                            
                             InitVertices(err_code);
                             checkVTCSuccess("When initing vertices network, an error occured", err_code);
 
                             memset(test_account.private_key, 0, 32);
                             test_account.vtc_account = nullptr;
-
+                            
                             const FString& address = Request.Address.GetValue();
+                            
                             err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*address), &test_account.vtc_account);
                             checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
                             UE_LOG(LogTemp, Warning, TEXT("err_code AlgorandGetaddressbalanceGet %d"), test_account.vtc_account->amount);
@@ -530,14 +711,14 @@ namespace algorand {
                         }
                         catch (SDKException& e)
                         {
-                            UE_LOG(LogTemp, Error, TEXT("👉 payment tx error: %s"), e.what());
+                            UE_LOG(LogTemp, Error, TEXT("👉 get balance error: %s"), e.what());
                             
                             response.SetSuccessful(false);
                             response.SetResponseString(FString(e.what()));   
                         }
                         catch (std::exception& ex)
                         {
-                            UE_LOG(LogTemp, Error, TEXT("👉 payment tx error: %s"), ex.what());
+                            UE_LOG(LogTemp, Error, TEXT("👉 get balance error: %s"), ex.what());
                             
                             response.SetSuccessful(false);
                             response.SetResponseString(FString(ex.what()));
@@ -572,7 +753,6 @@ namespace algorand {
                         try
                         {
                             // validation Request
-                            // char* notes = TCHAR_TO_ANSI(*(Request.notes.GetValue()));
                             auto auto_notes = StringCast<ANSICHAR>(*(Request.notes.GetValue()));
                             char* notes = (char *)auto_notes.Get();
 
@@ -586,11 +766,8 @@ namespace algorand {
                             }
                             InitVertices(err_code);
                             checkVTCSuccess("When initing vertices network, an error occured", err_code);
-                            
-                            err_code = load_existing_account();
-                            checkVTCSuccess("When loading an existing account, an error occured", err_code);
-                            
-                            UE_LOG(LogTemp, Display, TEXT("Loaded main account."));
+
+                            convert_Account_Vertices();
 
                             if (sender_account.vtc_account->amount < 1000) {
                                 FFormatNamedArguments Arguments;
@@ -676,6 +853,7 @@ namespace algorand {
 
                         try
                         {
+                            // validation request   
                             if ( Request.app_ID.GetValue() == 0 )
                             {
                                 err_code = VTC_ERROR_INVALID_ADDR;
@@ -684,9 +862,8 @@ namespace algorand {
                             
                             InitVertices(err_code);
                             checkVTCSuccess("When initing vertices network, an error occured", err_code);
-                            
-                            err_code = load_existing_account();
-                            checkVTCSuccess("When loading an existing account, an error occured", err_code);
+
+                            convert_Account_Vertices();
 
                             if (sender_account.vtc_account->amount < 1000) {
                                 FFormatNamedArguments Arguments;

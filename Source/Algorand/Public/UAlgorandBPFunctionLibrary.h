@@ -39,4 +39,15 @@ public:
             BlueprintAutocast),
         Category = "String")
         static FUInt64 Conv_FStringToUInt64(const FString& value);
+
+    /**
+     * @brief convert new defined FUInt64 to FString with comma   
+     * @param value value for convert
+     * @return converted value as string 
+     */
+    UFUNCTION(BlueprintPure,
+        meta = (DisplayName = "FUInt64 To Comma String", CompactNodeTitle = "->",
+            BlueprintAutocast),
+        Category = "FUInt64")
+        static FString Conv_FUInt64ToCommaString(const FUInt64& value, const FUInt64& count);
 };

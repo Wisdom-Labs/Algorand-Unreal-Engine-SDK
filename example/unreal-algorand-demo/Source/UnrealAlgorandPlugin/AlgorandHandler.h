@@ -31,5 +31,14 @@ public:
 		void OnSendApplicationCallTransactionCallback(const FString& txID);
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OnGenerateWalletCallback(const FString& address);
+		void OnRestoreWalletCallback(const FString& output);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnInitializeNewWalletCallback(const FString& output);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnGetBackupMnemonicPhraseCallback(const FString& output);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnGenerateMnemonicsCallback(const FString& output);
 };

@@ -1,13 +1,16 @@
 #pragma once
 
 #include <cstring>
+#include <vector>
+#include <string>
 using namespace std;
 
 typedef std::vector<unsigned char> bytes;
 
 class Address {
 public:
-	Address();                    // Constructs the ZERO address
+	Address() {}                    // Constructs the ZERO address
+	Address& operator=(const Address& other);
 	Address(std::string b32form);
 	Address(bytes public_key);
 	std::string as_string;

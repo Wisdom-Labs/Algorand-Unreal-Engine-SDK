@@ -13,12 +13,15 @@ typedef std::vector<unsigned char> bytes;
 
 class Account {
 public:
+	Account() {}
+	Account& operator=(const Account& other);
 	Account(std::string address);
 	Account(Address address);
 	Account(bytes public_key, bytes secret_key);
 	Account(std::pair<bytes, bytes> key_pair);
 
 	static Account from_mnemonic(std::string mnemonic);
+	static Account initialize_new();
 	static std::pair<bytes, bytes> generate_keys();
 	static std::pair<bytes, bytes> generate_keys(bytes seed);
 
@@ -28,6 +31,6 @@ public:
 	bytes sign(bytes msg) const;
 
 	const bytes public_key() const { return address.public_key; }
-	const Address address;
-	const bytes secret_key;       // empty() if created from an address, not key
+	Address address;
+	bytes secret_key;       // empty() if created from an address, not key
 };
