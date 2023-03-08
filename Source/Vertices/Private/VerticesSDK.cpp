@@ -461,7 +461,6 @@ namespace algorand {
 
             err_code = vertices_account_new_from_bin((char *)pub_key, &sender_account.vtc_account);
             UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_bin %d"), err_code);
-            checkVTCSuccess("Vertices account_new_from_bin", err_code);
 
             return err_code;
         }
@@ -701,7 +700,7 @@ namespace algorand {
                             
                             err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*address), &test_account.vtc_account);
                             checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("err_code AlgorandGetaddressbalanceGet %d"), test_account.vtc_account->amount);
+                            UE_LOG(LogTemp, Warning, TEXT("Amount of account on AlgorandGetaddressbalanceGet %d"), test_account.vtc_account->amount);
 
                             response = response_builders::buildGetBalanceResponse(test_account.vtc_account->amount);
                             response.SetSuccessful(true);
@@ -743,6 +742,7 @@ namespace algorand {
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
                 ret_code_t err_code = VTC_SUCCESS;
+                account_t receiver_account;
                 while (1) {
                     FScopeLock lock(&m_Mutex);
 
@@ -767,7 +767,8 @@ namespace algorand {
                             InitVertices(err_code);
                             checkVTCSuccess("When initing vertices network, an error occured", err_code);
 
-                            convert_Account_Vertices();
+                            err_code = convert_Account_Vertices();
+                            checkVTCSuccess("Vertices convert_Account_Vertices error", err_code);
 
                             if (sender_account.vtc_account->amount < 1000) {
                                 FFormatNamedArguments Arguments;
@@ -783,9 +784,16 @@ namespace algorand {
                                 checkVTCSuccess("Amount available on account is too low to pass a transaction, consider adding Algos", err_code);
                             }
                             
+                            
+                            const FString& address = Request.receiverAddress.GetValue();
+                            
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*address), &receiver_account.vtc_account);
+                            checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
+                            UE_LOG(LogTemp, Warning, TEXT("Amount of receiver_account on Payment TX %d"), receiver_account.vtc_account->amount);
+                            
                             err_code =
                                 vertices_transaction_pay_new(sender_account.vtc_account,
-                                    TCHAR_TO_ANSI(*(Request.receiverAddress.GetValue())) /* or ACCOUNT_RECEIVER */,
+                                    (char *)receiver_account.vtc_account->public_key /* or ACCOUNT_RECEIVER */,
                                     (uint64_t)Request.amount.GetValue(),
                                     notes);
                             checkVTCSuccess("vertices_transaction_pay_new error occured", err_code);
@@ -864,6 +872,7 @@ namespace algorand {
                             checkVTCSuccess("When initing vertices network, an error occured", err_code);
 
                             convert_Account_Vertices();
+                            checkVTCSuccess("Vertices convert_Account_Vertices error", err_code);
 
                             if (sender_account.vtc_account->amount < 1000) {
                                 FFormatNamedArguments Arguments;
