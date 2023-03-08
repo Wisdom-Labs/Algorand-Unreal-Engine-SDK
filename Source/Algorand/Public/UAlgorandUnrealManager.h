@@ -290,7 +290,7 @@ public:
     UFUNCTION(BlueprintCallable,
 			  meta = (DisplayName = "getBalance", Keywords = "Balance"),
     		  Category = "AlgorandUnrealManager")
-    void getBalance();
+    void getBalance(const FString& address);
 
 	/**
 	 * get balance information callback
