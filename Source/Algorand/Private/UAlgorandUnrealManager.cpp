@@ -232,12 +232,12 @@ void UAlgorandUnrealManager::OnGenerateMnemonicsCompleteCallback(const Vertices:
 /**
  * @brief create its context to send the request to unreal api for get balance
  */
-void UAlgorandUnrealManager::getBalance()
+void UAlgorandUnrealManager::getBalance(const FString& address)
 {
     this->requestContextManager_
         .createContext<API::FAlgorandGetaddressbalanceGetDelegate,
         Vertices::VerticesGetaddressbalanceGetRequest>(
-            request_builders::buildGetBalanceRequest(this->getAddress()),
+            request_builders::buildGetBalanceRequest(address),
             std::bind(&API::AlgorandGetaddressbalanceGet, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             std::bind(&UAlgorandUnrealManager::OnGetBalanceCompleteCallback, this , std::placeholders::_1)
