@@ -6,9 +6,9 @@ Official Unreal Engine plugin for Algorand Blockchain Platform.
 This plugin provides functionallity for building different types of transactions and managing  wallet on algorand chain.
 
 ## 📙 1. Overview:
-ALgorand Unreal Engine Plugin
+Algorand Unreal Engine Plugin
 
-We made a [Doc](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.pdf) which shows overview of our plugin usage and you can check this doc at start of dev with this plugin.
+For indepth documentation on the overview, setup and usage of our plugin check here: [Doc](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.pdf)
  
 This UE plugin includes:
 - Root Folder: Unreal-Plugin - Put this plugin in your new or existing project to utilize.
