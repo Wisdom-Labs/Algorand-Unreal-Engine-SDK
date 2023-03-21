@@ -27,7 +27,7 @@ This repository contains a sample project that uses the Algorand Play Unreal SDK
         + testnet: https://testnet-algorand.api.purestake.io/ps2
         + betanet: https://betanet-algorand.api.purestake.io/ps2
         > C++ Usage
-        + ```setAlgoRpc("https://betanet-algorand.api.purestake.io/ps2");```
+        + ```setAlgoRpc("https://testnet-algorand.api.purestake.io/ps2");```
     * rpc Port
         should be set port supporting in algorand node.
         should set ```port = 0```
