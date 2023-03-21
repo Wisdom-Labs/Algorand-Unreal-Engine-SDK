@@ -3,21 +3,21 @@ Official Unreal Engine plugin for Algorand Blockchain Platform.
 
 > If you are looking for a repo for this c++ sdk, [check this repository](https://github.com/Wisdom-Labs/Algorand-CPlusPlus-SDK.git).
 
-This plugin provides functionallity for building different types of transactions and managing  wallet on algorand chain.
+This plugin provides the functionallity for building different types of transactions and managing wallets on the Algorand blockchain.
 
 ## 📙 1. Overview:
-ALgorand Unreal Engine Plugin
+Algorand Unreal Engine Plugin
 
-We made a [Doc](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.pdf) which shows overview of our plugin usage and you can check this doc at start of dev with this plugin.
+For indepth documentation on the overview, setup and usage of this plugin check here: [Doc](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.pdf)
  
 This UE plugin includes:
 - Root Folder: Unreal-Plugin - Put this plugin in your new or existing project to utilize.
 - Example Folder: Unreal Plugin Example Project - Use this project to start your new game or demo/test Algorand System
 
 This sdk contains a setting option to set RPC Info.
-* RPC URL : You should set algorand node you want to work on with this url.
+* RPC URL : You should set the Algorand node you want to work on with this url.
   ` setAlgoRpc("https://node.testnet.algoexplorerapi.io"); `
-* RPC Port : set port which can connect into server supporting algorand node with.
+* RPC Port : Set port which can connect into server supporting algorand node with.
   ` setAlgoPort(0); `
 * RPC TokenHeader : You should set Header to request apis according to algorand node type.
   ` setAlgoTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1"); `
