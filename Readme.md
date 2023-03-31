@@ -9,6 +9,8 @@ This plugin provides the functionallity for building different types of transact
 Algorand Unreal Engine Plugin
 
 For indepth documentation on the overview, setup and usage of this plugin check here: [Doc](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.pdf)
+
+For indepth video demo on using the plugin watch here: [Video](https://youtu.be/zRjuzZP1ngY)
  
 This UE plugin includes:
 - Root Folder: Unreal-Plugin - Put this plugin in your new or existing project to utilize.
