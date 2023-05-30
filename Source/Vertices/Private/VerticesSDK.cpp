@@ -845,7 +845,132 @@ namespace algorand {
                 }
             });
         }
+        
+        void VerticesSDK::VerticesAssetTransferTransactionGet(const VerticesAssetTransferTransactionGetRequest& Request, const FVerticesAssetTransferTransactionGetDelegate& delegate)
+        {
+            AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
+            {
+                ret_code_t err_code = VTC_SUCCESS;
+                account_t asnd_account, arcv_account;
+                while (1) {
+                    FScopeLock lock(&m_Mutex);
 
+                    if (vertices_usable) {
+                        VerticesSDK::VerticesAssetTransferTransactionGetResponse response;
+                        vertices_usable = false;
+
+                        try
+                        {
+                            // validation Request
+                            auto auto_notes = StringCast<ANSICHAR>(*(Request.notes.GetValue()));
+                            char* notes = (char *)auto_notes.Get();
+
+                            if(strlen(notes) == 0)
+                                notes = "Asset Transfer Transaction";
+
+                            if ( Request.senderAddress.GetValue().Len() != PUBLIC_ADDRESS_LENGTH )
+                            {
+                                err_code = VTC_ERROR_INVALID_ADDR;
+                                checkVTCSuccess("Please input address with correct length.", err_code);
+                            }
+                            
+                            if ( Request.receiverAddress.GetValue().Len() != PUBLIC_ADDRESS_LENGTH )
+                            {
+                                err_code = VTC_ERROR_INVALID_ADDR;
+                                checkVTCSuccess("Please input address with correct length.", err_code);
+                            }
+                            
+                            InitVertices(err_code);
+                            checkVTCSuccess("When initing vertices network, an error occured", err_code);
+
+                            err_code = convert_Account_Vertices();
+                            checkVTCSuccess("Vertices convert_Account_Vertices error", err_code);
+
+                            if (sender_account.vtc_account->amount < 1000) {
+                                FFormatNamedArguments Arguments;
+                                Arguments.Add(TEXT("Address"), FText::FromString(sender_account.vtc_account->public_b32));
+                                FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
+
+                                UE_LOG(LogTemp, Warning, TEXT("👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: %s"), *FString(sender_account.vtc_account->public_b32));
+                                UE_LOG(LogTemp, Warning,
+                                    TEXT("🙄 Amount available on account is too low to pass a transaction, consider adding Algos"));
+                                UE_LOG(LogTemp, Warning, TEXT("😎 Then wait for a few seconds for transaction to pass..."));
+                                
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Amount available on account is too low to pass a transaction, consider adding Algos", err_code);
+                            }
+                            
+                            const FString& asnd = Request.senderAddress.GetValue();
+                            const FString& arcv = Request.receiverAddress.GetValue();
+                            
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*asnd), &asnd_account.vtc_account);
+                            checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
+                            UE_LOG(LogTemp, Warning, TEXT("Amount of sender_account on Asset Transfer TX %d"), asnd_account.vtc_account->amount);
+
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*arcv), &arcv_account.vtc_account);
+                            checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
+                            UE_LOG(LogTemp, Warning, TEXT("Amount of receiver_account on Asset Transfer TX %d"), arcv_account.vtc_account->amount);
+
+                            err_code =
+                                vertices_transaction_asset_xfer(sender_account.vtc_account,
+                                    (char *)asnd_account.vtc_account->public_key /* or ACCOUNT_SENDER */,
+                                    (char *)arcv_account.vtc_account->public_key /* or ACCOUNT_RECEIVER */,
+                                    NULL,
+                                    NULL,
+                                    (uint64_t)Request.asset_id.GetValue(),
+                                    (uint64_t)Request.amount.GetValue(),
+                                    notes);
+                            
+                            checkVTCSuccess("vertices_transaction_asset_transfer error occured", err_code);
+
+                            unsigned char* txID = nullptr;
+                            txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
+
+                            size_t queue_size = 1;
+                            while (queue_size && err_code == VTC_SUCCESS) {
+                                err_code = vertices_event_process(&queue_size, txID);
+                            }
+
+                            checkVTCSuccess("vertices_event_process error occured", err_code);
+                            UE_LOG(LogTemp, Warning, TEXT("err_code Asset Transfer TX ID Success, %s"), txID);
+
+                            err_code = vertices_account_free(sender_account.vtc_account);
+                            checkVTCSuccess("vertices_account_free error occured", err_code);
+                            UE_LOG(LogTemp, Warning, TEXT("VerticesAssetTransferTransactionGetRequest Success"));
+
+                            response = response_builders::buildAssetTransferTransactionResponse(FString(UTF8_TO_TCHAR(txID)));
+                            response.SetSuccessful(true);
+
+                            //free(txID);
+                        }
+                        catch(SDKException& e)
+                        {
+                            UE_LOG(LogTemp, Error, TEXT("👉 asset transfer tx error: %s"), e.what());
+                            
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(e.what()));
+                        }
+                        catch(std::exception& ex)
+                        {
+                            UE_LOG(LogTemp, Error, TEXT("👉 payment tx error: %s"), ex.what());
+                            
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(ex.what()));
+                        }
+
+                        // after build response, execute delegate to run callback with response
+                        AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+                        {
+                            delegate.ExecuteIfBound(response);
+                        });
+
+                        vertices_usable = true;
+                        break;
+                    }
+                }
+            });
+        }
+        
         void VerticesSDK::VerticesApplicationCallTransactionGet(const VerticesApplicationCallTransactionGetRequest& Request, const FVerticesApplicationCallTransactionGetDelegate& delegate)
         {
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()

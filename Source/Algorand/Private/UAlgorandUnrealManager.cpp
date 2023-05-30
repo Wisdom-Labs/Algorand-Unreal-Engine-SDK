@@ -5,6 +5,8 @@
 #include "TransactionBuilderFactory.h"
 #include "RequestBuilders.h"
 #include <functional>
+
+#include "VerticesApiOperations.h"
 #include "VerticesApiOperations.h"
 #include "Misc/MessageDialog.h"
 
@@ -300,6 +302,49 @@ void UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback(const Vert
         FString txID = response.txID;
         SendPaymentTransactionCallback.Broadcast(txID);
         FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Payment Transaction", "sent payment tx successfully."));
+    }
+    else {
+        FFormatNamedArguments Arguments;
+        Arguments.Add(TEXT("MSG"), FText::FromString(response.GetResponseString()));
+        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "{MSG}"), Arguments));
+        
+        if (!ErrorDelegateCallback.IsBound()) {
+            ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
+        }
+    }
+}
+
+/**
+ * @brief create its context to send the request to unreal api for asset transfer tx
+ */
+void UAlgorandUnrealManager::sendAssetTransferTransaction(const FString& senderAddress, ,
+                                                        const FString& receiverAddress,
+                                                        const FUInt64& asset_ID,
+                                                        const FUInt64& amount,
+                                                        const FString& notes)
+{
+    this->requestContextManager_
+        .createContext<API::FAlgorandAssetTransferTransactionGetDelegate,
+        Vertices::VerticesAssetTransferTransactionGetRequest>(
+            request_builders::buildAssetTransferTransactionRequest(this->getAddress(),
+                                                             receiverAddress,
+                                                             asset_ID,
+                                                             amount,
+                                                             notes),
+            std::bind(&API::AlgorandAssetTransferTransactionGet, unrealApi_.Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            std::bind(&UAlgorandUnrealManager::OnSendAssetTransferTransactionCompleteCallback, this, std::placeholders::_1)
+            );
+}
+
+/**
+ * @brief get response from unreal api after payment TX and broadcast the result to binded functions
+ */
+void UAlgorandUnrealManager::OnSendAssetTransferTransactionCompleteCallback(const Vertices::VerticesAssetTransferTransactionGetResponse& response) {
+    if (response.IsSuccessful()) {
+        FString txID = response.txID;
+        SendAssetTransferTransactionCallback.Broadcast(txID);
+        FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Asset Transfer Transaction", "sent asset transfer tx successfully."));
     }
     else {
         FFormatNamedArguments Arguments;

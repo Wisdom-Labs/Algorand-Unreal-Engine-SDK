@@ -135,6 +135,8 @@ namespace vertices {
         class VerticesGetaddressbalanceGetResponse;
         class VerticesPaymentTransactionGetRequest;
         class VerticesPaymentTransactionGetResponse;
+        class VerticesAssetTransferTransactionGetRequest;
+        class VerticesAssetTransferTransactionGetResponse;
         class VerticesApplicationCallTransactionGetRequest;
         class VerticesApplicationCallTransactionGetResponse;
 
@@ -156,6 +158,9 @@ namespace vertices {
         /// payment tx callabck
         DECLARE_DELEGATE_OneParam(FVerticesPaymentTransactionGetDelegate, const VerticesPaymentTransactionGetResponse&);
 
+        /// asset transfer tx callabck
+        DECLARE_DELEGATE_OneParam(FVerticesAssetTransferTransactionGetDelegate, const VerticesAssetTransferTransactionGetResponse&);
+
         /// application call tx callback
         DECLARE_DELEGATE_OneParam(FVerticesApplicationCallTransactionGetDelegate, const VerticesApplicationCallTransactionGetResponse&);
 
@@ -165,6 +170,7 @@ namespace vertices {
         void VerticesGenerateMnemonicsGet(const VerticesGenerateMnemonicsGetRequest&, const FVerticesGenerateMnemonicsGetDelegate&);
         void VerticesGetaddressbalanceGet(const VerticesGetaddressbalanceGetRequest&, const FVerticesGetaddressbalanceGetDelegate&);
         void VerticesPaymentTransactionGet(const VerticesPaymentTransactionGetRequest&, const FVerticesPaymentTransactionGetDelegate&);
+        void VerticesAssetTransferTransactionGet(const VerticesAssetTransferTransactionGetRequest&, const FVerticesAssetTransferTransactionGetDelegate&);
         void VerticesApplicationCallTransactionGet(const VerticesApplicationCallTransactionGetRequest&, const FVerticesApplicationCallTransactionGetDelegate&);
     
     private:
