@@ -25,6 +25,7 @@ using ApiDelegate = TVariant<
 	algorand::api::UnrealApi::FAlgorandGenerateMnemonicsGetDelegate,
 	algorand::api::UnrealApi::FAlgorandGetaddressbalanceGetDelegate,
 	algorand::api::UnrealApi::FAlgorandPaymentTransactionGetDelegate,
+	algorand::api::UnrealApi::FAlgorandAssetTransferTransactionGetDelegate,
 	algorand::api::UnrealApi::FAlgorandApplicationCallTransactionGetDelegate
 >;
 

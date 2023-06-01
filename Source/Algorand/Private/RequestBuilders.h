@@ -67,6 +67,18 @@ namespace request_builders {
 									   const FString& notes);
 
 	/**
+	 * @brief build request for asset transfer tx with following params
+	 * like sender, receiver, amount and notes
+	 * @return request
+	 */
+	algorand::vertices::VerticesSDK::VerticesAssetTransferTransactionGetRequest
+		buildAssetTransferTransactionRequest(const FString& sender,
+									   const FString& receiver,
+									   const FUInt64& asset_id,
+									   const FUInt64& amount,
+									   const FString& notes);
+
+	/**
 	 * @brief build request for application call tx with following params
 	 * like application ID
 	 * @return request
