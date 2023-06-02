@@ -131,9 +131,9 @@ namespace algorand {
     namespace vertices {
 
         // load thirdparty libs
-        VerticesSDK::VerticesSDK() {
+        VerticesSDK::VerticesSDK() {\
             loadVerticesLibrary();
-
+            
             if (!loaded_)
             {
                 FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("ThirdPartyLibraryError", "Failed to load example third party library"));
@@ -1096,10 +1096,17 @@ namespace algorand {
 
         void VerticesSDK::setHTTPCURLs() 
         {
-            set_http_init(&http_init);
-            set_http_get(&http_get);
-            set_http_post(&http_post);
-            set_http_close(&http_close);
+            try
+            {
+                set_http_init(&http_init);
+                set_http_get(&http_get);
+                set_http_post(&http_post);
+                set_http_close(&http_close);
+            }
+            catch (std::exception &ex)
+            {
+                UE_LOG(LogTemp, Display, TEXT("Failed to load C-Vertices-sdk.dll & libsodium.dll. Error: %s"), *FString(ex.what()));
+            }
         }
     }
 }

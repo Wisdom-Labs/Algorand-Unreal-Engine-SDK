@@ -317,7 +317,7 @@ void UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback(const Vert
 /**
  * @brief create its context to send the request to unreal api for asset transfer tx
  */
-void UAlgorandUnrealManager::sendAssetTransferTransaction(const FString& senderAddress, ,
+void UAlgorandUnrealManager::sendAssetTransferTransaction(const FString& senderAddress,
                                                         const FString& receiverAddress,
                                                         const FUInt64& asset_ID,
                                                         const FUInt64& amount,
@@ -326,7 +326,7 @@ void UAlgorandUnrealManager::sendAssetTransferTransaction(const FString& senderA
     this->requestContextManager_
         .createContext<API::FAlgorandAssetTransferTransactionGetDelegate,
         Vertices::VerticesAssetTransferTransactionGetRequest>(
-            request_builders::buildAssetTransferTransactionRequest(this->getAddress(),
+            request_builders::buildAssetTransferTransactionRequest(senderAddress,
                                                              receiverAddress,
                                                              asset_ID,
                                                              amount,
