@@ -57,6 +57,22 @@ namespace request_builders {
 		request.notes = notes;
 		return request;
 	}
+		
+	Vertices::VerticesAssetTransferTransactionGetRequest
+		buildAssetTransferTransactionRequest(const FString& sender, 
+									   const FString& receiver,
+									   const FUInt64& asset_id,
+									   const FUInt64& amount,
+									   const FString& notes)
+	{
+		Vertices::VerticesAssetTransferTransactionGetRequest request;
+		request.senderAddress = sender;
+		request.receiverAddress = receiver;
+		request.asset_id = asset_id;
+		request.amount = amount;
+		request.notes = notes;
+		return request;
+	}
 
 	Vertices::VerticesApplicationCallTransactionGetRequest
 		buildApplicationCallTransactionRequest(const FString& sender, 

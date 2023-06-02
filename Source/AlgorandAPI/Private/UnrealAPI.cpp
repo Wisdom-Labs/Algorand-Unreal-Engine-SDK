@@ -129,6 +129,24 @@ void UnrealApi::OnAlgorandPaymentTransactionGetResponse(const Vertices::Vertices
     Delegate.ExecuteIfBound(response);
 }
 
+void UnrealApi::AlgorandAssetTransferTransactionGet(const Vertices::VerticesAssetTransferTransactionGetRequest& Request, const FAlgorandAssetTransferTransactionGetDelegate& Delegate) const
+{
+    TSharedRef<Vertices::FVerticesAssetTransferTransactionGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesAssetTransferTransactionGetDelegate>());
+
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesAssetTransferTransactionGetResponse& response) {
+        OnAlgorandAssetTransferTransactionGetResponse(response, Delegate);
+        });
+    vertices_->VerticesAssetTransferTransactionGet(Request, delegatePtr.Get());
+}
+
+/**
+ * @brief callback after asset transfer tx
+ */
+void UnrealApi::OnAlgorandAssetTransferTransactionGetResponse(const Vertices::VerticesAssetTransferTransactionGetResponse& response, const FAlgorandAssetTransferTransactionGetDelegate& Delegate) const
+{
+    Delegate.ExecuteIfBound(response);
+}
+    
 void UnrealApi::AlgorandApplicationCallTransactionGet(const Vertices::VerticesApplicationCallTransactionGetRequest& Request, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const
 {
     TSharedRef<Vertices::FVerticesApplicationCallTransactionGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesApplicationCallTransactionGetDelegate>());

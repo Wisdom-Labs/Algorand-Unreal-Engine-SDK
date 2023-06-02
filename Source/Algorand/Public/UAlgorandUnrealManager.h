@@ -70,6 +70,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetBalanceDelegate, const FUInt64&,
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPaymentTransactionDelegate, const FString&, txID);
 
 /**
+ * asset transfer tx callback
+ * @param txID transaction hash
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAssetTransferTransactionDelegate, const FString&, txID);
+
+/**
  * application call tx callback
  * @param txID transaction hash
 */
@@ -327,6 +333,34 @@ public:
 	 * @param response txID after payment tx
 	 */
     void OnSendPaymentTransactionCompleteCallback(const Vertices::VerticesPaymentTransactionGetResponse& response);
+
+	/**
+	 * send asset transfer TX to algorand node
+	 * @param senderAddress address which take token
+	 * @param receiverAddress address which take token 
+	 * @param asset_ID of token to be sent
+	 * @param amount of token to be sent
+	 * @param notes tx description when send payment tx
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "sendAssetTransferTX", Keywords = "AssetTransferTX"),
+			  Category = "AlgorandUnrealManager")
+	void sendAssetTransferTransaction(const FString& senderAddress,
+								const FString& receiverAddress,
+								const FUInt64& asset_ID,
+								const FUInt64& amount,
+								const FString& notes);   
+	/**
+	 * asset transfer transaction information callback
+	 */ 
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+	FAssetTransferTransactionDelegate SendAssetTransferTransactionCallback;
+
+	/**
+	 * get response after asset transfer tx
+	 * @param response txID after asset transfer tx
+	 */
+	void OnSendAssetTransferTransactionCompleteCallback(const Vertices::VerticesAssetTransferTransactionGetResponse& response);
 
 	/**
 	 * send application call TX to algorand node

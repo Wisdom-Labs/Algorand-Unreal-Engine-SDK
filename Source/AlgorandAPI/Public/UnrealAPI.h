@@ -48,6 +48,9 @@ public:
 	/// payment tx api callabck
     DECLARE_DELEGATE_OneParam(FAlgorandPaymentTransactionGetDelegate, const Vertices::VerticesPaymentTransactionGetResponse&);
 
+	/// asset transfer tx api callabck
+	DECLARE_DELEGATE_OneParam(FAlgorandAssetTransferTransactionGetDelegate, const Vertices::VerticesAssetTransferTransactionGetResponse&);
+
 	/// application call tx api callback
     DECLARE_DELEGATE_OneParam(FAlgorandApplicationCallTransactionGetDelegate, const Vertices::VerticesApplicationCallTransactionGetResponse&);
 
@@ -96,6 +99,13 @@ public:
 	 * @param Delegate is used to implement async task after get response as api result
 	 */
     void AlgorandPaymentTransactionGet(const Vertices::VerticesPaymentTransactionGetRequest& Request, const FAlgorandPaymentTransactionGetDelegate& Delegate = FAlgorandPaymentTransactionGetDelegate()) const;
+
+	/**
+	 * @brief send api request for send asset transfer tx
+	 * @param Request value to send as params for calling api
+	 * @param Delegate is used to implement async task after get response as api result
+	 */
+	void AlgorandAssetTransferTransactionGet(const Vertices::VerticesAssetTransferTransactionGetRequest& Request, const FAlgorandAssetTransferTransactionGetDelegate& Delegate = FAlgorandAssetTransferTransactionGetDelegate()) const;
 
 	/**
 	 * @brief send api request for send application call tx
@@ -147,6 +157,13 @@ private:
 	 * @param Delegate is used to execute binded callback from Algorand module
 	 */
     void OnAlgorandPaymentTransactionGetResponse(const Vertices::VerticesPaymentTransactionGetResponse& response, const FAlgorandPaymentTransactionGetDelegate& Delegate) const;
+
+	/**
+	 * @brief callback function to be run after api request of sending asset transfer tx
+	 * @param response is used to send as Vertices Response type to Algorand module 
+	 * @param Delegate is used to execute binded callback from Algorand module
+	 */
+	void OnAlgorandAssetTransferTransactionGetResponse(const Vertices::VerticesAssetTransferTransactionGetResponse& response, const FAlgorandAssetTransferTransactionGetDelegate& Delegate) const;
 
 	/**
 	 * @brief callback function to be run after api request of sending application call tx
