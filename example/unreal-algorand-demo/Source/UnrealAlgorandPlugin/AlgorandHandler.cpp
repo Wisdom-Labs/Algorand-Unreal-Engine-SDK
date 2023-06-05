@@ -20,6 +20,12 @@ void UAlgorandHandler::OnRestoreWalletCallback(const FString& output) {
     _delegate2.BindUFunction(this, FName("OnSendPaymentTransactionCallback"));
     algorandManager->SendPaymentTransactionCallback.Add(_delegate2);
     algorandManager->sendPaymentTransaction(FString("YZ5IOV3EPSSBRKOLY64BHG2HNF3MUC32Y5BM4ZJSHA5KOSF5OPAIABVSRI"), 100, FString("Sent 100 algo to NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE."));
+
+    // FScriptDelegate _delegate8;
+    // _delegate8.BindUFunction(this, FName("OnSendAssetTransferTransactionCallback"));
+    // algorandManager->SendAssetTransferTransactionCallback.Add(_delegate8);
+    // algorandManager->sendAssetTransferTransaction(FString("BT4WXMIULS5OZWRRPDXQJMB3GAGC4A5MITAFQARDPEERQBTNYEMXQXO64A"), FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),218447260,100,FString("Sent 100 ERC20 token to NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE."));   // A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM
+    
 }
 
 void UAlgorandHandler::OnInitializeNewWalletCallback(const FString& output) {
@@ -51,6 +57,11 @@ void UAlgorandHandler::OnSendPaymentTransactionCallback(const FString& txID) {
         *txID);
 }
 
+void UAlgorandHandler::OnSendAssetTransferTransactionCallback(const FString& txID) {
+    UE_LOG(LogTemp, Display, TEXT("Asset Transfer TX ID: %s"),
+        *txID);
+}
+
 void UAlgorandHandler::OnSendApplicationCallTransactionCallback(const FString& txID) {
     UE_LOG(LogTemp, Display, TEXT("Application Call TX ID: %s"),
         *txID);
@@ -60,7 +71,7 @@ void UAlgorandHandler::RunSomeLogic() {
     FScriptDelegate _delegate4;
     _delegate4.BindUFunction(this, FName("OnRestoreWalletCallback"));
     algorandManager->RestoreWalletCallback.Add(_delegate4);
-    FString mnemonics = "base giraffe believe make tone transfer wrap attend typical dirt grocery distance outside horn also abstract slim ecology island alter daring equal boil absent carpet";
+    FString mnemonics = "afford emerge have market grow elevator tumble crumble smart sting matrix movie custom slice labor dilemma define foster focus vintage aisle inmate veteran abstract sunny";
     algorandManager->restoreWallet(mnemonics);
 
     // FScriptDelegate _delegate5;
@@ -87,6 +98,11 @@ void UAlgorandHandler::RunSomeLogic() {
     // _delegate2.BindUFunction(this, FName("OnSendPaymentTransactionCallback"));
     // algorandManager->SendPaymentTransactionCallback.Add(_delegate2);
     // algorandManager->sendPaymentTransaction(FString("NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE"), 100, FString("Sent 100 algo to NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE."));
+
+    // FScriptDelegate _delegate8;
+    // _delegate8.BindUFunction(this, FName("OnSendAssetTransferTransactionCallback"));
+    // algorandManager->SendAssetTransferTransactionCallback.Add(_delegate8);
+    // algorandManager->sendAssetTransferTransaction(FString("NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE"), FString("NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE"),100,100,FString("Sent 100 ERC20 token to NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE."));
 
     // FScriptDelegate _delegate3;
     // _delegate3.BindUFunction(this, FName("OnSendApplicationCallTransactionCallback"));
