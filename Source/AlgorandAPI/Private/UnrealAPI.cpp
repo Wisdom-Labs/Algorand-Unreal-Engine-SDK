@@ -2,6 +2,7 @@
 
 #include "UnrealApi.h"
 #include "ArcResponseBuilders.h"
+#include "VerticesApiOperations.h"
 #include "Arc/Arc03.h"
 #include "Arc/Arc69.h"
 #include "Misc/MessageDialog.h"
@@ -185,6 +186,7 @@ void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetai
         });
 
         ArcResponseBuilders::buildArcAssetDetailsResponse(arc03_data, delegatePtr.Get());
+        return;
     }
 
     Arc69 arc69_data(Request.asset_ID.GetValue());
@@ -199,7 +201,13 @@ void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetai
         });
 
         ArcResponseBuilders::buildArcAssetDetailsResponse(arc69_data, delegatePtr.Get());
+        return;
     }
+
+    Vertices::VerticesArcAssetDetailsGetResponse response;
+    response.SetSuccessful(false);
+    response.SetResponseString("This arc asset doesn't have correct type.");
+    OnAlgorandArcAssetDetailsGetResponse(response, Delegate);
 }
 
 /**

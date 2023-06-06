@@ -120,10 +120,10 @@ void Arc69::from_tx_note(std::string& tx_note) {
                 TSharedPtr<FJsonObject> json_properties = json_note->GetObjectField("properties");
                 if(json_properties.IsValid()) {
                     for (auto itr : json_properties->Values) {
-                        if (itr.Value->Type == EJson::String)
-                            metadata.properties[itr.Key] = itr.Value->AsString();
-                        if (itr.Value->Type == EJson::Number)
-                            metadata.properties[itr.Key] = FString::Printf(TEXT("%.*f"),0, itr.Value->AsNumber());
+                        if(itr.Value->Type == EJson::String)
+                            metadata.properties.Add(itr.Key, itr.Value->AsString());
+                        if(itr.Value->Type == EJson::Number)
+                            metadata.properties.Add(itr.Key, FString::FromInt(itr.Value->AsNumber()));
                     }
                 }
             }

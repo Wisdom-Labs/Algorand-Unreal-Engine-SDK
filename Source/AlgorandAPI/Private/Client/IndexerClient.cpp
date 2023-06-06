@@ -49,7 +49,7 @@ JsonResponse IndexerClient::searchForAssets(uint64_t limit,
     if (next_page.size())
         params["next"] = next_page;
 
-    if(!creator.is_zero())
+    if(!creator.as_string.empty())
         params["creator"] = creator.as_string;
     if (name.size() > 0)
         params["name"] = name;
@@ -96,7 +96,7 @@ JsonResponse IndexerClient::searchForTransactions(uint64_t limit,
     if (after_time.size())
         params["after-time"] = after_time;
 
-    if(!address.is_zero())
+    if(!address.as_string.empty())
         params["address"] = address.as_string;
     if (application_id != 0)
         params["application-id"] = std::to_string(application_id);

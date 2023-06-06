@@ -57,9 +57,9 @@ void Arc03::from_asset_url(std::string &url) {
 
                 for (auto itrr : json_properties.Values) {
                     if(itrr.Value->Type == EJson::String)
-                        metadata.properties[itrr.Key] = itr.Value->AsString();
+                        metadata.properties.Add(itrr.Key, itrr.Value->AsString());
                     if(itrr.Value->Type == EJson::Number)
-                        metadata.properties[itr.Key] = FString::Printf(TEXT("%.*f"),0, itr.Value->AsNumber());
+                        metadata.properties.Add(itrr.Key, FString::FromInt(itrr.Value->AsNumber()));
                 }
             }
         }

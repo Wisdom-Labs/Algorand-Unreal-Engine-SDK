@@ -5,6 +5,7 @@
 #include "Engine/World.h"
 #include "RequestContextManager.h"
 #include "Wallet.h"
+#include "Models/FArcAssetDetails.h"
 #include "Models/FUInt64.h"
 #include "Models/FError.h"
 #include "UnrealApi.h"
@@ -31,61 +32,6 @@ namespace {
     // Export Procedures
     using Vertices = algorand::vertices::VerticesSDK;
 }
-
-UENUM(BlueprintType)
-enum class EArcType : uint8 {
-	Arc00 UMETA(DisplayName = "Arc00"),
-	Arc03 UMETA(DisplayName = "Arc03"),
-	Arc69 UMETA(DisplayName = "Arc69"),
-};
-
-USTRUCT(BlueprintType)
-struct FArcAssetDetails
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	EArcType standard;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString unit_name;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FUInt64 total;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FUInt64 decimals;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString description;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString clawback;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString creator;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString freeze;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString manager;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString reserve;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString media_url;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString external_url;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString animation_url;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	TMap<FString, FString> properties;
-};
 
 /**
  * restore wallet callback 

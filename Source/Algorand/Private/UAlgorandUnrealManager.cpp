@@ -413,7 +413,7 @@ void UAlgorandUnrealManager::fetchArcAssetDetails(const FUInt64& asset_ID)
  */
 void UAlgorandUnrealManager::OnFetchArcAssetDetailsCompleteCallback(const Vertices::VerticesArcAssetDetailsGetResponse& response) {
     if (response.IsSuccessful()) {
-        FArcAssetDetails arcNft;
+        FArcAssetDetails arcNft(response);
         FetchArcAssetDetailsCallback.Broadcast(arcNft);
         FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Arc Asset Details", "sent request to fetch details of arc asset successfully."));
     }
