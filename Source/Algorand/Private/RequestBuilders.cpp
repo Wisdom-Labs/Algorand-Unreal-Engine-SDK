@@ -83,4 +83,12 @@ namespace request_builders {
 		request.app_ID = app_ID;
 		return request;
 	}
+
+	Vertices::VerticesArcAssetDetailsGetRequest
+		buildArcAssetDetailsRequest(const FUInt64& asset_ID)
+	{
+		Vertices::VerticesArcAssetDetailsGetRequest request;
+		request.asset_ID = asset_ID;
+		return request;
+	}
 }

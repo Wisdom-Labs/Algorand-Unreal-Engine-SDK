@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Models/FArcAssetDetails.h"
 #include "Models/FUInt64.h"
 #include "CoreMinimal.h"
 #include "UAlgorandUnrealManager.h"
@@ -32,6 +33,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
 		void OnSendApplicationCallTransactionCallback(const FString& txID);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnGetArcAssetDetailsCallback(const FArcAssetDetails& asset_Details);
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
 		void OnRestoreWalletCallback(const FString& output);

@@ -1,6 +1,10 @@
 // Copyright 2022, Wisdom Labs. All Rights Reserved
 
 #include "UnrealApi.h"
+#include "ArcResponseBuilders.h"
+#include "VerticesApiOperations.h"
+#include "Arc/Arc03.h"
+#include "Arc/Arc69.h"
 #include "Misc/MessageDialog.h"
 
 #define LOCTEXT_NAMESPACE "FVerticesModule"
@@ -19,6 +23,18 @@ UnrealApi::UnrealApi(TSharedPtr<algorand::vertices::VerticesSDK>& vertices)
 }
 
 UnrealApi::~UnrealApi() {}
+
+void UnrealApi::setAlgoRpc(const FString& algoRpc) {
+    myAlgoRpc = algoRpc;
+}
+
+void UnrealApi::setAlgoPort(const int& algoPort) {
+    myAlgoPort = algoPort;
+}
+
+void UnrealApi::setAlgoTokenHeader(const FString& algoTokenHeader) {
+    myAlgoTokenHeader = algoTokenHeader;
+}
     
 void UnrealApi::AlgorandRestoreWalletGet(const Vertices::VerticesRestoreWalletGetRequest& Request, const FAlgorandRestoreWalletGetDelegate& Delegate) const
 {
@@ -162,6 +178,61 @@ void UnrealApi::AlgorandApplicationCallTransactionGet(const Vertices::VerticesAp
  * @brief callback after application call tx
  */
 void UnrealApi::OnAlgorandApplicationCallTransactionGetResponse(const Vertices::VerticesApplicationCallTransactionGetResponse& response, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const
+{
+    Delegate.ExecuteIfBound(response);
+}
+
+void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetailsGetRequest& Request, const FAlgorandArcAssetDetailsGetDelegate& Delegate) const
+{
+    AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, Delegate]()
+    {   
+        TSharedRef<ArcResponseBuilders::FAPIArcAssetDetailsGetDelegate> delegatePtr(MakeShared<ArcResponseBuilders::FAPIArcAssetDetailsGetDelegate>());
+    
+        Arc03 arc03_data(Request.asset_ID.GetValue(), myAlgoRpc, myAlgoPort, myAlgoTokenHeader);
+        if(arc03_data.IsVerify())
+        {
+            auto param_url = StringCast<ANSICHAR>(*(arc03_data.asset.params.url));
+            std::string s_url = param_url.Get();
+            arc03_data.from_asset_url(s_url);
+            
+            delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesArcAssetDetailsGetResponse& response) {
+                OnAlgorandArcAssetDetailsGetResponse(response, Delegate);
+            });
+
+            ArcResponseBuilders::buildArcAssetDetailsResponse(arc03_data, delegatePtr.Get());
+            return;
+        }
+
+        Arc69 arc69_data(Request.asset_ID.GetValue(), myAlgoRpc, myAlgoPort, myAlgoTokenHeader);
+        if(arc69_data.IsVerify())
+        {
+            auto tx_note = StringCast<ANSICHAR>(*(arc69_data.tx.note));
+            std::string s_tx_note = tx_note.Get();
+            arc69_data.from_tx_note(s_tx_note);
+
+            delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesArcAssetDetailsGetResponse& response) {
+                OnAlgorandArcAssetDetailsGetResponse(response, Delegate);
+            });
+
+            ArcResponseBuilders::buildArcAssetDetailsResponse(arc69_data, delegatePtr.Get());
+            return;
+        }
+
+        Vertices::VerticesArcAssetDetailsGetResponse response;
+        response.SetSuccessful(false);
+        response.SetResponseString("This arc asset doesn't have correct type.");
+        OnAlgorandArcAssetDetailsGetResponse(response, Delegate);
+        AsyncTask(ENamedThreads::GameThread, [Delegate, response]()
+        {
+            Delegate.ExecuteIfBound(response);
+        });
+    });
+}
+
+/**
+ * @brief callback after arc asset details
+ */
+void UnrealApi::OnAlgorandArcAssetDetailsGetResponse(const Vertices::VerticesArcAssetDetailsGetResponse& response, const FAlgorandArcAssetDetailsGetDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
 }

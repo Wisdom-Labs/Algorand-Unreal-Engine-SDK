@@ -50,4 +50,14 @@ public:
             BlueprintAutocast),
         Category = "FUInt64")
         static FString Conv_FUInt64ToCommaString(const FUInt64& value, const FUInt64& count);
+
+    /**
+     * @brief static function to get TMap from FString
+     * @param value value to convert as string
+     * @return converted value as TMap 
+     */
+    UFUNCTION(BlueprintCallable,
+              meta = (DisplayName = "TMap To JSON String", Keywords = "FArcAssetDetails"),
+              Category = "ArcAsset")
+        static FString Conv_PropertiesToString(TMap<FString, FString> map_data);
 };

@@ -143,5 +143,36 @@ namespace algorand {
             ~VerticesApplicationCallTransactionGetResponse() {}
             FString txID;
         };
+
+        // Request for Arc Asset Details
+        class VerticesSDK::VerticesArcAssetDetailsGetRequest : public Request
+        {
+        public:
+            virtual ~VerticesArcAssetDetailsGetRequest() {}
+            
+            TOptional<uint64_t> asset_ID;
+        };
+
+        // Response for Arc Asset Details
+        class VerticesSDK::VerticesArcAssetDetailsGetResponse : public Response
+        {
+        public:
+            ~VerticesArcAssetDetailsGetResponse() {}
+            
+            uint8 standard;
+            FString unit_name;
+            uint64_t total;
+            uint64_t decimals;
+            FString description;
+            FString clawback;
+            FString creator;
+            FString freeze;
+            FString manager;
+            FString reserve;
+            FString media_url;
+            FString external_url;
+            FString animation_url;
+            TMap<FString, FString> properties;
+        };
     }
 }

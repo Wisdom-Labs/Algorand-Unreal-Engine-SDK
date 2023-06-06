@@ -86,4 +86,12 @@ namespace request_builders {
 	algorand::vertices::VerticesSDK::VerticesApplicationCallTransactionGetRequest
 		buildApplicationCallTransactionRequest(const FString& sender,
 									   const FUInt64& app_ID);
+
+	/**
+	 * @brief build request for arc asset details with following params
+	 * like asset ID
+	 * @return request
+	 */
+	algorand::vertices::VerticesSDK::VerticesArcAssetDetailsGetRequest
+		buildArcAssetDetailsRequest(const FUInt64& asset_ID);
 }

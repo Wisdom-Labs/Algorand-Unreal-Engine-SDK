@@ -67,13 +67,24 @@ void UAlgorandHandler::OnSendApplicationCallTransactionCallback(const FString& t
         *txID);
 }
 
-void UAlgorandHandler::RunSomeLogic() {
-    FScriptDelegate _delegate4;
-    _delegate4.BindUFunction(this, FName("OnRestoreWalletCallback"));
-    algorandManager->RestoreWalletCallback.Add(_delegate4);
-    FString mnemonics = "afford emerge have market grow elevator tumble crumble smart sting matrix movie custom slice labor dilemma define foster focus vintage aisle inmate veteran abstract sunny";
-    algorandManager->restoreWallet(mnemonics);
+void UAlgorandHandler::OnGetArcAssetDetailsCallback(const FArcAssetDetails& asset_Details)
+{
+    UE_LOG(LogTemp, Display, TEXT("Arc Asset Media Url: %s"),
+     *asset_Details.media_url);
+}
 
+void UAlgorandHandler::RunSomeLogic() {
+    // FScriptDelegate _delegate4;
+    // _delegate4.BindUFunction(this, FName("OnRestoreWalletCallback"));
+    // algorandManager->RestoreWalletCallback.Add(_delegate4);
+    // FString mnemonics = "afford emerge have market grow elevator tumble crumble smart sting matrix movie custom slice labor dilemma define foster focus vintage aisle inmate veteran abstract sunny";
+    // algorandManager->restoreWallet(mnemonics);
+
+    FScriptDelegate _delegate9;
+    _delegate9.BindUFunction(this, FName("OnGetArcAssetDetailsCallback"));
+    algorandManager->FetchArcAssetDetailsCallback.Add(_delegate9);
+    algorandManager->fetchArcAssetDetails(779312090);
+    
     // FScriptDelegate _delegate5;
     // _delegate5.BindUFunction(this, FName("OnInitializeNewWalletCallback"));
     // algorandManager->InitializeNewWalletCallback.Add(_delegate5);

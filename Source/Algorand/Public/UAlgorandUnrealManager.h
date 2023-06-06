@@ -5,6 +5,7 @@
 #include "Engine/World.h"
 #include "RequestContextManager.h"
 #include "Wallet.h"
+#include "Models/FArcAssetDetails.h"
 #include "Models/FUInt64.h"
 #include "Models/FError.h"
 #include "UnrealApi.h"
@@ -29,7 +30,6 @@
 
 namespace {
     // Export Procedures
-     
     using Vertices = algorand::vertices::VerticesSDK;
 }
 
@@ -82,6 +82,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAssetTransferTransactionDelegate, c
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FApplicationCallTransactionDelegate, const FString&, txID);
 
 /**
+ * nft details callback
+ * @param assetDetails Arc Asset details
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FArcAssetDetailsDelegate, const FArcAssetDetails&, assetDetails);
+
+/**
  * error callback
  * @param error 
 */
@@ -99,16 +105,25 @@ public:
 
     /**
      * Create Instance of Algorand manager
-     * @param algoRpc algorand rpc url https://node.testnet.algoexplorerapi.io
-     * @param algoPort algorand rpc port 0
-     * @param algoTokenHeader algorand rpc token header "" , if localhost, X-Algo-API-Token: , if using purestake api, x-api-key:
+     * @param algodRpc algorand rpc url https://testnet-api.algonode.cloud
+     * @param algodPort algorand rpc port 443
+     * @param algodTokenHeader algorand rpc token header "" , if localhost, X-Algo-API-Token: , if using purestake api, x-api-key:
+	 * @param indexerRpc algorand rpc url https://testnet-idx.algonode.network
+	 * @param indexerPort algorand rpc port 443
+	 * @param indexerTokenHeader algorand rpc token header "" , if localhost, X-Algo-API-Token: , if using purestake api, x-api-key:
      * @param outer root on level
      * @return AlgorandUnrealManager as a pointer
      */
     UFUNCTION(BlueprintCallable,
 			  meta = (DisplayName = "createInstanceWithParams", Keywords = "AlgorandManager"),
 			  Category = "AlgorandUnrealManager")
-        static UAlgorandUnrealManager* createInstanceWithParams(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader_, UObject* outer);
+        static UAlgorandUnrealManager* createInstanceWithParams(const FString& algodRpc,
+																const FUInt64& algodPort,
+																const FString& algodTokenHeader_,
+																const FString& indexerRpc,
+																const FUInt64& indexerPort,
+																const FString& indexerTokenHeader_,
+																UObject* outer);
 
 	/**
 	 * Create Instance of Algorand manager
@@ -123,71 +138,28 @@ public:
 
 	/**
 	 * Create Instance of Algorand manager
-	 * @param algoRpc algorand rpc url https://node.testnet.algoexplorerapi.io
-	 * @param algoPort algorand rpc port 0
-	 * @param algoTokenHeader algorand rpc token header "" , if localhost, X-Algo-API-Token: , if using purestake api, x-api-key:
+	 * @param algodRpc algorand rpc url https://testnet-api.algonode.cloud
+	 * @param algodPort algorand rpc port 443
+	 * @param algodTokenHeader algorand rpc token header "" , if localhost, X-Algo-API-Token: , if using purestake api, x-api-key:
 	 * @return AlgorandUnrealManager as a pointer
 	 */
 	UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "setAlgoRpcInfo", Keywords = "AlgorandManager"),
+			  meta = (DisplayName = "setAlgodRpcInfo", Keywords = "AlgorandManager"),
 			  Category = "AlgorandUnrealManager")
-		void setAlgoRpcInfo(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader_);
+		void setAlgodRpcInfo(const FString& algodRpc, const FUInt64& algodPort, const FString& algodTokenHeader_);
 
-    /**
-     * Set rpc url of algorand node
-     * @param algoRpc algoRpc algorand rpc url
-     */
-    UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "setAlgoRpc", Keywords = "SetAlgo"),
+	/**
+	 * Create Instance of Algorand manager
+	 * @param indexerRpc algorand rpc url https://testnet-api.algonode.cloud
+	 * @param indexerPort algorand rpc port 443
+	 * @param indexerTokenHeader algorand rpc token header "" , if localhost, X-Algo-API-Token: , if using purestake api, x-api-key:
+	 * @return AlgorandUnrealManager as a pointer
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "setIndexerRpcInfo", Keywords = "AlgorandManager"),
 			  Category = "AlgorandUnrealManager")
-        void setAlgoRpc(const FString& algoRpc);
-
-    /**
-     * Set rpc port of algorand node
-     * @param algoPort algorand rpc port
-     */
-    UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "setAlgoPort", Keywords = "SetAlgo"),
-    		  Category = "AlgorandUnrealManager")
-        void setAlgoPort(const FUInt64& algoPort);
-
-    /**
-     * Set rpc tokenHeader of algorand node
-     * @param algoTokenHeader algorand rpc tokenHeader
-     */
-    UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "setAlgoTokenHeader", Keywords = "SetAlgo"),
-    		  Category = "AlgorandUnrealManager")
-        void setAlgoTokenHeader(const FString& algoTokenHeader);
-
-    /**
-     * get rpc url of algorand node
-     * @return algorand rpc url as string
-     */
-    UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "getAlgoRpc", Keywords = "GetAlgo"),
-    	      Category = "AlgorandUnrealManager")
-        FString getAlgoRpc();
-
-    /**
-     * get rpc port of algorand node
-     * @return algorand rpc port as uint64
-     */
+		void setIndexerRpcInfo(const FString& indexerRpc, const FUInt64& indexerPort, const FString& indexerTokenHeader);
 	
-    UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "getAlgoPort", Keywords = "GetAlgo"),
-    		  Category = "AlgorandUnrealManager")
-        FUInt64 getAlgoPort();
-
-    /**
-     * get rpc token header of algorand node
-     * @return algorand rpc token header as string
-     */
-    UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "getAlgoTokenHeader", Keywords = "GetAlgo"),
-    		  Category = "AlgorandUnrealManager")
-        FString getAlgoTokenHeader();
-
     /**
      * get account address connected to algorand node
      * @return account address as string
@@ -379,9 +351,30 @@ public:
 
 	/**
 	 * get response after application call tx
-	 * @param response txID after payment tx
+	 * @param response txID after application call tx
 	 */ 
     void OnSendApplicationCallTransactionCompleteCallback(const Vertices::VerticesApplicationCallTransactionGetResponse& response);
+
+	/**
+	 * send request to algorand node to fetech arc-asset details
+	 * @param asset_ID asset id to be fetched from algorand node
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "fetchArcAssetDetails", Keywords = "ArcAsset"),	
+			  Category = "AlgorandUnrealManager")
+	void fetchArcAssetDetails(const FUInt64& asset_ID);
+
+	/**
+	 * arc asset details callback
+	 */
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+	FArcAssetDetailsDelegate FetchArcAssetDetailsCallback;
+
+	/**
+	 * get response after arc asset details
+	 * @param response after arc asset details
+	 */ 
+	void OnFetchArcAssetDetailsCompleteCallback(const Vertices::VerticesArcAssetDetailsGetResponse& response);
 
 	/**
 	 * return world of outer
@@ -391,9 +384,13 @@ public:
 
 private:
 	// algorand rpc information
-    FString myAlgoRpc;
-    FUInt64 myAlgoPort;
-    FString myAlgoTokenHeader;
+    FString myAlgodRpc;
+    FUInt64 myAlgodPort;
+    FString myAlgodTokenHeader;
+
+	FString myIndexerRpc;
+	FUInt64 myIndexerPort;
+	FString myIndexerTokenHeader;
 
 	// Algorand modules
     TSharedPtr<TransactionBuilder> transactionBuilder_;

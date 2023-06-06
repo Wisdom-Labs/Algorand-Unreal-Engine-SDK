@@ -5,9 +5,12 @@
 #include <string>
 using namespace std;
 
+namespace algorand {
+namespace vertices {
+
 typedef std::vector<unsigned char> bytes;
 
-class Address {
+class VERTICES_API Address {
 public:
 	Address() {}                    // Constructs the ZERO address
 	Address& operator=(const Address& other);
@@ -20,3 +23,6 @@ private:
 	Address(std::string s, bytes with_csum);
 	Address(bytes public_key, bytes with_csum);
 };
+
+}
+}
