@@ -393,6 +393,41 @@ void UAlgorandUnrealManager::OnSendApplicationCallTransactionCompleteCallback(co
     }
 }
 
+/**
+ * @brief create its context to send the request to unreal api for arc asset details
+ */
+void UAlgorandUnrealManager::fetchArcAssetDetails(const FUInt64& asset_ID)
+{
+    this->requestContextManager_
+        .createContext<API::FAlgorandArcAssetDetailsGetDelegate,
+        Vertices::VerticesArcAssetDetailsGetRequest>(
+            request_builders::buildArcAssetDetailsRequest(asset_ID),
+            std::bind(&API::AlgorandArcAssetDetailsGet, unrealApi_.Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            std::bind(&UAlgorandUnrealManager::OnFetchArcAssetDetailsCompleteCallback, this, std::placeholders::_1)
+            );
+}
+
+/**
+ * @brief get response from unreal api after fetching arc asset details and broadcast the result to binded functions
+ */
+void UAlgorandUnrealManager::OnFetchArcAssetDetailsCompleteCallback(const Vertices::VerticesArcAssetDetailsGetResponse& response) {
+    if (response.IsSuccessful()) {
+        FArcAssetDetails arcNft;
+        FetchArcAssetDetailsCallback.Broadcast(arcNft);
+        FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Arc Asset Details", "sent request to fetch details of arc asset successfully."));
+    }
+    else {
+        FFormatNamedArguments Arguments;
+        Arguments.Add(TEXT("MSG"), FText::FromString(response.GetResponseString()));
+        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "{MSG}"), Arguments));
+        
+        if (!ErrorDelegateCallback.IsBound()) {
+            ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
+        }
+    }
+}
+
 UWorld* UAlgorandUnrealManager::GetWorld() const
 {
     return GetOuter()->GetWorld();

@@ -54,6 +54,9 @@ public:
 	/// application call tx api callback
     DECLARE_DELEGATE_OneParam(FAlgorandApplicationCallTransactionGetDelegate, const Vertices::VerticesApplicationCallTransactionGetResponse&);
 
+	/// arc asset details api callback
+	DECLARE_DELEGATE_OneParam(FAlgorandArcAssetDetailsGetDelegate, const Vertices::VerticesArcAssetDetailsGetResponse&);
+
     /**
      * @brief send api request for restore wallet
      * @param Request value to send as params for calling api
@@ -114,6 +117,13 @@ public:
 	 */
     void AlgorandApplicationCallTransactionGet(const Vertices::VerticesApplicationCallTransactionGetRequest& Request, const FAlgorandApplicationCallTransactionGetDelegate& Delegate = FAlgorandApplicationCallTransactionGetDelegate()) const;
 
+	/**
+	 * @brief send api request for send arc asset details
+	 * @param Request value to send as params for calling api
+	 * @param Delegate is used to implement async task after get response as api result
+	 */
+	void AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetailsGetRequest& Request, const FAlgorandArcAssetDetailsGetDelegate& Delegate = FAlgorandArcAssetDetailsGetDelegate()) const;
+
 private:
 	
     /**
@@ -171,6 +181,13 @@ private:
 	 * @param Delegate is used to execute binded callback from Algorand module
 	 */
     void OnAlgorandApplicationCallTransactionGetResponse(const Vertices::VerticesApplicationCallTransactionGetResponse& response, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const;
+
+	/**
+	 * @brief callback function to be run after api request of sending arc asset details
+	 * @param response is used to send as Vertices Response type to Algorand module 
+	 * @param Delegate is used to execute binded callback from Algorand module
+	 */
+	void OnAlgorandArcAssetDetailsGetResponse(const Vertices::VerticesArcAssetDetailsGetResponse& response, const FAlgorandArcAssetDetailsGetDelegate& Delegate) const;
 
 	// Algorand modules
     TSharedPtr<algorand::vertices::VerticesSDK> vertices_;

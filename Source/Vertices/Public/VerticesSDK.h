@@ -1,6 +1,7 @@
 ﻿// Copyright 2022, Wisdom Labs. All Rights Reserved
 
 #pragma once
+
 #include "Modules/ModuleManager.h"
 #include "include/vertices/vertices.h"
 #include "include/utils/base32.h"
@@ -139,6 +140,8 @@ namespace vertices {
         class VerticesAssetTransferTransactionGetResponse;
         class VerticesApplicationCallTransactionGetRequest;
         class VerticesApplicationCallTransactionGetResponse;
+        class VerticesArcAssetDetailsGetRequest;
+        class VerticesArcAssetDetailsGetResponse;
 
         /// restore wallet callback
         DECLARE_DELEGATE_OneParam(FVerticesRestoreWalletGetDelegate, const VerticesRestoreWalletGetResponse&);

@@ -29,9 +29,63 @@
 
 namespace {
     // Export Procedures
-     
     using Vertices = algorand::vertices::VerticesSDK;
 }
+
+UENUM(BlueprintType)
+enum class EArcType : uint8 {
+	Arc00 UMETA(DisplayName = "Arc00"),
+	Arc03 UMETA(DisplayName = "Arc03"),
+	Arc69 UMETA(DisplayName = "Arc69"),
+};
+
+USTRUCT(BlueprintType)
+struct FArcAssetDetails
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
+	EArcType standard;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
+	FString unit_name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
+	FUInt64 total;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
+	FUInt64 decimals;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
+	FString description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
+	FString clawback;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
+	FString creator;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
+	FString freeze;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
+	FString manager;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
+	FString reserve;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
+	FString media_url;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
+	FString external_url;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
+	FString animation_url;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
+	TMap<FString, FString> properties;
+};
 
 /**
  * restore wallet callback 
@@ -80,6 +134,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAssetTransferTransactionDelegate, c
  * @param txID transaction hash
 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FApplicationCallTransactionDelegate, const FString&, txID);
+
+/**
+ * nft details callback
+ * @param assetDetails Arc Asset details
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FArcAssetDetailsDelegate, const FArcAssetDetails&, assetDetails);
 
 /**
  * error callback
@@ -379,9 +439,30 @@ public:
 
 	/**
 	 * get response after application call tx
-	 * @param response txID after payment tx
+	 * @param response txID after application call tx
 	 */ 
     void OnSendApplicationCallTransactionCompleteCallback(const Vertices::VerticesApplicationCallTransactionGetResponse& response);
+
+	/**
+	 * send request to algorand node to fetech arc-asset details
+	 * @param asset_ID asset id to be fetched from algorand node
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "fetchArcAssetDetails", Keywords = "ArcAsset"),	
+			  Category = "AlgorandUnrealManager")
+	void fetchArcAssetDetails(const FUInt64& asset_ID);
+
+	/**
+	 * arc asset details callback
+	 */
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+	FArcAssetDetailsDelegate FetchArcAssetDetailsCallback;
+
+	/**
+	 * get response after arc asset details
+	 * @param response after arc asset details
+	 */ 
+	void OnFetchArcAssetDetailsCompleteCallback(const Vertices::VerticesArcAssetDetailsGetResponse& response);
 
 	/**
 	 * return world of outer
