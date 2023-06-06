@@ -25,7 +25,10 @@ namespace ArcResponseBuilders {
 		response.animation_url = arc_asset.metadata.animation_url;
 		response.properties = arc_asset.metadata.properties; 
 		
-		delegate.ExecuteIfBound(response);
+		AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+		{
+			delegate.ExecuteIfBound(response);
+		});
 	}
 
 	void ArcResponseBuilders::buildArcAssetDetailsResponse(const Arc69& arc_asset, const FAPIArcAssetDetailsGetDelegate& delegate)
@@ -50,7 +53,10 @@ namespace ArcResponseBuilders {
 
 		response.SetSuccessful(true);
 		
-		delegate.ExecuteIfBound(response);
+		AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+		{
+			delegate.ExecuteIfBound(response);
+		});
 	}
 
 }

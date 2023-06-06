@@ -67,6 +67,7 @@ public:
 
 	FArcAssetDetails();
 	FArcAssetDetails(const algorand::vertices::VerticesSDK::VerticesArcAssetDetailsGetResponse& response);
+	
 };
 
 #pragma pack(pop)

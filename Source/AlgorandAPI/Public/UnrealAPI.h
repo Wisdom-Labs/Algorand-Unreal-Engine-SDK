@@ -191,7 +191,7 @@ private:
 
 	// Algorand modules
     TSharedPtr<algorand::vertices::VerticesSDK> vertices_;
-
+	
 };
        
 }

@@ -37,3 +37,4 @@ FArcAssetDetails::FArcAssetDetails(const algorand::vertices::VerticesSDK::Vertic
 	properties = response.properties;
 }
 
+

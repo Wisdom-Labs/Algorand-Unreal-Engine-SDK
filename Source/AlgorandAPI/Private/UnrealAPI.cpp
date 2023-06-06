@@ -172,42 +172,49 @@ void UnrealApi::OnAlgorandApplicationCallTransactionGetResponse(const Vertices::
 
 void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetailsGetRequest& Request, const FAlgorandArcAssetDetailsGetDelegate& Delegate) const
 {
-    TSharedRef<ArcResponseBuilders::FAPIArcAssetDetailsGetDelegate> delegatePtr(MakeShared<ArcResponseBuilders::FAPIArcAssetDetailsGetDelegate>());
+    AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, Delegate]()
+    {
+        TSharedRef<ArcResponseBuilders::FAPIArcAssetDetailsGetDelegate> delegatePtr(MakeShared<ArcResponseBuilders::FAPIArcAssetDetailsGetDelegate>());
     
-    Arc03 arc03_data(Request.asset_ID.GetValue());
-    if(arc03_data.IsVerify())
-    {
-        auto param_url = StringCast<ANSICHAR>(*(arc03_data.asset.params.url));
-        std::string s_url = param_url.Get();
-        arc03_data.from_asset_url(s_url);
-        
-        delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesArcAssetDetailsGetResponse& response) {
-            OnAlgorandArcAssetDetailsGetResponse(response, Delegate);
+        Arc03 arc03_data(Request.asset_ID.GetValue());
+        if(arc03_data.IsVerify())
+        {
+            auto param_url = StringCast<ANSICHAR>(*(arc03_data.asset.params.url));
+            std::string s_url = param_url.Get();
+            arc03_data.from_asset_url(s_url);
+            
+            delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesArcAssetDetailsGetResponse& response) {
+                OnAlgorandArcAssetDetailsGetResponse(response, Delegate);
+            });
+
+            ArcResponseBuilders::buildArcAssetDetailsResponse(arc03_data, delegatePtr.Get());
+            return;
+        }
+
+        Arc69 arc69_data(Request.asset_ID.GetValue());
+        if(arc69_data.IsVerify())
+        {
+            auto tx_note = StringCast<ANSICHAR>(*(arc69_data.tx.note));
+            std::string s_tx_note = tx_note.Get();
+            arc69_data.from_tx_note(s_tx_note);
+
+            delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesArcAssetDetailsGetResponse& response) {
+                OnAlgorandArcAssetDetailsGetResponse(response, Delegate);
+            });
+
+            ArcResponseBuilders::buildArcAssetDetailsResponse(arc69_data, delegatePtr.Get());
+            return;
+        }
+
+        Vertices::VerticesArcAssetDetailsGetResponse response;
+        response.SetSuccessful(false);
+        response.SetResponseString("This arc asset doesn't have correct type.");
+        OnAlgorandArcAssetDetailsGetResponse(response, Delegate);
+        AsyncTask(ENamedThreads::GameThread, [Delegate, response]()
+        {
+            Delegate.ExecuteIfBound(response);
         });
-
-        ArcResponseBuilders::buildArcAssetDetailsResponse(arc03_data, delegatePtr.Get());
-        return;
-    }
-
-    Arc69 arc69_data(Request.asset_ID.GetValue());
-    if(arc69_data.IsVerify())
-    {
-        auto tx_note = StringCast<ANSICHAR>(*(arc69_data.tx.note));
-        std::string s_tx_note = tx_note.Get();
-        arc69_data.from_tx_note(s_tx_note);
-
-        delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesArcAssetDetailsGetResponse& response) {
-            OnAlgorandArcAssetDetailsGetResponse(response, Delegate);
-        });
-
-        ArcResponseBuilders::buildArcAssetDetailsResponse(arc69_data, delegatePtr.Get());
-        return;
-    }
-
-    Vertices::VerticesArcAssetDetailsGetResponse response;
-    response.SetSuccessful(false);
-    response.SetResponseString("This arc asset doesn't have correct type.");
-    OnAlgorandArcAssetDetailsGetResponse(response, Delegate);
+    });
 }
 
 /**

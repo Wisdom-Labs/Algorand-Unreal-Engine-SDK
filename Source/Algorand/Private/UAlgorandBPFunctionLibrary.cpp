@@ -39,3 +39,18 @@ UAlgorandBPFunctionLibrary::Conv_FUInt64ToCommaString(const FUInt64& value, cons
 	
 	return CommaString;
 }
+
+FString UAlgorandBPFunctionLibrary::Conv_PropertiesToString(TMap<FString, FString> map_data)
+{
+	FString MapAsString;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&MapAsString);
+	Writer->WriteObjectStart();
+	for (auto& Elem : map_data)
+	{
+		Writer->WriteValue(Elem.Key, Elem.Value);
+	}
+	Writer->WriteObjectEnd();
+	Writer->Close();
+
+	return MapAsString;
+}
