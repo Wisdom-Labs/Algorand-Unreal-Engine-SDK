@@ -32,15 +32,15 @@ Account::seed() const {
 }
 
 Account::Account(std::string address)
-	: address(Address(address)) {
+	: address(algorand::vertices::Address(address)) {
 }
 
-Account::Account(Address address)
+Account::Account(algorand::vertices::Address address)
 	: address(address) {
 }
 
 Account::Account(bytes public_key, bytes secret_key)
-	: address(Address(public_key)), secret_key(secret_key) {
+	: address(algorand::vertices::Address(public_key)), secret_key(secret_key) {
 	assert(public_key.size() == crypto_sign_ed25519_PUBLICKEYBYTES);
 	assert(secret_key.size() == crypto_sign_ed25519_SECRETKEYBYTES);
 }
