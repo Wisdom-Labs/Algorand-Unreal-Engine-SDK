@@ -12,6 +12,7 @@
 #include "AES.h"
 #include <cstring>
 #include "SDKException.h"
+#include "include/vertices/vertices_http.h"
 #include "Windows/AllowWindowsPlatformTypes.h"
 
 using namespace std;
@@ -1098,10 +1099,14 @@ namespace algorand {
         {
             try
             {
-                set_http_init(&http_init);
-                set_http_get(&http_get);
-                set_http_post(&http_post);
-                set_http_close(&http_close);
+                if(http_init != NULL)
+                    set_http_init(&http_init);
+                if(http_get != NULL)
+                    set_http_get(&http_get);
+                if(http_post != NULL)
+                    set_http_post(&http_post);
+                if(http_close != NULL)
+                    set_http_close(&http_close);
             }
             catch (std::exception &ex)
             {

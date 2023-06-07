@@ -2,6 +2,7 @@
 
 #include "include/vertices/vertices_errors.h"
 #include "include/vertices/vertices_types.h"
+#include "include/vertices/vertices_http.h"
 #include "include/vertices_log.h"
 #include <curl/curl.h>
 #include <string.h>
