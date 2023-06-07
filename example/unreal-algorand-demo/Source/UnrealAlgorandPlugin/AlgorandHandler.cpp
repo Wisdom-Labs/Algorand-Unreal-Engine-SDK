@@ -83,7 +83,7 @@ void UAlgorandHandler::RunSomeLogic() {
     FScriptDelegate _delegate9;
     _delegate9.BindUFunction(this, FName("OnGetArcAssetDetailsCallback"));
     algorandManager->FetchArcAssetDetailsCallback.Add(_delegate9);
-    algorandManager->fetchArcAssetDetails(1092104610);
+    algorandManager->fetchArcAssetDetails(779312090);
     
     // FScriptDelegate _delegate5;
     // _delegate5.BindUFunction(this, FName("OnInitializeNewWalletCallback"));

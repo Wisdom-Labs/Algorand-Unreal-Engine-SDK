@@ -23,6 +23,18 @@ UnrealApi::UnrealApi(TSharedPtr<algorand::vertices::VerticesSDK>& vertices)
 }
 
 UnrealApi::~UnrealApi() {}
+
+void UnrealApi::setAlgoRpc(const FString& algoRpc) {
+    myAlgoRpc = algoRpc;
+}
+
+void UnrealApi::setAlgoPort(const int& algoPort) {
+    myAlgoPort = algoPort;
+}
+
+void UnrealApi::setAlgoTokenHeader(const FString& algoTokenHeader) {
+    myAlgoTokenHeader = algoTokenHeader;
+}
     
 void UnrealApi::AlgorandRestoreWalletGet(const Vertices::VerticesRestoreWalletGetRequest& Request, const FAlgorandRestoreWalletGetDelegate& Delegate) const
 {
@@ -173,10 +185,10 @@ void UnrealApi::OnAlgorandApplicationCallTransactionGetResponse(const Vertices::
 void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetailsGetRequest& Request, const FAlgorandArcAssetDetailsGetDelegate& Delegate) const
 {
     AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, Delegate]()
-    {
+    {   
         TSharedRef<ArcResponseBuilders::FAPIArcAssetDetailsGetDelegate> delegatePtr(MakeShared<ArcResponseBuilders::FAPIArcAssetDetailsGetDelegate>());
     
-        Arc03 arc03_data(Request.asset_ID.GetValue());
+        Arc03 arc03_data(Request.asset_ID.GetValue(), myAlgoRpc, myAlgoPort, myAlgoTokenHeader);
         if(arc03_data.IsVerify())
         {
             auto param_url = StringCast<ANSICHAR>(*(arc03_data.asset.params.url));
@@ -191,7 +203,7 @@ void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetai
             return;
         }
 
-        Arc69 arc69_data(Request.asset_ID.GetValue());
+        Arc69 arc69_data(Request.asset_ID.GetValue(), myAlgoRpc, myAlgoPort, myAlgoTokenHeader);
         if(arc69_data.IsVerify())
         {
             auto tx_note = StringCast<ANSICHAR>(*(arc69_data.tx.note));

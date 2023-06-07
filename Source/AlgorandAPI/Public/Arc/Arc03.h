@@ -25,7 +25,7 @@ typedef struct {
 class Arc03 : public ArcBase{
 public:
     Arc03() : ArcBase() {}
-    Arc03(uint64_t asset_id);
+    Arc03(uint64_t asset_id, FString algoRpc, uint64_t algoPort, FString algoToken);
 
     bool IsVerify();
     void from_asset_url(std::string& url);

@@ -7,10 +7,13 @@
 
 ArcBase::ArcBase(uint64_t asset_id) {
     asset.index = asset_id;
+    myAlgoRpc = "https://testnet-idx.algonode.network";
+    myAlgoPort = 443;
+    myAlgoTokenHeader = "";
 }
 
-void ArcBase::from_asset(uint64_t asset_id) {
-    IndexerClient indexerClient("https://mainnet-idx.algonode.network:443", "");
+void ArcBase::from_asset(uint64_t asset_id) { 
+    IndexerClient indexerClient(std::string(TCHAR_TO_UTF8(*(myAlgoRpc + ":" + FString::FromInt(myAlgoPort)))), std::string(TCHAR_TO_UTF8(*myAlgoTokenHeader)));
 
     auto resp = indexerClient.searchForAssets(0,"",algorand::vertices::Address(), "", "", asset_id);
 
@@ -70,7 +73,7 @@ void ArcBase::from_asset(uint64_t asset_id) {
 }
 
 void ArcBase::from_tx(uint64_t asset_id) {
-    IndexerClient indexerClient("https://mainnet-idx.algonode.network:443", "");
+    IndexerClient indexerClient(std::string(TCHAR_TO_UTF8(*(myAlgoRpc + ":" + FString::FromInt(myAlgoPort)))), std::string(TCHAR_TO_UTF8(*myAlgoTokenHeader)));
 
     auto resp = indexerClient.searchForTransactions(0,"","","acfg","",0,asset_id,"","",algorand::vertices::Address(),0);
 

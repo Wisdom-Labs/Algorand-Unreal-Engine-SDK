@@ -71,7 +71,12 @@ std::string trim(std::string str)
     return str;
 }
 
-Arc69::Arc69(uint64_t asset_id) {
+Arc69::Arc69(uint64_t asset_id, FString algoRpc, uint64_t algoPort, FString algoToken) {
+    // set rpc info
+    myAlgoRpc = algoRpc;
+    myAlgoPort = algoPort;
+    myAlgoTokenHeader = algoToken;
+    
     this->from_asset(asset_id);
     this->from_tx(asset_id);
 }

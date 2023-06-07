@@ -57,6 +57,24 @@ public:
 	/// arc asset details api callback
 	DECLARE_DELEGATE_OneParam(FAlgorandArcAssetDetailsGetDelegate, const Vertices::VerticesArcAssetDetailsGetResponse&);
 
+	/**
+		 * @brief set rpc url of algorand node 
+		 * @param algoRpc algoRpc rpc url
+		 */
+	void setAlgoRpc(const FString& algoRpc);
+
+	/**
+	 * @brief set rpc port of algorand node
+	 * @param algoPort algoPort rpc port
+	 */
+	void setAlgoPort(const int& algoPort);
+
+	/**
+	 * @brief set rpc tokenHeader of algorand node
+	 * @param algoTokenHeader algorand rpc tokenHeader
+	 */
+	void setAlgoTokenHeader(const FString& algoTokenHeader);
+	
     /**
      * @brief send api request for restore wallet
      * @param Request value to send as params for calling api
@@ -191,7 +209,11 @@ private:
 
 	// Algorand modules
     TSharedPtr<algorand::vertices::VerticesSDK> vertices_;
-	
+
+	// algorand rpc information
+	FString myAlgoRpc;
+	uint64_t myAlgoPort;
+	FString myAlgoTokenHeader;
 };
        
 }

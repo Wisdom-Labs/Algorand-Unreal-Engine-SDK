@@ -22,29 +22,33 @@ namespace {
 // create vertices_ , transactionBuilder_ , unrealApi_ and load payment address 
 // Sets default values
 UAlgorandUnrealManager::UAlgorandUnrealManager()
-    :myAlgoRpc("https://node.testnet.algoexplorerapi.io") , myAlgoPort(0) , myAlgoTokenHeader("")
+    :myAlgodRpc("https://mainnet-api.algonode.cloud") , myAlgodPort(443) , myAlgodTokenHeader(""), myIndexerRpc("https://mainnet-idx.algonode.network"), myIndexerPort(443), myIndexerTokenHeader("")
 {
     FString address;
     // create instance of Vertices library
     vertices_ = MakeShared<algorand::vertices::VerticesSDK>();
 
-    setAlgoRpc(myAlgoRpc);
-    setAlgoPort(myAlgoPort);
-    setAlgoTokenHeader(myAlgoTokenHeader);
-
     transactionBuilder_ = createTransactionBuilder("");       
     // create instance of unreal api library
     unrealApi_ = MakeShared<algorand::api::UnrealApi>(vertices_);
+
+    setAlgodRpcInfo(myAlgodRpc, myAlgodPort, myAlgodTokenHeader);
+    setIndexerRpcInfo(myIndexerRpc, myIndexerPort, myIndexerTokenHeader);        
 }
 
 // create instance of algorand manager using blueprint
-UAlgorandUnrealManager* UAlgorandUnrealManager::createInstanceWithParams(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader, UObject* outer)
+UAlgorandUnrealManager* UAlgorandUnrealManager::createInstanceWithParams(const FString& algodRpc,
+                                                                         const FUInt64& algodPort,
+                                                                         const FString& algodTokenHeader,
+                                                                         const FString& indexerRpc,
+                                                                         const FUInt64& indexerPort,
+                                                                         const FString& indexerTokenHeader,
+                                                                         UObject* outer)
 {
     UAlgorandUnrealManager* manager = NewObject<UAlgorandUnrealManager>(outer);
     
-    manager->setAlgoRpc(algoRpc);
-    manager->setAlgoPort(algoPort);
-    manager->setAlgoTokenHeader(algoTokenHeader);
+    manager->setAlgodRpcInfo(algodRpc, algodPort, algodTokenHeader);
+    manager->setIndexerRpcInfo(indexerRpc, indexerPort, indexerTokenHeader);
         
     return manager;
 }
@@ -58,45 +62,27 @@ UAlgorandUnrealManager* UAlgorandUnrealManager::createInstance(UObject* outer)
 }
 
 /// set rpc info from algorand manager to vertices instance
-void UAlgorandUnrealManager::setAlgoRpcInfo(const FString& algoRpc, const FUInt64& algoPort, const FString& algoTokenHeader)
+void UAlgorandUnrealManager::setAlgodRpcInfo(const FString& algodRpc, const FUInt64& algodPort, const FString& algodTokenHeader)
 {
-    this->setAlgoRpc(algoRpc);
-    this->setAlgoPort(algoPort);
-    this->setAlgoTokenHeader(algoTokenHeader);
+    myAlgodRpc = algodRpc;
+    myAlgodPort = algodPort;
+    myAlgodTokenHeader = algodTokenHeader;
+    
+    vertices_->setAlgoRpc(myAlgodRpc);
+    vertices_->setAlgoPort(myAlgodPort);
+    vertices_->setAlgoTokenHeader(myAlgodTokenHeader);
 }
 
-/// set rpc info from algorand manager to vertices instance
-
-void UAlgorandUnrealManager::setAlgoRpc(const FString& algoRpc) {
-    myAlgoRpc = algoRpc;
-    vertices_->setAlgoRpc(myAlgoRpc);
-}
-
-void UAlgorandUnrealManager::setAlgoPort(const FUInt64& algoPort) {
-    myAlgoPort = algoPort; 
-    vertices_->setAlgoPort(algoPort.Value);
-}
-
-void UAlgorandUnrealManager::setAlgoTokenHeader(const FString& algoTokenHeader) {
-    myAlgoTokenHeader = algoTokenHeader;
-    vertices_->setAlgoTokenHeader(myAlgoTokenHeader);
-}
-
-/// get alogrand rpc information
-
-FString UAlgorandUnrealManager::getAlgoRpc()
+/// set rpc info from algorand manager to unrealapi instance
+void UAlgorandUnrealManager::setIndexerRpcInfo(const FString& indexerRpc, const FUInt64& indexerPort, const FString& indexerTokenHeader)
 {
-    return myAlgoRpc;
-}
-
-FUInt64 UAlgorandUnrealManager::getAlgoPort()
-{
-    return myAlgoPort;
-}
-
-FString UAlgorandUnrealManager::getAlgoTokenHeader()
-{
-    return myAlgoTokenHeader;
+    myIndexerRpc = indexerRpc;
+    myIndexerPort = indexerPort;
+    myIndexerTokenHeader = indexerTokenHeader;
+    
+    unrealApi_->setAlgoRpc(myIndexerRpc);
+    unrealApi_->setAlgoPort(myIndexerPort);
+    unrealApi_->setAlgoTokenHeader(myIndexerTokenHeader);
 }
 
 FString UAlgorandUnrealManager::getAddress()

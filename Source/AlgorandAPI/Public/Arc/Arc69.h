@@ -21,7 +21,7 @@ typedef struct {
 class Arc69 : public ArcBase{
 public:
     Arc69() : ArcBase() {}
-    Arc69(uint64_t asset_id);
+    Arc69(uint64_t asset_id, FString algoRpc, uint64_t algoPort, FString algoToken);
 
     bool IsVerify();
     void from_tx_note(std::string& tx_note);

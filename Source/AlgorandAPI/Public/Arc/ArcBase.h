@@ -38,7 +38,7 @@ typedef struct {
 
 class ArcBase {
 public:
-    ArcBase() {asset.index = 0; asset.destroyed_at_round = 0; asset.destroyed_at_round = 0;}
+    ArcBase() {asset.index = 0;}
     ArcBase(uint64_t asset_id);
 
     void from_asset(uint64_t asset_id);
@@ -46,6 +46,11 @@ public:
 
     arc_asset asset;
     arc_tx tx;
+
+    // algorand rpc information
+    FString myAlgoRpc;
+    uint64_t myAlgoPort;
+    FString myAlgoTokenHeader;
 };
 
 
