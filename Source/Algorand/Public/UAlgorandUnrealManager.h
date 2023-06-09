@@ -70,6 +70,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetBalanceDelegate, const FUInt64&,
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPaymentTransactionDelegate, const FString&, txID);
 
 /**
+ * asset config tx callback
+ * @param txID transaction hash
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAssetConfigTransactionDelegate, const FString&, txID);
+
+/**
  * asset transfer tx callback
  * @param txID transaction hash
 */
@@ -305,6 +311,48 @@ public:
 	 * @param response txID after payment tx
 	 */
     void OnSendPaymentTransactionCompleteCallback(const Vertices::VerticesPaymentTransactionGetResponse& response);
+
+	/**
+	 * send asset transfer TX to algorand node
+	 * @param creator address which create token
+	 * @param manager address which take token 
+	 * @param reserve address which take token 
+	 * @param freeze address which take token 
+	 * @param clawback address which take token 
+	 * @param asset_id of token to be sent
+	 * @param total amount of token to be sent
+	 * @param decimals of token to be sent
+	 * @param unit_name of token to be sent
+	 * @param asset_name of token to be sent
+	 * @param url of token to be sent
+	 * @param notes tx description when send payment tx
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "sendAssetConfigTX", Keywords = "AssetConfigTX"),
+			  Category = "AlgorandUnrealManager")
+	void sendAssetConfigTransaction(const FString& manager,
+									const FString& reserve,
+									const FString& freeze,
+									const FString& clawback,
+									const FUInt64& asset_id,
+									const FUInt64& total,
+									const FUInt64& decimals,
+									const FString& unit_name,
+									const FString& asset_name,
+									const FString& url,
+									const FString& notes);   
+
+	/**
+	 * asset transfer transaction information callback
+	 */ 
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+	FAssetConfigTransactionDelegate SendAssetConfigTransactionCallback;
+
+	/**
+	 * get response after asset config tx
+	 * @param response txID after asset config tx
+	 */
+	void OnSendAssetConfigTransactionCompleteCallback(const Vertices::VerticesAssetConfigTransactionGetResponse& response);
 
 	/**
 	 * send asset transfer TX to algorand node

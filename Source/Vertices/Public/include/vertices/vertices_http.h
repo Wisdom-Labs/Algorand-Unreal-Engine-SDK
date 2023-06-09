@@ -11,7 +11,7 @@ extern "C" {
 
     // if not defined before, set default value
 #ifndef HTTP_MAXIMUM_CONTENT_LENGTH
-#define HTTP_MAXIMUM_CONTENT_LENGTH 4096
+#define HTTP_MAXIMUM_CONTENT_LENGTH 9192
 #endif
 
     ret_code_t

@@ -48,6 +48,9 @@ public:
 	/// payment tx api callabck
     DECLARE_DELEGATE_OneParam(FAlgorandPaymentTransactionGetDelegate, const Vertices::VerticesPaymentTransactionGetResponse&);
 
+	/// asset config tx api callabck
+	DECLARE_DELEGATE_OneParam(FAlgorandAssetConfigTransactionGetDelegate, const Vertices::VerticesAssetConfigTransactionGetResponse&);
+
 	/// asset transfer tx api callabck
 	DECLARE_DELEGATE_OneParam(FAlgorandAssetTransferTransactionGetDelegate, const Vertices::VerticesAssetTransferTransactionGetResponse&);
 
@@ -122,6 +125,13 @@ public:
     void AlgorandPaymentTransactionGet(const Vertices::VerticesPaymentTransactionGetRequest& Request, const FAlgorandPaymentTransactionGetDelegate& Delegate = FAlgorandPaymentTransactionGetDelegate()) const;
 
 	/**
+	 * @brief send api request for send asset config tx
+	 * @param Request value to send as params for calling api
+	 * @param Delegate is used to implement async task after get response as api result
+	 */
+	void AlgorandAssetConfigTransactionGet(const Vertices::VerticesAssetConfigTransactionGetRequest& Request, const FAlgorandAssetConfigTransactionGetDelegate& Delegate = FAlgorandAssetConfigTransactionGetDelegate()) const;
+
+	/**
 	 * @brief send api request for send asset transfer tx
 	 * @param Request value to send as params for calling api
 	 * @param Delegate is used to implement async task after get response as api result
@@ -185,6 +195,13 @@ private:
 	 * @param Delegate is used to execute binded callback from Algorand module
 	 */
     void OnAlgorandPaymentTransactionGetResponse(const Vertices::VerticesPaymentTransactionGetResponse& response, const FAlgorandPaymentTransactionGetDelegate& Delegate) const;
+
+	/**
+	 * @brief callback function to be run after api request of sending asset config tx
+	 * @param response is used to send as Vertices Response type to Algorand module 
+	 * @param Delegate is used to execute binded callback from Algorand module
+	 */
+	void OnAlgorandAssetConfigTransactionGetResponse(const Vertices::VerticesAssetConfigTransactionGetResponse& response, const FAlgorandAssetConfigTransactionGetDelegate& Delegate) const;
 
 	/**
 	 * @brief callback function to be run after api request of sending asset transfer tx

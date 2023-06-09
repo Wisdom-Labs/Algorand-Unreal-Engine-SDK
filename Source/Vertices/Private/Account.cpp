@@ -2,14 +2,24 @@
 
 std::pair<bytes, bytes>
 Account::generate_keys(bytes seed) {
-	assert(sodium_init() >= 0);
-	unsigned char ed25519_pk[crypto_sign_ed25519_PUBLICKEYBYTES];
-	unsigned char ed25519_sk[crypto_sign_ed25519_SECRETKEYBYTES];
+	try
+	{
+		assert(sodium_init() >= 0);
+		unsigned char ed25519_pk[crypto_sign_ed25519_PUBLICKEYBYTES];
+		unsigned char ed25519_sk[crypto_sign_ed25519_SECRETKEYBYTES];
 
-	crypto_sign_ed25519_seed_keypair(ed25519_pk, ed25519_sk, seed.data());
-	auto pub = bytes{ ed25519_pk, &ed25519_pk[sizeof(ed25519_pk)] };
-	auto sec = bytes{ ed25519_sk, &ed25519_sk[sizeof(ed25519_sk)] };
-	return std::make_pair(pub, sec);
+		crypto_sign_ed25519_seed_keypair(ed25519_pk, ed25519_sk, seed.data());
+		auto pub = bytes{ ed25519_pk, &ed25519_pk[sizeof(ed25519_pk)] };
+		auto sec = bytes{ ed25519_sk, &ed25519_sk[sizeof(ed25519_sk)] };
+		return std::make_pair(pub, sec);
+	}
+	catch (std::exception &e)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Didn't generate accounts with valid pub and sec %s"), e.what());
+		bytes pub, sec;  
+		pub.clear();  sec.clear();
+		return std::make_pair(pub, sec);
+	}
 }
 
 std::pair<bytes, bytes>

@@ -105,6 +105,34 @@ namespace algorand {
             FString txID;
         };
 
+        // Request for Asset Config TX
+        class VerticesSDK::VerticesAssetConfigTransactionGetRequest : public Request
+        {
+        public:
+            virtual ~VerticesAssetConfigTransactionGetRequest() {}
+
+            TOptional<FString>  creator; 
+            TOptional<FString>  manager;
+            TOptional<FString>  reserve;
+            TOptional<FString>  freeze;
+            TOptional<FString>  clawback;
+            TOptional<uint64_t>  asset_id;
+            TOptional<uint64_t>  total;
+            TOptional<uint64_t>  decimals;
+            TOptional<FString>  unit_name;
+            TOptional<FString>  asset_name;
+            TOptional<FString>  url;
+            TOptional<FString>  notes;
+        };
+
+        // Response for Asset Config TX
+        class VerticesSDK::VerticesAssetConfigTransactionGetResponse : public Response
+        {
+        public:
+            ~VerticesAssetConfigTransactionGetResponse() {}
+            FString txID;
+        };
+
         // Request for Asset Transfer TX
         class VerticesSDK::VerticesAssetTransferTransactionGetRequest : public Request
         {

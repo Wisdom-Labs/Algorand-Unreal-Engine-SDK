@@ -22,7 +22,7 @@ namespace {
 // create vertices_ , transactionBuilder_ , unrealApi_ and load payment address 
 // Sets default values
 UAlgorandUnrealManager::UAlgorandUnrealManager()
-    :myAlgodRpc("https://mainnet-api.algonode.cloud") , myAlgodPort(443) , myAlgodTokenHeader(""), myIndexerRpc("https://mainnet-idx.algonode.network"), myIndexerPort(443), myIndexerTokenHeader("")
+    :myAlgodRpc("https://testnet-algorand.api.purestake.io/ps2") , myAlgodPort(0) , myAlgodTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1"), myIndexerRpc("https://mainnet-idx.algonode.network"), myIndexerPort(443), myIndexerTokenHeader("")
 {
     FString address;
     // create instance of Vertices library
@@ -301,6 +301,42 @@ void UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback(const Vert
 }
 
 /**
+ * @brief create its context to send the request to unreal api for asset config tx
+ */
+void UAlgorandUnrealManager::sendAssetConfigTransaction(const FString& manager,
+                                                        const FString& reserve,
+                                                        const FString& freeze,
+                                                        const FString& clawback,
+                                                        const FUInt64& asset_id,
+                                                        const FUInt64& total,
+                                                        const FUInt64& decimals,
+                                                        const FString& unit_name,
+                                                        const FString& asset_name,
+                                                        const FString& url,
+                                                        const FString& notes)
+{
+    this->requestContextManager_
+        .createContext<API::FAlgorandAssetConfigTransactionGetDelegate,
+        Vertices::VerticesAssetConfigTransactionGetRequest>(
+            request_builders::buildAssetConfigTransactionRequest(this->getAddress(),
+                                                                 manager,
+                                                                 reserve,
+                                                                 freeze,
+                                                                 clawback,
+                                                                 asset_id,
+                                                                 total,
+                                                                 decimals,
+                                                                 unit_name,
+                                                                 asset_name,
+                                                                 url,
+                                                                 notes),
+            std::bind(&API::AlgorandAssetConfigTransactionGet, unrealApi_.Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            std::bind(&UAlgorandUnrealManager::OnSendAssetConfigTransactionCompleteCallback, this, std::placeholders::_1)
+            );
+}
+
+/**
  * @brief create its context to send the request to unreal api for asset transfer tx
  */
 void UAlgorandUnrealManager::sendAssetTransferTransaction(const FString& senderAddress,
@@ -324,7 +360,27 @@ void UAlgorandUnrealManager::sendAssetTransferTransaction(const FString& senderA
 }
 
 /**
- * @brief get response from unreal api after payment TX and broadcast the result to binded functions
+ * @brief get response from unreal api after asset config TX and broadcast the result to binded functions
+ */
+void UAlgorandUnrealManager::OnSendAssetConfigTransactionCompleteCallback(const Vertices::VerticesAssetConfigTransactionGetResponse& response) {
+    if (response.IsSuccessful()) {
+        FString txID = response.txID;
+        SendAssetConfigTransactionCallback.Broadcast(txID);
+        FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Asset Config Transaction", "sent asset config tx successfully."));
+    }
+    else {
+        FFormatNamedArguments Arguments;
+        Arguments.Add(TEXT("MSG"), FText::FromString(response.GetResponseString()));
+        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "{MSG}"), Arguments));
+        
+        if (!ErrorDelegateCallback.IsBound()) {
+            ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
+        }
+    }
+}
+
+/**
+ * @brief get response from unreal api after asset config TX and broadcast the result to binded functions
  */
 void UAlgorandUnrealManager::OnSendAssetTransferTransactionCompleteCallback(const Vertices::VerticesAssetTransferTransactionGetResponse& response) {
     if (response.IsSuccessful()) {
