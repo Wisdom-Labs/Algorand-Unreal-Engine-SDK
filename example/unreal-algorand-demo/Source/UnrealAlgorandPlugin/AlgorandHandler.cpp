@@ -10,11 +10,6 @@ UWorld* UAlgorandHandler::GetWorld() const { return GetOuter()->GetWorld(); }
 void UAlgorandHandler::OnRestoreWalletCallback(const FString& output) {
     UE_LOG(LogTemp, Display, TEXT("Generated address: %s"),
         *output);
-
-    /*FString("WSD"),
-                                                FString("WSDAlgo"),
-                                                FString("https://algoexplorer.io/"),
-                                                FString("Created a token called WSD.")*/
     
     FScriptDelegate _delegate8;
     _delegate8.BindUFunction(this, FName("OnSendAssetConfigTransactionCallback"));

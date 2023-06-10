@@ -10,15 +10,15 @@ This repository contains a sample project that uses the Algorand Play Unreal SDK
  - Generate wallet
 
 ## How to set rpc info
- - Algoexplorerapi
+ - Rest Api
     * rpc url
-        + mainnet: https://node.mainnet.algoexplorerapi.io
-        + testnet: https://node.testnet.algoexplorerapi.io
-        + betanet: https://node.betanet.algoexplorerapi.io
+        + mainnet: https://mainnet-api.algonode.cloud
+        + testnet: https://testnet-api.algonode.cloud
+        + betanet: https://betanet-api.algonode.cloud
     > C++ Usage
     ```c++
-    setAlgoRpc("https://node.testnet.algoexplorerapi.io");
-    setAlgoPort(0);
+    setAlgoRpc("https://testnet-api.algonode.cloud");
+    setAlgoPort(443);
     setAlgoTokenHeader("");
     ```
  - Purestake
