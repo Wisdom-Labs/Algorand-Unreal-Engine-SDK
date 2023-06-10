@@ -11,20 +11,25 @@ void UAlgorandHandler::OnRestoreWalletCallback(const FString& output) {
     UE_LOG(LogTemp, Display, TEXT("Generated address: %s"),
         *output);
 
+    /*FString("WSD"),
+                                                FString("WSDAlgo"),
+                                                FString("https://algoexplorer.io/"),
+                                                FString("Created a token called WSD.")*/
+    
     FScriptDelegate _delegate8;
     _delegate8.BindUFunction(this, FName("OnSendAssetConfigTransactionCallback"));
     algorandManager->SendAssetConfigTransactionCallback.Add(_delegate8);
     algorandManager->sendAssetConfigTransaction(FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
-                                                FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
+                                                FString(""),
                                                 FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
                                                 FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
                                                 0,
                                                 10000,
-                                                2,
-                                                FString("WSD"),
-                                                FString("WSDAlgo"),
-                                                FString("https://algoexplorer.io/"),
-                                                FString("Created a token called WSD."));
+                                                0,
+                                                FString(""),
+                                                FString("wef"),
+                                                FString("ef"),
+                                                FString("fe"));
     
     /*FScriptDelegate _delegate1;
     _delegate1.BindUFunction(this, FName("OnGetBalanceCallback"));

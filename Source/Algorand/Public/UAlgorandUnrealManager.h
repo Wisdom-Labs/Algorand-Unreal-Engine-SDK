@@ -156,7 +156,7 @@ public:
 
 	/**
 	 * Create Instance of Algorand manager
-	 * @param indexerRpc algorand rpc url https://testnet-api.algonode.cloud
+	 * @param indexerRpc algorand rpc url https://testnet-idx.algonode.network
 	 * @param indexerPort algorand rpc port 443
 	 * @param indexerTokenHeader algorand rpc token header "" , if localhost, X-Algo-API-Token: , if using purestake api, x-api-key:
 	 * @return AlgorandUnrealManager as a pointer
