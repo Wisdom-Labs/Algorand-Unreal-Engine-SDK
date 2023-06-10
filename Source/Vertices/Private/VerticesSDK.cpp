@@ -132,7 +132,10 @@ namespace algorand {
     namespace vertices {
 
         // load thirdparty libs
-        VerticesSDK::VerticesSDK() {\
+        VerticesSDK::VerticesSDK() {
+            loaded_ = false;
+            http_loaded = false;
+            
             loadVerticesLibrary();
             
             if (!loaded_)
@@ -168,7 +171,6 @@ namespace algorand {
         }
 
         void VerticesSDK::loadVerticesLibrary() {
-            loaded_ = false;
             // Get the base directory of this plugin
             FString BaseDir = IPluginManager::Get().FindPlugin("Algorand")->GetBaseDir();
 
@@ -847,6 +849,182 @@ namespace algorand {
             });
         }
         
+        void VerticesSDK::VerticesAssetConfigTransactionGet(const VerticesAssetConfigTransactionGetRequest& Request, const FVerticesAssetConfigTransactionGetDelegate& delegate)
+        {
+            AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
+            {
+                ret_code_t err_code = VTC_SUCCESS;
+                account_t m_account, r_account, f_account, c_account;  // 5 accounts for acfg
+                while (1) {
+                    FScopeLock lock(&m_Mutex);
+
+                    if (vertices_usable) {
+                        VerticesSDK::VerticesAssetConfigTransactionGetResponse response;
+                        vertices_usable = false;
+
+                        try
+                        {
+                            // validation Request
+                            auto auto_notes = StringCast<ANSICHAR>(*(Request.notes.GetValue()));        // notes
+                            char* notes = (char *)auto_notes.Get();
+
+                            if(strlen(notes) == 0)
+                                notes = "Asset Config Transaction";
+
+                            auto auto_unit_name = StringCast<ANSICHAR>(*(Request.unit_name.GetValue()));        // unit name        
+                            char* unit_name = (char *)auto_unit_name.Get();
+
+                            auto auto_asset_name = StringCast<ANSICHAR>(*(Request.asset_name.GetValue()));        // asset name        
+                            char* asset_name = (char *)auto_asset_name.Get();
+
+                            auto auto_url = StringCast<ANSICHAR>(*(Request.url.GetValue()));        // url        
+                            char* url = (char *)auto_url.Get();
+
+                            if ( Request.creator.GetValue().Len() != PUBLIC_ADDRESS_LENGTH )
+                            {
+                                err_code = VTC_ERROR_INVALID_ADDR;
+                                checkVTCSuccess("Please input creator address with correct length.", err_code);
+                            }
+
+                            if ( Request.manager.GetValue().Len() != PUBLIC_ADDRESS_LENGTH && Request.manager.GetValue().Len() != 0)
+                            {
+                                err_code = VTC_ERROR_INVALID_ADDR;
+                                checkVTCSuccess("Please input manager address with correct length.", err_code);
+                            }
+                            
+                            if ( Request.reserve.GetValue().Len() != PUBLIC_ADDRESS_LENGTH && Request.reserve.GetValue().Len() != 0)
+                            {
+                                err_code = VTC_ERROR_INVALID_ADDR;
+                                checkVTCSuccess("Please input reserve address with correct length.", err_code);
+                            }
+
+                            if ( Request.freeze.GetValue().Len() != PUBLIC_ADDRESS_LENGTH && Request.freeze.GetValue().Len() != 0)
+                            {
+                                err_code = VTC_ERROR_INVALID_ADDR;
+                                checkVTCSuccess("Please input freeze address with correct length.", err_code);
+                            }
+
+                            if ( Request.clawback.GetValue().Len() != PUBLIC_ADDRESS_LENGTH && Request.clawback.GetValue().Len() != 0 )
+                            {
+                                err_code = VTC_ERROR_INVALID_ADDR;
+                                checkVTCSuccess("Please input clawback address with correct length.", err_code);
+                            }
+                            
+                            InitVertices(err_code);
+                            checkVTCSuccess("When initing vertices network, an error occured", err_code);
+
+                            err_code = convert_Account_Vertices();
+                            checkVTCSuccess("Vertices convert_Account_Vertices error", err_code);
+
+                            if (sender_account.vtc_account->amount < 1000) {
+                                FFormatNamedArguments Arguments;
+                                Arguments.Add(TEXT("Address"), FText::FromString(sender_account.vtc_account->public_b32));
+                                FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
+
+                                UE_LOG(LogTemp, Warning, TEXT("👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: %s"), *FString(sender_account.vtc_account->public_b32));
+                                UE_LOG(LogTemp, Warning,
+                                    TEXT("🙄 Amount available on account is too low to pass a transaction, consider adding Algos"));
+                                UE_LOG(LogTemp, Warning, TEXT("😎 Then wait for a few seconds for transaction to pass..."));
+                                
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Amount available on account is too low to pass a transaction, consider adding Algos", err_code);
+                            }
+                            
+                            FString manager = Request.manager.GetValue();
+                            if ( manager.IsEmpty())
+                                manager = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
+                            
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*manager), &m_account.vtc_account);
+                            checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
+                            UE_LOG(LogTemp, Warning, TEXT("manager account on Asset Config TX %d"), m_account.vtc_account->amount);
+                            
+                            FString reserve = Request.reserve.GetValue();
+                            if ( reserve.IsEmpty())
+                                reserve = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
+                            
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*reserve), &r_account.vtc_account);
+                            checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
+                            UE_LOG(LogTemp, Warning, TEXT("reserve account on Asset Config TX %d"), r_account.vtc_account->amount);
+
+                            FString freeze = Request.freeze.GetValue();
+                            if ( freeze.IsEmpty())
+                                freeze = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
+                            
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*freeze), &f_account.vtc_account);
+                            checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
+                            UE_LOG(LogTemp, Warning, TEXT("freeze account on Asset Config TX %d"), f_account.vtc_account->amount);
+
+                            FString clawback = Request.clawback.GetValue();
+                            if ( clawback.IsEmpty())
+                                clawback = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
+                            
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*clawback), &c_account.vtc_account);
+                            checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
+                            UE_LOG(LogTemp, Warning, TEXT("clawback account on Asset Config TX %d"), c_account.vtc_account->amount);
+
+                            err_code =
+                                vertices_transaction_asset_cfg(sender_account.vtc_account,
+                                    (char *)m_account.vtc_account->public_key /* or ACCOUNT_MANAGER */,
+                                    (char *)r_account.vtc_account->public_key /* or ACCOUNT_RESERVE */,
+                                    (char *)f_account.vtc_account->public_key /* or ACCOUNT_RESERVE */,
+                                    (char *)r_account.vtc_account->public_key /* or ACCOUNT_RESERVE */,
+                                    (uint64_t)Request.asset_id.GetValue(),
+                                    (uint64_t)Request.total.GetValue(),
+                                    (uint64_t)Request.decimals.GetValue(),
+                                    unit_name,
+                                    asset_name,
+                                    url,
+                                    notes);
+                            checkVTCSuccess("vertices_transaction_asset_config error occured", err_code);
+                            
+                            unsigned char* txID = nullptr;
+                            txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
+
+                            size_t queue_size = 1;
+                            while (queue_size && err_code == VTC_SUCCESS) {
+                                err_code = vertices_event_process(&queue_size, txID);
+                            }
+
+                            checkVTCSuccess("vertices_event_process error occured", err_code);
+                            UE_LOG(LogTemp, Warning, TEXT("err_code Asset Config TX ID Success, %s"), txID);
+
+                            err_code = vertices_account_free(sender_account.vtc_account);
+                            checkVTCSuccess("vertices_account_free error occured", err_code);
+                            UE_LOG(LogTemp, Warning, TEXT("VerticesAssetConfigTransactionGetRequest Success"));
+
+                            response = response_builders::buildAssetConfigTransactionResponse(FString(UTF8_TO_TCHAR(txID)));
+                            response.SetSuccessful(true);
+
+                            //free(txID);
+                        }
+                        catch(SDKException& e)
+                        {
+                            UE_LOG(LogTemp, Error, TEXT("👉 asset config tx error: %s"), e.what());
+                            
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(e.what()));
+                        }
+                        catch(std::exception& ex)
+                        {
+                            UE_LOG(LogTemp, Error, TEXT("👉 config tx error: %s"), ex.what());
+                            
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(ex.what()));
+                        }
+
+                        // after build response, execute delegate to run callback with response
+                        AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+                        {
+                            delegate.ExecuteIfBound(response);
+                        });
+
+                        vertices_usable = true;
+                        break;
+                    }
+                }
+            });
+        }
+
         void VerticesSDK::VerticesAssetTransferTransactionGet(const VerticesAssetTransferTransactionGetRequest& Request, const FVerticesAssetTransferTransactionGetDelegate& delegate)
         {
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
@@ -1099,14 +1277,13 @@ namespace algorand {
         {
             try
             {
-                if(http_init != NULL)
-                    set_http_init(&http_init);
-                if(http_get != NULL)
-                    set_http_get(&http_get);
-                if(http_post != NULL)
-                    set_http_post(&http_post);
-                if(http_close != NULL)
-                    set_http_close(&http_close);
+                if(VerticesHandle == NULL || http_loaded) return;
+                
+                set_http_init(&http_init);
+                set_http_get(&http_get);
+                set_http_post(&http_post);
+                set_http_close(&http_close);
+                http_loaded = true;
             }
             catch (std::exception &ex)
             {

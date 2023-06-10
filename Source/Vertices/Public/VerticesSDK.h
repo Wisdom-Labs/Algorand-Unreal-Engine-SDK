@@ -136,6 +136,8 @@ namespace vertices {
         class VerticesGetaddressbalanceGetResponse;
         class VerticesPaymentTransactionGetRequest;
         class VerticesPaymentTransactionGetResponse;
+        class VerticesAssetConfigTransactionGetRequest;
+        class VerticesAssetConfigTransactionGetResponse;
         class VerticesAssetTransferTransactionGetRequest;
         class VerticesAssetTransferTransactionGetResponse;
         class VerticesApplicationCallTransactionGetRequest;
@@ -161,6 +163,9 @@ namespace vertices {
         /// payment tx callabck
         DECLARE_DELEGATE_OneParam(FVerticesPaymentTransactionGetDelegate, const VerticesPaymentTransactionGetResponse&);
 
+        /// asset config tx callabck
+        DECLARE_DELEGATE_OneParam(FVerticesAssetConfigTransactionGetDelegate, const VerticesAssetConfigTransactionGetResponse&);
+
         /// asset transfer tx callabck
         DECLARE_DELEGATE_OneParam(FVerticesAssetTransferTransactionGetDelegate, const VerticesAssetTransferTransactionGetResponse&);
 
@@ -173,6 +178,7 @@ namespace vertices {
         void VerticesGenerateMnemonicsGet(const VerticesGenerateMnemonicsGetRequest&, const FVerticesGenerateMnemonicsGetDelegate&);
         void VerticesGetaddressbalanceGet(const VerticesGetaddressbalanceGetRequest&, const FVerticesGetaddressbalanceGetDelegate&);
         void VerticesPaymentTransactionGet(const VerticesPaymentTransactionGetRequest&, const FVerticesPaymentTransactionGetDelegate&);
+        void VerticesAssetConfigTransactionGet(const VerticesAssetConfigTransactionGetRequest&, const FVerticesAssetConfigTransactionGetDelegate&);
         void VerticesAssetTransferTransactionGet(const VerticesAssetTransferTransactionGetRequest&, const FVerticesAssetTransferTransactionGetDelegate&);
         void VerticesApplicationCallTransactionGet(const VerticesApplicationCallTransactionGetRequest&, const FVerticesApplicationCallTransactionGetDelegate&);
     
@@ -193,7 +199,7 @@ namespace vertices {
         void* SodiumHandle;
 
      
-        bool loaded_;
+        bool loaded_, http_loaded;
         bool vertices_usable;
         FString config_path;
     };

@@ -67,6 +67,25 @@ namespace request_builders {
 									   const FString& notes);
 
 	/**
+	 * @brief build request for asset config tx with following params
+	 * like creator, manager,reserve, freeze, clawback, asset_id, total, decimals, unit_name,asset_name, url, notes
+	 * @return request
+	 */
+	 Vertices::VerticesAssetConfigTransactionGetRequest
+		buildAssetConfigTransactionRequest(const FString& creator, 
+									   const FString& manager,
+									   const FString& reserve,
+									   const FString& freeze,
+									   const FString& clawback,
+									   const FUInt64& asset_id,
+									   const FUInt64& total,
+									   const FUInt64& decimals,
+									   const FString& unit_name,
+									   const FString& asset_name,
+									   const FString& url,
+									   const FString& notes);
+
+	/**
 	 * @brief build request for asset transfer tx with following params
 	 * like sender, receiver, amount and notes
 	 * @return request

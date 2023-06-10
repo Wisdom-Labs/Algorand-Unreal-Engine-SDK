@@ -56,6 +56,14 @@ namespace response_builders {
 		return response;
 	}
 
+	Vertices::VerticesAssetConfigTransactionGetResponse
+		buildAssetConfigTransactionResponse(const FString& txID)
+	{
+		Vertices::VerticesAssetConfigTransactionGetResponse response;
+		response.txID = txID;
+		return response;
+	}
+
 	Vertices::VerticesAssetTransferTransactionGetResponse
 		buildAssetTransferTransactionResponse(const FString& txID)
 	{

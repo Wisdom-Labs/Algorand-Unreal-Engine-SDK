@@ -57,7 +57,37 @@ namespace request_builders {
 		request.notes = notes;
 		return request;
 	}
-		
+
+	Vertices::VerticesAssetConfigTransactionGetRequest
+		buildAssetConfigTransactionRequest(const FString& creator, 
+									   const FString& manager,
+									   const FString& reserve,
+									   const FString& freeze,
+									   const FString& clawback,
+									   const FUInt64& asset_id,
+									   const FUInt64& total,
+									   const FUInt64& decimals,
+									   const FString& unit_name,
+									   const FString& asset_name,
+									   const FString& url,
+									   const FString& notes)
+	{
+		Vertices::VerticesAssetConfigTransactionGetRequest request;
+		request.creator = creator;
+		request.manager = manager;
+		request.reserve = reserve;
+		request.freeze = freeze;
+		request.clawback = clawback;
+		request.asset_id = asset_id;
+		request.total = total;
+		request.decimals = decimals;
+		request.unit_name = unit_name;
+		request.asset_name = asset_name;
+		request.url = url;
+		request.notes = notes;
+		return request;
+	}
+
 	Vertices::VerticesAssetTransferTransactionGetRequest
 		buildAssetTransferTransactionRequest(const FString& sender, 
 									   const FString& receiver,
