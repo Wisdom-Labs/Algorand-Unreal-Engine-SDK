@@ -18,7 +18,7 @@ This UE plugin includes:
 
 This sdk contains a setting option to set RPC Info.
 * RPC URL : You should set the Algorand node you want to work on with this url.
-  ` setAlgoRpc("https://node.testnet.algoexplorerapi.io"); `
+  ` setAlgoRpc("https://testnet-algorand.api.purestake.io/ps2"); `
 * RPC Port : Set port which can connect into server supporting algorand node with.
   ` setAlgoPort(0); `
 * RPC TokenHeader : You should set Header to request apis according to algorand node type.
@@ -26,10 +26,10 @@ This sdk contains a setting option to set RPC Info.
   This param has a pair made of key and value.
 
 RPC types you can select are like following:
-* Algoexplorerapi
-  + mainnet: https://node.mainnet.algoexplorerapi.io
-  + testnet: https://node.testnet.algoexplorerapi.io
-  + betanet: https://node.betanet.algoexplorerapi.io
+* Rest API
+  + mainnet: https://mainnet-api.algonode.cloud
+  + testnet: https://testnet-api.algonode.cloud
+  + betanet: https://betanet-api.algonode.cloud
 * Purestake
   + mainnet: https://mainnet-algorand.api.purestake.io/ps2
   + testnet: https://testnet-algorand.api.purestake.io/ps2

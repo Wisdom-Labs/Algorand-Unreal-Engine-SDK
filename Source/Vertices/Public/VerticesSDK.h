@@ -199,7 +199,7 @@ namespace vertices {
         void* SodiumHandle;
 
      
-        bool loaded_, http_loaded;
+        bool loaded_;
         bool vertices_usable;
         FString config_path;
     };

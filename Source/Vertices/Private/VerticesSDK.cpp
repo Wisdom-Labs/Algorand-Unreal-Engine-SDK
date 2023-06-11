@@ -134,7 +134,6 @@ namespace algorand {
         // load thirdparty libs
         VerticesSDK::VerticesSDK() {
             loaded_ = false;
-            http_loaded = false;
             
             loadVerticesLibrary();
             
@@ -183,7 +182,7 @@ namespace algorand {
             VerticesHandle = !VerticesPath.IsEmpty() ? FPlatformProcess::GetDllHandle(*VerticesPath) : nullptr;
             SodiumHandle = !SodiumPath.IsEmpty() ? FPlatformProcess::GetDllHandle(*SodiumPath) : nullptr;
 
-            if (VerticesHandle && SodiumHandle)
+            if (VerticesHandle != nullptr && SodiumHandle != nullptr)
             {
                 loaded_ = true;
                 return;
@@ -483,6 +482,12 @@ namespace algorand {
             
                     try
                     {
+                        if(!loaded_)
+                        {
+                            UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                            err_code = VTC_ERROR_ASSERT_FAILS;
+                            checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                        }
                         auto mnemonics = StringCast<ANSICHAR>(*(Request.Mnemonics.GetValue()));
                         auto s_mnemonics = mnemonics.Get();
                         main_account = Account::from_mnemonic(s_mnemonics);
@@ -533,6 +538,12 @@ namespace algorand {
                         
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             main_account = Account::initialize_new();
 
                             // copy private key to vertices account
@@ -582,6 +593,12 @@ namespace algorand {
                         
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             bytes secret_key, pub_key;
 
                             if(sender_account.vtc_account->public_key == nullptr || sender_account.private_key == nullptr)
@@ -639,6 +656,12 @@ namespace algorand {
                         
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             Account account = Account::initialize_new();
                             
                             std::string mnemonics = account.mnemonic();
@@ -685,6 +708,12 @@ namespace algorand {
 
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             // validation Request
                             auto auto_address = StringCast<ANSICHAR>(*(Request.Address.GetValue()));
                             if ( auto_address.Length() == 0 )
@@ -755,6 +784,12 @@ namespace algorand {
 
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             // validation Request
                             auto auto_notes = StringCast<ANSICHAR>(*(Request.notes.GetValue()));
                             char* notes = (char *)auto_notes.Get();
@@ -854,7 +889,7 @@ namespace algorand {
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
                 ret_code_t err_code = VTC_SUCCESS;
-                account_t m_account, r_account, f_account, c_account;  // 5 accounts for acfg
+                account_t M_Account = {0}, R_Account = {0}, F_Account = {0}, C_Account = {0};  // 5 accounts for acfg
                 while (1) {
                     FScopeLock lock(&m_Mutex);
 
@@ -864,6 +899,12 @@ namespace algorand {
 
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             // validation Request
                             auto auto_notes = StringCast<ANSICHAR>(*(Request.notes.GetValue()));        // notes
                             char* notes = (char *)auto_notes.Get();
@@ -886,7 +927,7 @@ namespace algorand {
                                 checkVTCSuccess("Please input creator address with correct length.", err_code);
                             }
 
-                            if ( Request.manager.GetValue().Len() != PUBLIC_ADDRESS_LENGTH && Request.manager.GetValue().Len() != 0)
+                            if ( Request.manager.GetValue().Len() != PUBLIC_ADDRESS_LENGTH)
                             {
                                 err_code = VTC_ERROR_INVALID_ADDR;
                                 checkVTCSuccess("Please input manager address with correct length.", err_code);
@@ -929,45 +970,47 @@ namespace algorand {
                                 err_code = VTC_ERROR_ASSERT_FAILS;
                                 checkVTCSuccess("Amount available on account is too low to pass a transaction, consider adding Algos", err_code);
                             }
-                            
+
                             FString manager = Request.manager.GetValue();
-                            if ( manager.IsEmpty())
+                            if ( manager.IsEmpty() )
                                 manager = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
                             
-                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*manager), &m_account.vtc_account);
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*manager), &M_Account.vtc_account);
                             checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("manager account on Asset Config TX %d"), m_account.vtc_account->amount);
+                            UE_LOG(LogTemp, Warning, TEXT("manager account on Asset Config TX %d"), M_Account.vtc_account->amount);
                             
                             FString reserve = Request.reserve.GetValue();
                             if ( reserve.IsEmpty())
                                 reserve = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
                             
-                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*reserve), &r_account.vtc_account);
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*reserve), &R_Account.vtc_account);
                             checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("reserve account on Asset Config TX %d"), r_account.vtc_account->amount);
+                            UE_LOG(LogTemp, Warning, TEXT("reserve account on Asset Config TX %d"), R_Account.vtc_account->amount);
+                            
 
                             FString freeze = Request.freeze.GetValue();
-                            if ( freeze.IsEmpty())
+                            if ( freeze.IsEmpty() )
                                 freeze = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
-                            
-                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*freeze), &f_account.vtc_account);
+                                
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*freeze), &F_Account.vtc_account);
                             checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("freeze account on Asset Config TX %d"), f_account.vtc_account->amount);
+                            UE_LOG(LogTemp, Warning, TEXT("freeze account on Asset Config TX %d"), F_Account.vtc_account->amount);   
 
                             FString clawback = Request.clawback.GetValue();
-                            if ( clawback.IsEmpty())
+                            if ( clawback.IsEmpty() )
                                 clawback = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
-                            
-                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*clawback), &c_account.vtc_account);
+                                
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*clawback), &C_Account.vtc_account);
                             checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("clawback account on Asset Config TX %d"), c_account.vtc_account->amount);
-
+                            UE_LOG(LogTemp, Warning, TEXT("clawback account on Asset Config TX %d"), C_Account.vtc_account->amount);   
+                            
+                            
                             err_code =
                                 vertices_transaction_asset_cfg(sender_account.vtc_account,
-                                    (char *)m_account.vtc_account->public_key /* or ACCOUNT_MANAGER */,
-                                    (char *)r_account.vtc_account->public_key /* or ACCOUNT_RESERVE */,
-                                    (char *)f_account.vtc_account->public_key /* or ACCOUNT_RESERVE */,
-                                    (char *)r_account.vtc_account->public_key /* or ACCOUNT_RESERVE */,
+                                    (char *)M_Account.vtc_account->public_key /* or ACCOUNT_MANAGER */,
+                                    (char *)R_Account.vtc_account->public_key /* or ACCOUNT_RESERVE */,
+                                    (char *)F_Account.vtc_account->public_key /* or ACCOUNT_FREEZE */,
+                                    (char *)C_Account.vtc_account->public_key /* or ACCOUNT_CLAWBACK */,
                                     (uint64_t)Request.asset_id.GetValue(),
                                     (uint64_t)Request.total.GetValue(),
                                     (uint64_t)Request.decimals.GetValue(),
@@ -1006,7 +1049,7 @@ namespace algorand {
                         }
                         catch(std::exception& ex)
                         {
-                            UE_LOG(LogTemp, Error, TEXT("👉 config tx error: %s"), ex.what());
+                            UE_LOG(LogTemp, Error, TEXT("👉 asset config tx error: %s"), ex.what());
                             
                             response.SetSuccessful(false);
                             response.SetResponseString(FString(ex.what()));
@@ -1040,6 +1083,12 @@ namespace algorand {
 
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             // validation Request
                             auto auto_notes = StringCast<ANSICHAR>(*(Request.notes.GetValue()));
                             char* notes = (char *)auto_notes.Get();
@@ -1131,7 +1180,7 @@ namespace algorand {
                         }
                         catch(std::exception& ex)
                         {
-                            UE_LOG(LogTemp, Error, TEXT("👉 payment tx error: %s"), ex.what());
+                            UE_LOG(LogTemp, Error, TEXT("👉 asset transfer tx error: %s"), ex.what());
                             
                             response.SetSuccessful(false);
                             response.SetResponseString(FString(ex.what()));
@@ -1165,6 +1214,12 @@ namespace algorand {
 
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             // validation request   
                             if ( Request.app_ID.GetValue() == 0 )
                             {
@@ -1277,13 +1332,12 @@ namespace algorand {
         {
             try
             {
-                if(VerticesHandle == NULL || http_loaded) return;
+                if(!loaded_) return;
                 
                 set_http_init(&http_init);
                 set_http_get(&http_get);
                 set_http_post(&http_post);
                 set_http_close(&http_close);
-                http_loaded = true;
             }
             catch (std::exception &ex)
             {

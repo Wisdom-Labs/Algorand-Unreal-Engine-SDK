@@ -10,21 +10,21 @@ UWorld* UAlgorandHandler::GetWorld() const { return GetOuter()->GetWorld(); }
 void UAlgorandHandler::OnRestoreWalletCallback(const FString& output) {
     UE_LOG(LogTemp, Display, TEXT("Generated address: %s"),
         *output);
-
+    
     FScriptDelegate _delegate8;
     _delegate8.BindUFunction(this, FName("OnSendAssetConfigTransactionCallback"));
     algorandManager->SendAssetConfigTransactionCallback.Add(_delegate8);
     algorandManager->sendAssetConfigTransaction(FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
-                                                FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
+                                                FString(""),
                                                 FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
                                                 FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
                                                 0,
                                                 10000,
-                                                2,
-                                                FString("WSD"),
-                                                FString("WSDAlgo"),
-                                                FString("https://algoexplorer.io/"),
-                                                FString("Created a token called WSD."));
+                                                0,
+                                                FString(""),
+                                                FString("wef"),
+                                                FString("ef"),
+                                                FString("fe"));
     
     /*FScriptDelegate _delegate1;
     _delegate1.BindUFunction(this, FName("OnGetBalanceCallback"));
@@ -34,12 +34,12 @@ void UAlgorandHandler::OnRestoreWalletCallback(const FString& output) {
     // FScriptDelegate _delegate2;
     // _delegate2.BindUFunction(this, FName("OnSendPaymentTransactionCallback"));
     // algorandManager->SendPaymentTransactionCallback.Add(_delegate2);
-    // algorandManager->sendPaymentTransaction(FString("YZ5IOV3EPSSBRKOLY64BHG2HNF3MUC32Y5BM4ZJSHA5KOSF5OPAIABVSRI"), 100, FString("Sent 100 algo to NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE."));
+    // algorandManager->sendPaymentTransaction(FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"), 100, FString("Sent 100 algo to A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM."));
 
     // FScriptDelegate _delegate8;
     // _delegate8.BindUFunction(this, FName("OnSendAssetTransferTransactionCallback"));
     // algorandManager->SendAssetTransferTransactionCallback.Add(_delegate8);
-    // algorandManager->sendAssetTransferTransaction(FString("BT4WXMIULS5OZWRRPDXQJMB3GAGC4A5MITAFQARDPEERQBTNYEMXQXO64A"), FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),218447260,100,FString("Sent 100 ERC20 token to NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE."));   // A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM
+    // algorandManager->sendAssetTransferTransaction(FString("SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U"), FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),234664633,1,FString("Sent 100 ERC20 token to A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM."));   // A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM
     
 }
 
@@ -97,9 +97,9 @@ void UAlgorandHandler::RunSomeLogic() {
     FScriptDelegate _delegate4;
     _delegate4.BindUFunction(this, FName("OnRestoreWalletCallback"));
     algorandManager->RestoreWalletCallback.Add(_delegate4);
-    FString mnemonics = "afford emerge have market grow elevator tumble crumble smart sting matrix movie custom slice labor dilemma define foster focus vintage aisle inmate veteran abstract sunny";
+    FString mnemonics = "curious crime outdoor armor math rack odor mind elephant exit apple flat mango income social remember during woman bullet cinnamon romance harvest sign absorb acoustic";
     algorandManager->restoreWallet(mnemonics);
-
+    
     // FScriptDelegate _delegate9;
     // _delegate9.BindUFunction(this, FName("OnGetArcAssetDetailsCallback"));
     // algorandManager->FetchArcAssetDetailsCallback.Add(_delegate9);

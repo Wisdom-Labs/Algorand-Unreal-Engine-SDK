@@ -29,7 +29,7 @@ url_parameters(const string_map& map) {
 }
 
 IndexerClient::IndexerClient() :
-        IndexerClient("BT4WXMIULS5OZWRRPDXQJMB3GAGC4A5MITAFQARDPEERQBTNYEMXQXO64A", "bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1") {
+        IndexerClient("SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U", "bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1") {
 }
 
 IndexerClient::IndexerClient(std::string address, std::string token) :
