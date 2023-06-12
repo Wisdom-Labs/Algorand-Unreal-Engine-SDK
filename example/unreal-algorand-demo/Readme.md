@@ -6,11 +6,14 @@ This repository contains a sample project that uses the Algorand Play Unreal SDK
  inherit c++ and blueprint functions  
  - GetBalance
  - Send Payment TX
+ - Create Asset TX
+ - Update Asset TX
+ - Transfer Asset TX
  - Send Application TX
  - Generate wallet
 
 ## How to set rpc info
- - Rest Api
+ - Rest API
     * rpc url
         + mainnet: https://mainnet-api.algonode.cloud
         + testnet: https://testnet-api.algonode.cloud
@@ -68,6 +71,37 @@ This repository contains a sample project that uses the Algorand Play Unreal SDK
  - Payment TX
     > C++ Usage
     + receiver address: `NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE`
+ - AssetCreation TX
+    > C++ Usage
+    + manager address: `A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM`
+    + reserve address: `SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U`
+    + freeze address: `A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM`
+    + clawback address: `SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U`
+    + asset id: `0`
+    + total: `10000`
+    + decimals: `2`
+    + unit name: `AUSD`
+    + asset name: `AlgoUSD`
+    + url: `https://book.io`
+    + notes: `Asset Creation TX`
+ - AssetUpdate TX
+    > C++ Usage
+    + manager address: `A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM`
+    + reserve address: `SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U`
+    + freeze address: `A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM`
+    + clawback address: `SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U`
+    + asset id: `232082544`
+    + total: `1000`
+    + decimals: `0`
+    + unit name: `WAUSD`
+    + asset name: `AlgoUSD`
+    + url: `https://ebook.io`
+    + notes: `Asset Creation TX`
+ - AssetTransfer TX
+    > C++ Usage
+    + sender address: `SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U`
+    + receiver address: `A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM`
+    + asset ID: `218447260`
  - Application Usage
     > C++ Usage
     + App ID: `16037129`

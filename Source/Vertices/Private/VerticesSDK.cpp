@@ -134,7 +134,6 @@ namespace algorand {
         // load thirdparty libs
         VerticesSDK::VerticesSDK() {
             loaded_ = false;
-            http_loaded = false;
             
             loadVerticesLibrary();
             
@@ -183,7 +182,7 @@ namespace algorand {
             VerticesHandle = !VerticesPath.IsEmpty() ? FPlatformProcess::GetDllHandle(*VerticesPath) : nullptr;
             SodiumHandle = !SodiumPath.IsEmpty() ? FPlatformProcess::GetDllHandle(*SodiumPath) : nullptr;
 
-            if (VerticesHandle && SodiumHandle)
+            if (VerticesHandle != nullptr && SodiumHandle != nullptr)
             {
                 loaded_ = true;
                 return;
@@ -483,6 +482,12 @@ namespace algorand {
             
                     try
                     {
+                        if(!loaded_)
+                        {
+                            UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                            err_code = VTC_ERROR_ASSERT_FAILS;
+                            checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                        }
                         auto mnemonics = StringCast<ANSICHAR>(*(Request.Mnemonics.GetValue()));
                         auto s_mnemonics = mnemonics.Get();
                         main_account = Account::from_mnemonic(s_mnemonics);
@@ -533,6 +538,12 @@ namespace algorand {
                         
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             main_account = Account::initialize_new();
 
                             // copy private key to vertices account
@@ -582,6 +593,12 @@ namespace algorand {
                         
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             bytes secret_key, pub_key;
 
                             if(sender_account.vtc_account->public_key == nullptr || sender_account.private_key == nullptr)
@@ -639,6 +656,12 @@ namespace algorand {
                         
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             Account account = Account::initialize_new();
                             
                             std::string mnemonics = account.mnemonic();
@@ -685,6 +708,12 @@ namespace algorand {
 
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             // validation Request
                             auto auto_address = StringCast<ANSICHAR>(*(Request.Address.GetValue()));
                             if ( auto_address.Length() == 0 )
@@ -755,6 +784,12 @@ namespace algorand {
 
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             // validation Request
                             auto auto_notes = StringCast<ANSICHAR>(*(Request.notes.GetValue()));
                             char* notes = (char *)auto_notes.Get();
@@ -864,6 +899,12 @@ namespace algorand {
 
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             // validation Request
                             auto auto_notes = StringCast<ANSICHAR>(*(Request.notes.GetValue()));        // notes
                             char* notes = (char *)auto_notes.Get();
@@ -1008,7 +1049,7 @@ namespace algorand {
                         }
                         catch(std::exception& ex)
                         {
-                            UE_LOG(LogTemp, Error, TEXT("👉 config tx error: %s"), ex.what());
+                            UE_LOG(LogTemp, Error, TEXT("👉 asset config tx error: %s"), ex.what());
                             
                             response.SetSuccessful(false);
                             response.SetResponseString(FString(ex.what()));
@@ -1042,6 +1083,12 @@ namespace algorand {
 
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             // validation Request
                             auto auto_notes = StringCast<ANSICHAR>(*(Request.notes.GetValue()));
                             char* notes = (char *)auto_notes.Get();
@@ -1133,7 +1180,7 @@ namespace algorand {
                         }
                         catch(std::exception& ex)
                         {
-                            UE_LOG(LogTemp, Error, TEXT("👉 payment tx error: %s"), ex.what());
+                            UE_LOG(LogTemp, Error, TEXT("👉 asset transfer tx error: %s"), ex.what());
                             
                             response.SetSuccessful(false);
                             response.SetResponseString(FString(ex.what()));
@@ -1167,6 +1214,12 @@ namespace algorand {
 
                         try
                         {
+                            if(!loaded_)
+                            {
+                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Failed loading of dll libraries.", err_code);
+                            }
                             // validation request   
                             if ( Request.app_ID.GetValue() == 0 )
                             {
@@ -1279,13 +1332,12 @@ namespace algorand {
         {
             try
             {
-                if(VerticesHandle == NULL || http_loaded) return;
+                if(!loaded_) return;
                 
                 set_http_init(&http_init);
                 set_http_get(&http_get);
                 set_http_post(&http_post);
                 set_http_close(&http_close);
-                http_loaded = true;
             }
             catch (std::exception &ex)
             {
