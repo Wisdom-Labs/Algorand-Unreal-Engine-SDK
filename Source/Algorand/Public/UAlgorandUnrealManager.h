@@ -17,7 +17,7 @@
  * ToDo:
  * for asset bases on transactions and wallet provider
  * add like txs
- * Key Registration, Asset Configuration, Freeze and Transafer, State Proof
+ * Key Registration, Asset Freeze, State Proof
  */
 
 /**
@@ -165,6 +165,24 @@ public:
 			  meta = (DisplayName = "setIndexerRpcInfo", Keywords = "AlgorandManager"),
 			  Category = "AlgorandUnrealManager")
 		void setIndexerRpcInfo(const FString& indexerRpc, const FUInt64& indexerPort, const FString& indexerTokenHeader);
+
+	/**
+	 * get current rpc net connected to algorand node
+	 * @return rpc net as string
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "getAlgodRpcNet", Keywords = "AlgodRpcInfo"),
+			  Category = "AlgorandUnrealManager")
+		FString getAlgodRpcNet();
+
+	/**
+	 * get current rpc net connected to algorand node
+	 * @return rpc net as string
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "getIndexerRpcNet", Keywords = "IndexerRpcInfo"),
+			  Category = "AlgorandUnrealManager")
+		FString getIndexerRpcNet();
 	
     /**
      * get account address connected to algorand node

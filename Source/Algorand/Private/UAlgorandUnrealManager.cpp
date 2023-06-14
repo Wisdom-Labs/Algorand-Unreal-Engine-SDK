@@ -85,6 +85,30 @@ void UAlgorandUnrealManager::setIndexerRpcInfo(const FString& indexerRpc, const 
     unrealApi_->setAlgoTokenHeader(myIndexerTokenHeader);
 }
 
+/// get algod rpc net info 
+FString UAlgorandUnrealManager::getAlgodRpcNet()
+{
+    if(myAlgodRpc.Contains("mainnet"))
+        return "MainNet";
+    if(myAlgodRpc.Contains("testnet"))
+        return "TestNet";
+    if(myAlgodRpc.Contains("devnet"))
+        return "DevNet";
+    return "LocalNet";
+}
+
+/// get indexer rpc net info 
+FString UAlgorandUnrealManager::getIndexerRpcNet()
+{
+    if(myIndexerRpc.Contains("mainnet"))
+        return "MainNet";
+    if(myIndexerRpc.Contains("testnet"))
+        return "TestNet";
+    if(myIndexerRpc.Contains("devnet"))
+        return "DevNet";
+    return "LocalNet";
+}
+
 FString UAlgorandUnrealManager::getAddress()
 {
     return transactionBuilder_->paymentAddress();
