@@ -29,7 +29,7 @@ public:
 		void OnSendPaymentTransactionCallback(const FString& txID);
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OnSendAssetConfigTransactionCallback(const FString& txID);
+		void OnSendAssetConfigTransactionCallback(const FString& txID, const FUInt64& assetID);
 	
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
 		void OnSendAssetTransferTransactionCallback(const FString& txID);
