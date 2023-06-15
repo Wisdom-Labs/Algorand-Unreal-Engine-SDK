@@ -13,7 +13,7 @@ Arc03::Arc03(uint64_t asset_id, FString algoRpc, uint64_t algoPort, FString algo
     myAlgoTokenHeader = algoToken;
     
     this->from_asset(asset_id);
-    this->from_tx(asset_id);
+    this->getAssetByID(asset_id);
 }
 
 bool Arc03::IsVerify() {
