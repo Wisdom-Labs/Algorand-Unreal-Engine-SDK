@@ -15,11 +15,16 @@ UAlgorandBPFunctionLibrary::Conv_FUInt64ToString(const FUInt64& value)
  * @brief print value as FUInt64 using Strtoui64
  */
 FUInt64 
-UAlgorandBPFunctionLibrary::Conv_FStringToUInt64(const FString& value)
+UAlgorandBPFunctionLibrary::Conv_FStringToUInt64(const FString& value, const bool& type)
 {
-	double MyDouble = FCString::Atof(*value) * FMath::Pow(10.f, 6);
-	uint64 Value64 = static_cast<uint64>(MyDouble);
-	return FUInt64(Value64);
+	if(type)
+		return FUInt64(FCString::Strtoui64(*value, NULL, 10));
+	else
+	{
+		double MyDouble = FCString::Atof(*value) * FMath::Pow(10.f, 6);
+		uint64 Value64 = static_cast<uint64>(MyDouble);
+		return FUInt64(Value64);
+	}
 }
 
 /**

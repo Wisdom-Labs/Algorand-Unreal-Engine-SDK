@@ -10,14 +10,19 @@ ArcBase::ArcBase(FString algoRpc, uint64_t algoPort, FString algoToken) {
     myAlgoPort = algoPort;
     myAlgoTokenHeader = algoToken;
 }
-
 void ArcBase::from_asset(uint64_t asset_id) { 
-    IndexerClient indexerClient(std::string(TCHAR_TO_UTF8(*(myAlgoRpc + ":" + FString::FromInt(myAlgoPort)))), std::string(TCHAR_TO_UTF8(*myAlgoTokenHeader)));
+    std::string address;
+    if(myAlgoPort != 0)
+        address = TCHAR_TO_UTF8(*(myAlgoRpc + ":" + FString::FromInt(myAlgoPort)));
+    else
+        address = TCHAR_TO_UTF8(*(myAlgoRpc));
+        
+    IndexerClient indexerClient(address, std::string(TCHAR_TO_UTF8(*myAlgoTokenHeader)));
 
     auto resp = indexerClient.searchForAssets(0,"",algorand::vertices::Address(), "", "", asset_id);
 
     try {
-        if(resp.json->HasField("assets")) {
+        if(resp.json != nullptr && resp.json->HasField("assets")) {
             if(resp.json->GetArrayField("assets").Num() > 0) {
                 TSharedPtr<FJsonObject> json_asset = resp.json->GetArrayField("assets")[0]->AsObject();
 
@@ -72,12 +77,18 @@ void ArcBase::from_asset(uint64_t asset_id) {
 }
 
 void ArcBase::getAssetByID(uint64_t asset_id) {
-    IndexerClient indexerClient(std::string(TCHAR_TO_UTF8(*(myAlgoRpc + ":" + FString::FromInt(myAlgoPort)))), std::string(TCHAR_TO_UTF8(*myAlgoTokenHeader)));
+    std::string address;
+    if(myAlgoPort != 0)
+        address = TCHAR_TO_UTF8(*(myAlgoRpc + ":" + FString::FromInt(myAlgoPort)));
+    else
+        address = TCHAR_TO_UTF8(*(myAlgoRpc));
+        
+    IndexerClient indexerClient(address, std::string(TCHAR_TO_UTF8(*myAlgoTokenHeader)));
 
     auto resp = indexerClient.searchForTransactions(0,"","","acfg","",0,asset_id,"","",algorand::vertices::Address(),0);
 
     try {
-        if (resp.json->HasField("transactions")) {
+        if (resp.json != nullptr && resp.json->HasField("transactions")) {
             if (resp.json->GetArrayField("transactions").Num() > 0) {
                 TSharedPtr<FJsonObject> json_tx = resp.json->GetArrayField("transactions")[0]->AsObject();
 
@@ -88,36 +99,6 @@ void ArcBase::getAssetByID(uint64_t asset_id) {
                         tx.sender = itr.Value->AsString();
                     if (std::strcmp(TCHAR_TO_UTF8(*itr.Key) ,"note") == 0)
                         tx.note = itr.Value->AsString();
-                }
-            }
-        }
-    }
-    catch (std::exception &e) {
-        std::cout << e.what() << std::endl;
-    }
-
-    int x = 0;
-}
-
-void ArcBase::getAssetByTX(FString s_tx) {
-    IndexerClient indexerClient(std::string(TCHAR_TO_UTF8(*(myAlgoRpc + ":" + FString::FromInt(myAlgoPort)))), std::string(TCHAR_TO_UTF8(*myAlgoTokenHeader)));
-
-    auto resp = indexerClient.searchForTransactions(0,"","","acfg",TCHAR_TO_ANSI(*s_tx),0,0,"","",algorand::vertices::Address(),0);
-
-    try {
-        if (resp.json->HasField("transactions")) {
-            if (resp.json->GetArrayField("transactions").Num() > 0) {
-                TSharedPtr<FJsonObject> json_tx = resp.json->GetArrayField("transactions")[0]->AsObject();
-
-                for (auto itr : json_tx->Values) {
-                    if (std::strcmp(TCHAR_TO_UTF8(*itr.Key) ,"tx-type") == 0)
-                        tx.tx_type = itr.Value->AsString();
-                    if (std::strcmp(TCHAR_TO_UTF8(*itr.Key) ,"sender") == 0)
-                        tx.sender = itr.Value->AsString();
-                    if (std::strcmp(TCHAR_TO_UTF8(*itr.Key) ,"note") == 0)
-                        tx.note = itr.Value->AsString();
-                    if (std::strcmp(TCHAR_TO_UTF8(*itr.Key) ,"created-asset-index") == 0)
-                        tx.created_asset = itr.Value->AsNumber();
                 }
             }
         }

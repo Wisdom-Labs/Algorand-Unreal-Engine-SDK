@@ -30,15 +30,16 @@ public:
         static FString Conv_FUInt64ToString(const FUInt64& value);
 
     /**
-     * @brief convert FString to new defined FUInt64
+     * @brief convert FString to new FUInt64
      * @param value value for convert
+	 * @param type type for convert
      * @return converted value as FUInt64 
      */
     UFUNCTION(BlueprintPure,
         meta = (DisplayName = "String FUInt64", CompactNodeTitle = "->",
             BlueprintAutocast),
         Category = "String")
-        static FUInt64 Conv_FStringToUInt64(const FString& value);
+        static FUInt64 Conv_FStringToUInt64(const FString& value, const bool& type);
 
     /**
      * @brief convert new defined FUInt64 to FString with period   

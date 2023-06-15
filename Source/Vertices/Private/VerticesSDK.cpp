@@ -931,6 +931,12 @@ namespace algorand {
                             if(strlen(notes) == 0)
                                 notes = "Asset Config Transaction";
 
+                            if(Request.UnitName.GetValue().Len() > 8)
+                            {
+                                err_code = VTC_ERROR_INVALID_PARAM;
+                                checkVTCSuccess("Transaction Asset Unit Name is too big.", err_code);
+                            }
+                            
                             auto auto_unit_name = StringCast<ANSICHAR>(*(Request.UnitName.GetValue()));        // unit name        
                             char* unit_name = (char *)auto_unit_name.Get();
 
@@ -1056,7 +1062,8 @@ namespace algorand {
 
                             InitVertices(err_code);
                             checkVTCSuccess("When reiniting vertices network, an error occured", err_code);
-                            
+
+                            UE_LOG(LogTemp, Warning, TEXT("Asset Config TX ASSET TX Success, %s"), UTF8_TO_TCHAR(txID));
                             uint64 asset_id;
                             
                             do{
@@ -1214,7 +1221,7 @@ namespace algorand {
                             UE_LOG(LogTemp, Error, TEXT("👉 asset transfer tx error: %s"), ex.what());
                             
                             response.SetSuccessful(false);
-                            response.SetResponseString(FString(ex.what()));
+                            response.SetResponseString(FString(UTF8_TO_TCHAR("Opt-In Transaction should be done at first for Asset Transfer TX.")));
                         }
 
                         // after build response, execute delegate to run callback with response

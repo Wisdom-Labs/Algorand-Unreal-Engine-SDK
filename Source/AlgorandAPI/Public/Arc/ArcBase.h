@@ -44,7 +44,6 @@ public:
 
     void from_asset(uint64_t asset_id);
     void getAssetByID(uint64_t asset_id);
-    void getAssetByTX(FString s_tx);
 
     arc_asset asset;
     arc_tx tx;
