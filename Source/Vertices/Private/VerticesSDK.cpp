@@ -906,46 +906,46 @@ namespace algorand {
                                 checkVTCSuccess("Failed loading of dll libraries.", err_code);
                             }
                             // validation Request
-                            auto auto_notes = StringCast<ANSICHAR>(*(Request.notes.GetValue()));        // notes
+                            auto auto_notes = StringCast<ANSICHAR>(*(Request.Notes.GetValue()));        // notes
                             char* notes = (char *)auto_notes.Get();
 
                             if(strlen(notes) == 0)
                                 notes = "Asset Config Transaction";
 
-                            auto auto_unit_name = StringCast<ANSICHAR>(*(Request.unit_name.GetValue()));        // unit name        
+                            auto auto_unit_name = StringCast<ANSICHAR>(*(Request.UnitName.GetValue()));        // unit name        
                             char* unit_name = (char *)auto_unit_name.Get();
 
-                            auto auto_asset_name = StringCast<ANSICHAR>(*(Request.asset_name.GetValue()));        // asset name        
+                            auto auto_asset_name = StringCast<ANSICHAR>(*(Request.AssetName.GetValue()));        // asset name        
                             char* asset_name = (char *)auto_asset_name.Get();
 
-                            auto auto_url = StringCast<ANSICHAR>(*(Request.url.GetValue()));        // url        
+                            auto auto_url = StringCast<ANSICHAR>(*(Request.Url.GetValue()));        // url        
                             char* url = (char *)auto_url.Get();
 
-                            if ( Request.creator.GetValue().Len() != PUBLIC_ADDRESS_LENGTH )
+                            if ( Request.Creator.GetValue().Len() != PUBLIC_ADDRESS_LENGTH )
                             {
                                 err_code = VTC_ERROR_INVALID_ADDR;
                                 checkVTCSuccess("Please input creator address with correct length.", err_code);
                             }
 
-                            if ( Request.manager.GetValue().Len() != PUBLIC_ADDRESS_LENGTH)
+                            if ( Request.Manager.GetValue().Len() != PUBLIC_ADDRESS_LENGTH)
                             {
                                 err_code = VTC_ERROR_INVALID_ADDR;
                                 checkVTCSuccess("Please input manager address with correct length.", err_code);
                             }
                             
-                            if ( Request.reserve.GetValue().Len() != PUBLIC_ADDRESS_LENGTH && Request.reserve.GetValue().Len() != 0)
+                            if ( Request.Reserve.GetValue().Len() != PUBLIC_ADDRESS_LENGTH && Request.Reserve.GetValue().Len() != 0)
                             {
                                 err_code = VTC_ERROR_INVALID_ADDR;
                                 checkVTCSuccess("Please input reserve address with correct length.", err_code);
                             }
 
-                            if ( Request.freeze.GetValue().Len() != PUBLIC_ADDRESS_LENGTH && Request.freeze.GetValue().Len() != 0)
+                            if ( Request.Freeze.GetValue().Len() != PUBLIC_ADDRESS_LENGTH && Request.Freeze.GetValue().Len() != 0)
                             {
                                 err_code = VTC_ERROR_INVALID_ADDR;
                                 checkVTCSuccess("Please input freeze address with correct length.", err_code);
                             }
 
-                            if ( Request.clawback.GetValue().Len() != PUBLIC_ADDRESS_LENGTH && Request.clawback.GetValue().Len() != 0 )
+                            if ( Request.Clawback.GetValue().Len() != PUBLIC_ADDRESS_LENGTH && Request.Clawback.GetValue().Len() != 0 )
                             {
                                 err_code = VTC_ERROR_INVALID_ADDR;
                                 checkVTCSuccess("Please input clawback address with correct length.", err_code);
@@ -971,7 +971,7 @@ namespace algorand {
                                 checkVTCSuccess("Amount available on account is too low to pass a transaction, consider adding Algos", err_code);
                             }
 
-                            FString manager = Request.manager.GetValue();
+                            FString manager = Request.Manager.GetValue();
                             if ( manager.IsEmpty() )
                                 manager = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
                             
@@ -979,7 +979,7 @@ namespace algorand {
                             checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
                             UE_LOG(LogTemp, Warning, TEXT("manager account on Asset Config TX %d"), M_Account.vtc_account->amount);
                             
-                            FString reserve = Request.reserve.GetValue();
+                            FString reserve = Request.Reserve.GetValue();
                             if ( reserve.IsEmpty())
                                 reserve = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
                             
@@ -988,7 +988,7 @@ namespace algorand {
                             UE_LOG(LogTemp, Warning, TEXT("reserve account on Asset Config TX %d"), R_Account.vtc_account->amount);
                             
 
-                            FString freeze = Request.freeze.GetValue();
+                            FString freeze = Request.Freeze.GetValue();
                             if ( freeze.IsEmpty() )
                                 freeze = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
                                 
@@ -996,7 +996,7 @@ namespace algorand {
                             checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
                             UE_LOG(LogTemp, Warning, TEXT("freeze account on Asset Config TX %d"), F_Account.vtc_account->amount);   
 
-                            FString clawback = Request.clawback.GetValue();
+                            FString clawback = Request.Clawback.GetValue();
                             if ( clawback.IsEmpty() )
                                 clawback = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
                                 
@@ -1004,16 +1004,16 @@ namespace algorand {
                             checkVTCSuccess("vertices_account_new_from_b32 error occured.", err_code);
                             UE_LOG(LogTemp, Warning, TEXT("clawback account on Asset Config TX %d"), C_Account.vtc_account->amount);   
                             
-                            
                             err_code =
                                 vertices_transaction_asset_cfg(sender_account.vtc_account,
                                     (char *)M_Account.vtc_account->public_key /* or ACCOUNT_MANAGER */,
                                     (char *)R_Account.vtc_account->public_key /* or ACCOUNT_RESERVE */,
                                     (char *)F_Account.vtc_account->public_key /* or ACCOUNT_FREEZE */,
                                     (char *)C_Account.vtc_account->public_key /* or ACCOUNT_CLAWBACK */,
-                                    (uint64_t)Request.asset_id.GetValue(),
-                                    (uint64_t)Request.total.GetValue(),
-                                    (uint64_t)Request.decimals.GetValue(),
+                                    (uint64_t)Request.AssetId.GetValue(),
+                                    (uint64_t)Request.Total.GetValue(),
+                                    (uint64_t)Request.Decimals.GetValue(),
+                                    (uint8_t)Request.IsFrozen.GetValue(),
                                     unit_name,
                                     asset_name,
                                     url,

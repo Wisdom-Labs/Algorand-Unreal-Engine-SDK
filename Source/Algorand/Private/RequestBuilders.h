@@ -68,10 +68,10 @@ namespace request_builders {
 
 	/**
 	 * @brief build request for asset config tx with following params
-	 * like creator, manager,reserve, freeze, clawback, asset_id, total, decimals, unit_name,asset_name, url, notes
+	 * like creator, manager,reserve, freeze, clawback, asset_id, total, decimals, isFrozen, unit_name,asset_name, url, notes
 	 * @return request
 	 */
-	 Vertices::VerticesAssetConfigTransactionGetRequest
+	 algorand::vertices::VerticesSDK::VerticesAssetConfigTransactionGetRequest
 		buildAssetConfigTransactionRequest(const FString& creator, 
 									   const FString& manager,
 									   const FString& reserve,
@@ -80,6 +80,7 @@ namespace request_builders {
 									   const FUInt64& asset_id,
 									   const FUInt64& total,
 									   const FUInt64& decimals,
+									   const FString& isFrozen,
 									   const FString& unit_name,
 									   const FString& asset_name,
 									   const FString& url,

@@ -67,24 +67,29 @@ namespace request_builders {
 									   const FUInt64& asset_id,
 									   const FUInt64& total,
 									   const FUInt64& decimals,
+									   const FString& isFrozen,
 									   const FString& unit_name,
 									   const FString& asset_name,
 									   const FString& url,
 									   const FString& notes)
 	{
 		Vertices::VerticesAssetConfigTransactionGetRequest request;
-		request.creator = creator;
-		request.manager = manager;
-		request.reserve = reserve;
-		request.freeze = freeze;
-		request.clawback = clawback;
-		request.asset_id = asset_id;
-		request.total = total;
-		request.decimals = decimals;
-		request.unit_name = unit_name;
-		request.asset_name = asset_name;
-		request.url = url;
-		request.notes = notes;
+		request.Creator = creator;
+		request.Manager = manager;
+		request.Reserve = reserve;
+		request.Freeze = freeze;
+		request.Clawback = clawback;
+		request.AssetId = asset_id;
+		request.Total = total;
+		request.Decimals = decimals;
+		if(isFrozen.ToLower().Contains("true"))
+			request.IsFrozen = 1;
+		else
+			request.IsFrozen = 0;
+		request.UnitName = unit_name;
+		request.AssetName = asset_name;
+		request.Url = url;
+		request.Notes = notes;
 		return request;
 	}
 

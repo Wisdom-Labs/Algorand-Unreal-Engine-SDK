@@ -60,13 +60,14 @@ vertices_transaction_pay_new(account_info_t *account, char *receiver, uint64_t a
  /// \param asset_id Asset ID of token to be configured
  /// \param total Total amount of token to be configured
  /// \param decimals Decimals of token to be configured
+ /// \param isFrozen Default Frozen of token to be configured
  /// \param unit_name Unit Name of token to be configured
  /// \param asset_name Asset Name of token to be configured
  /// \param url Url of token to be configured
  /// \param params Pointer to type, where type is known by blockchain implementation. Can be NULL.
  /// \return \c VTC_ERROR_INVALID_PARAM if one parameter is incorrect
  VERTICES_IMPORT ret_code_t
- vertices_transaction_asset_cfg(account_info_t *account, char *manager , char *reserve, char *freeze, char *clawback, uint64_t asset_id, uint64_t total, uint64_t decimals, void *unit_name, void *asset_name, void *url, void *params);
+ vertices_transaction_asset_cfg(account_info_t *account, char *manager , char *reserve, char *freeze, char *clawback, uint64_t asset_id, uint64_t total, uint64_t decimals, uint8_t isFrozen, void *unit_name, void *asset_name, void *url, void *params);
  
 /// Send \c amount of tokens from \c account_id to \c receiver
 /// \param account Handle to the Sender account

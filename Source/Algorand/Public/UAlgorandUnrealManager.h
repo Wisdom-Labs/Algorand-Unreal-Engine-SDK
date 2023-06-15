@@ -355,6 +355,7 @@ public:
 									const FUInt64& asset_id,
 									const FUInt64& total,
 									const FUInt64& decimals,
+									const FString& isFrozen,
 									const FString& unit_name,
 									const FString& asset_name,
 									const FString& url,

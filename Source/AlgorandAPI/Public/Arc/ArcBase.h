@@ -33,16 +33,18 @@ typedef struct {
 typedef struct {
     FString tx_type;
     FString sender;
+    uint64_t created_asset;
     FString note;
 } arc_tx;
 
 class ArcBase {
 public:
     ArcBase() {asset.index = 0;}
-    ArcBase(uint64_t asset_id);
+    ArcBase(FString algoRpc, uint64_t algoPort, FString algoToken);
 
     void from_asset(uint64_t asset_id);
-    void from_tx(uint64_t asset_id);
+    void getAssetByID(uint64_t asset_id);
+    void getAssetByTX(FString s_tx);
 
     arc_asset asset;
     arc_tx tx;

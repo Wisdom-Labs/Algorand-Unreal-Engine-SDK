@@ -111,18 +111,19 @@ namespace algorand {
         public:
             virtual ~VerticesAssetConfigTransactionGetRequest() {}
 
-            TOptional<FString>  creator; 
-            TOptional<FString>  manager;
-            TOptional<FString>  reserve;
-            TOptional<FString>  freeze;
-            TOptional<FString>  clawback;
-            TOptional<uint64_t>  asset_id;
-            TOptional<uint64_t>  total;
-            TOptional<uint64_t>  decimals;
-            TOptional<FString>  unit_name;
-            TOptional<FString>  asset_name;
-            TOptional<FString>  url;
-            TOptional<FString>  notes;
+            TOptional<FString>  Creator; 
+            TOptional<FString>  Manager;
+            TOptional<FString>  Reserve;
+            TOptional<FString>  Freeze;
+            TOptional<FString>  Clawback;
+            TOptional<uint64_t>  AssetId;
+            TOptional<uint64_t>  Total;
+            TOptional<uint64_t>  Decimals;
+            TOptional<uint8_t>  IsFrozen;
+            TOptional<FString>  UnitName;
+            TOptional<FString>  AssetName;
+            TOptional<FString>  Url;
+            TOptional<FString>  Notes;
         };
 
         // Response for Asset Config TX
@@ -131,6 +132,7 @@ namespace algorand {
         public:
             ~VerticesAssetConfigTransactionGetResponse() {}
             FString txID;
+            FString assetID;
         };
 
         // Request for Asset Transfer TX
