@@ -22,14 +22,14 @@ HTTP_WEAK_IMPORT ret_code_t set_http_init(
 
 // set function pointer of http_get
 HTTP_WEAK_IMPORT ret_code_t set_http_get(
-    ret_code_t(*http_get_handler)(const provider_info_t* provider,
+    ret_code_t(*http_get_handler)(const char *url,
         const char* relative_path,
         const char* headers,
         uint32_t* response_code));
 
 // set function pointer of http_post
 HTTP_WEAK_IMPORT ret_code_t set_http_post(
-    ret_code_t(*http_post_handler)(const provider_info_t* provider,
+    ret_code_t(*http_post_handler)(const char *url,
         const char* relative_path,
         char* headers,
         const char* body,

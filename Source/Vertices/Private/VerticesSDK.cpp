@@ -157,8 +157,12 @@ namespace algorand {
             SodiumHandle = nullptr;
         }
 
-        void VerticesSDK::setAlgoRpc(const FString& algoRpc) {
-            myAlgoRpc = algoRpc;
+        void VerticesSDK::setIndexerRpc(const FString& indexerRpc) {
+            myIndexerRpc = indexerRpc;
+        }
+        
+        void VerticesSDK::setAlgodRpc(const FString& algodRpc) {
+            myAlgodRpc = algodRpc;
         }
 
         void VerticesSDK::setAlgoPort(const int& algoPort) {
@@ -202,14 +206,21 @@ namespace algorand {
                 checkVTCSuccess("Init Vertices", err_code);    
             }
             
-            char* url = new char[myAlgoRpc.Len()];
+            char* algodurl = new char[myAlgodRpc.Len()];
+            char* indexerurl = new char[myIndexerRpc.Len()];
             char* tokenHeader = new char[myAlgoTokenHeader.Len()];
-            memcpy(url, TCHAR_TO_ANSI(*myAlgoRpc), myAlgoRpc.Len());
+            memcpy(algodurl, TCHAR_TO_ANSI(*myAlgodRpc), myAlgodRpc.Len());
+            memcpy(indexerurl, TCHAR_TO_ANSI(*myIndexerRpc), myIndexerRpc.Len());
             memcpy(tokenHeader, TCHAR_TO_ANSI(*myAlgoTokenHeader), myAlgoTokenHeader.Len());
-            url[myAlgoRpc.Len()] = 0;
+            algodurl[myAlgodRpc.Len()] = 0;
+            indexerurl[myIndexerRpc.Len()] = 0;
             tokenHeader[myAlgoTokenHeader.Len()] = 0;
 
-            createNewVertices(url, myAlgoPort, tokenHeader, err_code);
+            createNewVertices(algodurl,
+                            indexerurl,
+                                myAlgoPort,
+                                tokenHeader,
+                                err_code);
             vertices_ping_check(err_code);
             vertices_version_check(err_code);
 
@@ -217,8 +228,9 @@ namespace algorand {
         }
 
         // pass m_vertex through vertices lib
-        void VerticesSDK::createNewVertices(char* sever_url, short port, char* server_token_header, ret_code_t& err_code) {
-            providers.url = sever_url;
+        void VerticesSDK::createNewVertices(char* algod_url, char* indexer_url, short port, char* server_token_header, ret_code_t& err_code) {
+            providers.algod_url = algod_url;
+            providers.indexer_url = indexer_url;
             providers.port = port;
             providers.header = server_token_header;
 
@@ -822,7 +834,14 @@ namespace algorand {
                                 checkVTCSuccess("Amount available on account is too low to pass a transaction, consider adding Algos", err_code);
                             }
                             
-                            
+                            if (sender_account.vtc_account->amount < Request.amount.GetValue())
+                            {
+                                FFormatNamedArguments Arguments;
+                                Arguments.Add(TEXT("Address"), FText::FromString(sender_account.vtc_account->public_b32));
+                                FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "To send algos to {Address}, you should add more algos"), Arguments));
+                                err_code = VTC_ERROR_ASSERT_FAILS;
+                                checkVTCSuccess("Amount available on account is too low to pass a transaction, consider adding Algos", err_code);
+                            }
                             const FString& address = Request.receiverAddress.GetValue();
                             
                             err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*address), &receiver_account.vtc_account);
@@ -1035,7 +1054,19 @@ namespace algorand {
                             checkVTCSuccess("vertices_account_free error occured", err_code);
                             UE_LOG(LogTemp, Warning, TEXT("VerticesAssetConfigTransactionGetRequest Success"));
 
-                            response = response_builders::buildAssetConfigTransactionResponse(FString(UTF8_TO_TCHAR(txID)));
+                            InitVertices(err_code);
+                            checkVTCSuccess("When reiniting vertices network, an error occured", err_code);
+                            
+                            uint64 asset_id;
+                            
+                            do{
+                                err_code = vertices_transaction_get(txID, &asset_id);
+                                UE_LOG(LogTemp, Warning, TEXT("Asset Config TX ASSET ID Success, %d"), asset_id);
+                            }
+                            while (err_code != VTC_SUCCESS);
+
+                            UE_LOG(LogTemp, Warning, TEXT("Asset Config TX ASSET ID Success, %d"), asset_id);
+                            response = response_builders::buildAssetConfigTransactionResponse(FString(UTF8_TO_TCHAR(txID)), asset_id);
                             response.SetSuccessful(true);
 
                             //free(txID);

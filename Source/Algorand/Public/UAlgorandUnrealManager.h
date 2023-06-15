@@ -73,7 +73,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPaymentTransactionDelegate, const F
  * asset config tx callback
  * @param txID transaction hash
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAssetConfigTransactionDelegate, const FString&, txID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAssetConfigTransactionDelegate, const FString&, txID, const FUInt64&,  assetID);
 
 /**
  * asset transfer tx callback

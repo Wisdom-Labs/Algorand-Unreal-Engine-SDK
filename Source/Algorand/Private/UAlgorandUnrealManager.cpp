@@ -22,7 +22,7 @@ namespace {
 // create vertices_ , transactionBuilder_ , unrealApi_ and load payment address 
 // Sets default values
 UAlgorandUnrealManager::UAlgorandUnrealManager()
-    :myAlgodRpc("https://testnet-algorand.api.purestake.io/ps2") , myAlgodPort(0) , myAlgodTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1"), myIndexerRpc("https://mainnet-idx.algonode.network"), myIndexerPort(443), myIndexerTokenHeader("")
+    :myAlgodRpc("https://testnet-algorand.api.purestake.io/ps2") , myAlgodPort(0) , myAlgodTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1"), myIndexerRpc("https://testnet-algorand.api.purestake.io/idx2"), myIndexerPort(0), myIndexerTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1")
 {
     FString address;
     // create instance of Vertices library
@@ -68,7 +68,7 @@ void UAlgorandUnrealManager::setAlgodRpcInfo(const FString& algodRpc, const FUIn
     myAlgodPort = algodPort;
     myAlgodTokenHeader = algodTokenHeader;
     
-    vertices_->setAlgoRpc(myAlgodRpc);
+    vertices_->setAlgodRpc(myAlgodRpc);
     vertices_->setAlgoPort(myAlgodPort);
     vertices_->setAlgoTokenHeader(myAlgodTokenHeader);
 }
@@ -79,6 +79,8 @@ void UAlgorandUnrealManager::setIndexerRpcInfo(const FString& indexerRpc, const 
     myIndexerRpc = indexerRpc;
     myIndexerPort = indexerPort;
     myIndexerTokenHeader = indexerTokenHeader;
+
+    vertices_->setIndexerRpc(myIndexerRpc);
     
     unrealApi_->setAlgoRpc(myIndexerRpc);
     unrealApi_->setAlgoPort(myIndexerPort);
@@ -390,8 +392,9 @@ void UAlgorandUnrealManager::sendAssetTransferTransaction(const FString& senderA
  */
 void UAlgorandUnrealManager::OnSendAssetConfigTransactionCompleteCallback(const Vertices::VerticesAssetConfigTransactionGetResponse& response) {
     if (response.IsSuccessful()) {
-        FString txID = response.txID;
-        SendAssetConfigTransactionCallback.Broadcast(txID);
+        FString TxId = response.txID;
+        uint64 AssetId = response.assetID;
+        SendAssetConfigTransactionCallback.Broadcast(TxId, FUInt64(AssetId));
         FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Asset Config Transaction", "sent asset config tx successfully."));
     }
     else {

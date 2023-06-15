@@ -36,10 +36,16 @@ namespace vertices {
         ~VerticesSDK();
 
         /**
+            * @brief set rpc url of algorand node 
+            * @param indexerRpc indexer rpc url
+            */
+        void setIndexerRpc(const FString& indexerRpc);
+     
+        /**
          * @brief set rpc url of algorand node 
          * @param algoRpc algoRpc rpc url
          */
-        void setAlgoRpc(const FString& algoRpc);
+        void setAlgodRpc(const FString& algodRpc);
 
         /**
          * @brief set rpc port of algorand node
@@ -72,7 +78,7 @@ namespace vertices {
         /**
          * @brief create new Vertices with rpc info
          */
-        void createNewVertices(char* , short, char* , ret_code_t&);
+        void createNewVertices(char* , char*,  short, char* , ret_code_t&);
 
         /**
          * @brief create new account including pub_key and priv_key on Vertices lib
@@ -184,7 +190,8 @@ namespace vertices {
     
     private:
         // algorand rpc info for creating vertices
-        FString myAlgoRpc;
+        FString myIndexerRpc;
+        FString myAlgodRpc;
         int myAlgoPort;
         FString myAlgoTokenHeader;
 

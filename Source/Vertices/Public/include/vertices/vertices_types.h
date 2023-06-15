@@ -51,7 +51,8 @@ typedef struct
 
 typedef struct
 {
-    char *url;
+    char *algod_url;
+    char *indexer_url;
     short port;
     char *header;
     const char *cert_pem;

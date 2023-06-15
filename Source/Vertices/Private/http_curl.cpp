@@ -46,7 +46,7 @@ http_init(const provider_info_t* provider,
 }
 
 ret_code_t
-http_get(const provider_info_t *provider,
+http_get(const char *url,
          const char *relative_path,
          const char *headers,
          uint32_t *response_code)
@@ -58,7 +58,7 @@ http_get(const provider_info_t *provider,
     long response;
 
     char url_full[512] = {0};
-    sprintf_s(url_full, "%s%s", provider->url, relative_path);
+    sprintf_s(url_full, "%s%s", url, relative_path);
 
     if (m_curl)
     {
@@ -113,7 +113,7 @@ http_get(const provider_info_t *provider,
 }
 
 ret_code_t
-http_post(const provider_info_t *provider,
+http_post(const char *url,
           const char *relative_path,
           char *headers,
           const char *body,
@@ -126,7 +126,7 @@ http_post(const provider_info_t *provider,
     CURLcode res;
 
     char url_full[256] = {0};
-    sprintf_s(url_full, "%s%s", provider->url, relative_path);
+    sprintf_s(url_full, "%s%s", url, relative_path);
 
     if (m_curl)
     {

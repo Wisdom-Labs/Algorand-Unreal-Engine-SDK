@@ -132,7 +132,7 @@ namespace algorand {
         public:
             ~VerticesAssetConfigTransactionGetResponse() {}
             FString txID;
-            FString assetID;
+            uint64 assetID;
         };
 
         // Request for Asset Transfer TX
