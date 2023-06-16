@@ -81,24 +81,6 @@ namespace vertices {
         void createNewVertices(char* , char*,  short, char* , ret_code_t&);
 
         /**
-         * @brief create new account including pub_key and priv_key on Vertices lib
-         * @return return status of creation account, if VTC_SUCCESS, successful, not failed
-         */
-        ret_code_t create_new_account();
-
-        /**
-         * @brief load existing account from files stored on disk
-         * @return return status of loading keys, if VTC_SUCCESS, successful, not failed
-         */
-        ret_code_t load_existing_account();
-
-        /**
-         * @brief load public key which length is 32byte 
-         * @return return status of loading keys, if VTC_SUCCESS, successful, not failed
-         */
-        FString load_pub_key();
-
-        /**
          * @brief convert mnemonic account to vertices account
          * @return return status of converting
          */

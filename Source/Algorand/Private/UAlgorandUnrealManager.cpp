@@ -46,10 +46,9 @@ UAlgorandUnrealManager* UAlgorandUnrealManager::createInstanceWithParams(const F
                                                                          UObject* outer)
 {
     UAlgorandUnrealManager* manager = NewObject<UAlgorandUnrealManager>(outer);
-    
+
     manager->setAlgodRpcInfo(algodRpc, algodPort, algodTokenHeader);
     manager->setIndexerRpcInfo(indexerRpc, indexerPort, indexerTokenHeader);
-        
     return manager;
 }
 

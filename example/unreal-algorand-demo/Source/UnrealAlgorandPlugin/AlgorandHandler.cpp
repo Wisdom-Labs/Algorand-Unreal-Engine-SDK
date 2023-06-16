@@ -27,10 +27,10 @@ void UAlgorandHandler::OnRestoreWalletCallback(const FString& output) {
     //                                             FString("https://myurl.com"),
     //                                             FString("fe"));
     
-    // FScriptDelegate _delegate1;
-    // _delegate1.BindUFunction(this, FName("OnGetBalanceCallback"));
-    // algorandManager->GetBalanceCallback.Add(_delegate1);
-    // algorandManager->getBalance("LCKVRVM2MJ7RAJZKPAXUCEC4GZMYNTFMLHJTV2KF6UGNXUFQFIIMSXRVM4");
+    FScriptDelegate _delegate1;
+    _delegate1.BindUFunction(this, FName("OnGetBalanceCallback"));
+    algorandManager->GetBalanceCallback.Add(_delegate1);
+    algorandManager->getBalance("LCKVRVM2MJ7RAJZKPAXUCEC4GZMYNTFMLHJTV2KF6UGNXUFQFIIMSXRVM4");
 
     // FScriptDelegate _delegate2;
     // _delegate2.BindUFunction(this, FName("OnSendPaymentTransactionCallback"));
@@ -95,16 +95,16 @@ void UAlgorandHandler::OnGetArcAssetDetailsCallback(const FArcAssetDetails& asse
 }
 
 void UAlgorandHandler::RunSomeLogic() {
-    // FScriptDelegate _delegate4;
-    // _delegate4.BindUFunction(this, FName("OnRestoreWalletCallback"));
-    // algorandManager->RestoreWalletCallback.Add(_delegate4);
-    // FString mnemonics = "rally relief lucky maple primary chair syrup economy tired hurdle slot upset clever chest curve bitter weekend prepare movie letter lamp alert then able taste";
-    // algorandManager->restoreWallet(mnemonics);
+    FScriptDelegate _delegate4;
+    _delegate4.BindUFunction(this, FName("OnRestoreWalletCallback"));
+    algorandManager->RestoreWalletCallback.Add(_delegate4);
+    FString mnemonics = "rally relief lucky maple primary chair syrup economy tired hurdle slot upset clever chest curve bitter weekend prepare movie letter lamp alert then able taste";
+    algorandManager->restoreWallet(mnemonics);
     
-    FScriptDelegate _delegate9;
-    _delegate9.BindUFunction(this, FName("OnGetArcAssetDetailsCallback"));
-    algorandManager->FetchArcAssetDetailsCallback.Add(_delegate9);
-    algorandManager->fetchArcAssetDetails(1019478822);// 779312090
+    // FScriptDelegate _delegate9;
+    // _delegate9.BindUFunction(this, FName("OnGetArcAssetDetailsCallback"));
+    // algorandManager->FetchArcAssetDetailsCallback.Add(_delegate9);
+    // algorandManager->fetchArcAssetDetails(1019478822);// 779312090
     
     // FScriptDelegate _delegate5;
     // _delegate5.BindUFunction(this, FName("OnInitializeNewWalletCallback"));
