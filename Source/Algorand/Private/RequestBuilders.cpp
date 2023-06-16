@@ -97,14 +97,14 @@ namespace request_builders {
 		buildAssetTransferTransactionRequest(const FString& sender, 
 									   const FString& receiver,
 									   const FUInt64& asset_id,
-									   const FUInt64& amount,
+									   const FString& amount,
 									   const FString& notes)
 	{
 		Vertices::VerticesAssetTransferTransactionGetRequest request;
 		request.senderAddress = sender;
 		request.receiverAddress = receiver;
 		request.asset_id = asset_id;
-		request.amount = amount;
+		request.amount = atof(TCHAR_TO_ANSI(*amount)); 
 		request.notes = notes;
 		return request;
 	}

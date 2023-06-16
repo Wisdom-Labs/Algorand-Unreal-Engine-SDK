@@ -11,21 +11,21 @@ void UAlgorandHandler::OnRestoreWalletCallback(const FString& output) {
     UE_LOG(LogTemp, Display, TEXT("Generated address: %s"),
         *output);
     
-    FScriptDelegate _delegate8;
-    _delegate8.BindUFunction(this, FName("OnSendAssetConfigTransactionCallback"));
-    algorandManager->SendAssetConfigTransactionCallback.Add(_delegate8);
-    algorandManager->sendAssetConfigTransaction(FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
-                                                FString(""),
-                                                FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
-                                                FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
-                                                0,
-                                                1000,
-                                                0,
-                                                "false",
-                                                FString("1234567890"),
-                                                FString("My Asset"),
-                                                FString("https://myurl.com"),
-                                                FString("fe"));
+    // FScriptDelegate _delegate8;
+    // _delegate8.BindUFunction(this, FName("OnSendAssetConfigTransactionCallback"));
+    // algorandManager->SendAssetConfigTransactionCallback.Add(_delegate8);
+    // algorandManager->sendAssetConfigTransaction(FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
+    //                                             FString(""),
+    //                                             FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
+    //                                             FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
+    //                                             0,
+    //                                             1000,
+    //                                             0,
+    //                                             "false",
+    //                                             FString("1234567890"),
+    //                                             FString("My Asset"),
+    //                                             FString("https://myurl.com"),
+    //                                             FString("fe"));
     
     // FScriptDelegate _delegate1;
     // _delegate1.BindUFunction(this, FName("OnGetBalanceCallback"));
@@ -40,7 +40,7 @@ void UAlgorandHandler::OnRestoreWalletCallback(const FString& output) {
     // FScriptDelegate _delegate8;
     // _delegate8.BindUFunction(this, FName("OnSendAssetTransferTransactionCallback"));
     // algorandManager->SendAssetTransferTransactionCallback.Add(_delegate8);
-    // algorandManager->sendAssetTransferTransaction(FString("SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U"), FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),234664633,1,FString("Sent 100 ERC20 token to A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM."));   // A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM
+    // algorandManager->sendAssetTransferTransaction(FString("SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U"), FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),234664633,"0.1",FString("Sent 100 ERC20 token to A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM."));   // A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM
     
 }
 

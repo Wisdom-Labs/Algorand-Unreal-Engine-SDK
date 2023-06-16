@@ -80,7 +80,7 @@ vertices_transaction_pay_new(account_info_t *account, char *receiver, uint64_t a
 /// \param params Pointer to type, where type is known by blockchain implementation. Can be NULL.
 /// \return \c VTC_ERROR_INVALID_PARAM if one parameter is incorrect
 VERTICES_IMPORT ret_code_t
-vertices_transaction_asset_xfer(account_info_t *account, char *sender , char *receiver, char *closeRemainderTo, char *revocationTarget, uint64_t asset_id, uint64_t amount, void *params);
+vertices_transaction_asset_xfer(account_info_t *account, char *sender , char *receiver, char *closeRemainderTo, char *revocationTarget, uint64_t asset_id, double amount, void *params);
  
 /// Call Smart Contract DApp
 /// \param account Account handle, see \c vertices_account_new_from_b32

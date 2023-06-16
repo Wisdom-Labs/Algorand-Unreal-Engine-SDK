@@ -1184,7 +1184,7 @@ namespace algorand {
                                     NULL,
                                     NULL,
                                     (uint64_t)Request.asset_id.GetValue(),
-                                    (uint64_t)Request.amount.GetValue(),
+                                    (double)Request.amount.GetValue(),
                                     notes);
                             
                             checkVTCSuccess("vertices_transaction_asset_transfer error occured", err_code);

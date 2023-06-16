@@ -95,7 +95,7 @@ namespace request_builders {
 		buildAssetTransferTransactionRequest(const FString& sender,
 									   const FString& receiver,
 									   const FUInt64& asset_id,
-									   const FUInt64& amount,
+									   const FString& amount,
 									   const FString& notes);
 
 	/**

@@ -387,7 +387,7 @@ public:
 	void sendAssetTransferTransaction(const FString& senderAddress,
 								const FString& receiverAddress,
 								const FUInt64& asset_ID,
-								const FUInt64& amount,
+								const FString& amount,
 								const FString& notes);   
 	/**
 	 * asset transfer transaction information callback
