@@ -60,23 +60,24 @@ public:
 	/// arc asset details api callback
 	DECLARE_DELEGATE_OneParam(FAlgorandArcAssetDetailsGetDelegate, const Vertices::VerticesArcAssetDetailsGetResponse&);
 
+	/// account information api callback
+	DECLARE_DELEGATE_OneParam(FAlgorandAccountInformationGetDelegate, const Vertices::VerticesAccountInformationGetResponse&);
+
 	/**
-		 * @brief set rpc url of algorand node 
-		 * @param algoRpc algoRpc rpc url
+		 * @brief set algod rpc url, port, token of algorand node 
+		 * @param algodRpc algodRpc rpc url
+		 * * @param algodPort algodRpc rpc port
+		 * * @param algodTokenHeader_ algodRpc rpc token
 		 */
-	void setAlgoRpc(const FString& algoRpc);
+	void setAlgodRpcInfo(const FString& algodRpc, const uint64_t& algodPort, const FString& algodTokenHeader_);
 
 	/**
-	 * @brief set rpc port of algorand node
-	 * @param algoPort algoPort rpc port
-	 */
-	void setAlgoPort(const int& algoPort);
-
-	/**
-	 * @brief set rpc tokenHeader of algorand node
-	 * @param algoTokenHeader algorand rpc tokenHeader
-	 */
-	void setAlgoTokenHeader(const FString& algoTokenHeader);
+		 * @brief set indexer rpc url, port, token of algorand node 
+		 * @param indexerRpc indexerRpc rpc url
+		 * @param indexerPort indexerRpc rpc port
+		 * @param indexerTokenHeader indexerRpc rpc token
+		 */
+	void setIndexerRpcInfo(const FString& indexerRpc, const uint64_t& indexerPort, const FString& indexerTokenHeader);
 	
     /**
      * @brief send api request for restore wallet
@@ -152,6 +153,13 @@ public:
 	 */
 	void AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetailsGetRequest& Request, const FAlgorandArcAssetDetailsGetDelegate& Delegate = FAlgorandArcAssetDetailsGetDelegate()) const;
 
+	/**
+	 * @brief send api request for send account information
+	 * @param Request value to send as params for calling api
+	 * @param Delegate is used to implement async task after get response as api result
+	 */
+	void AlgorandAccountInformationGet(const Vertices::VerticesAccountInformationGetRequest& Request, const FAlgorandAccountInformationGetDelegate& Delegate = FAlgorandAccountInformationGetDelegate()) const;
+
 private:
 	
     /**
@@ -224,13 +232,24 @@ private:
 	 */
 	void OnAlgorandArcAssetDetailsGetResponse(const Vertices::VerticesArcAssetDetailsGetResponse& response, const FAlgorandArcAssetDetailsGetDelegate& Delegate) const;
 
+	/**
+	 * @brief callback function to be run after api request of sending account information
+	 * @param response is used to send as Vertices Response type to Algorand module 
+	 * @param Delegate is used to execute binded callback from Algorand module
+	 */
+	void OnAlgorandAccountInformationGetResponse(const Vertices::VerticesAccountInformationGetResponse& response, const FAlgorandAccountInformationGetDelegate& Delegate) const;
+
 	// Algorand modules
     TSharedPtr<algorand::vertices::VerticesSDK> vertices_;
 
 	// algorand rpc information
-	FString myAlgoRpc;
-	uint64_t myAlgoPort;
-	FString myAlgoTokenHeader;
+	FString myAlgodRpc;
+	uint64_t myAlgodPort;
+	FString myAlgodTokenHeader;
+
+	FString myIndexerRpc;
+	uint64_t myIndexerPort;
+	FString myIndexerTokenHeader;
 };
        
 }

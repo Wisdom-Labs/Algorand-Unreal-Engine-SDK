@@ -20,13 +20,13 @@ extern "C" {
                 size_t chunk_size));
 
     ret_code_t
-        http_get(const provider_info_t* provider,
+        http_get(const char *url,
             const char* relative_path,
             const char* headers,
             uint32_t* response_code);
 
     ret_code_t
-        http_post(const provider_info_t* provider,
+        http_post(const char *url,
             const char* relative_path,
             char* headers,
             const char* body,

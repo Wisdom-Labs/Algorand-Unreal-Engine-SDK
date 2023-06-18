@@ -5,20 +5,24 @@
 #include "Arc/ArcBase.h"
 #include "../Private/Client/IndexerClient.h"
 
-ArcBase::ArcBase(uint64_t asset_id) {
-    asset.index = asset_id;
-    myAlgoRpc = "https://testnet-idx.algonode.network";
-    myAlgoPort = 443;
-    myAlgoTokenHeader = "";
+ArcBase::ArcBase(FString algoRpc, uint64_t algoPort, FString algoToken) {
+    myAlgoRpc = algoRpc;
+    myAlgoPort = algoPort;
+    myAlgoTokenHeader = algoToken;
 }
-
 void ArcBase::from_asset(uint64_t asset_id) { 
-    IndexerClient indexerClient(std::string(TCHAR_TO_UTF8(*(myAlgoRpc + ":" + FString::FromInt(myAlgoPort)))), std::string(TCHAR_TO_UTF8(*myAlgoTokenHeader)));
+    std::string address;
+    if(myAlgoPort != 0)
+        address = TCHAR_TO_UTF8(*(myAlgoRpc + ":" + FString::FromInt(myAlgoPort)));
+    else
+        address = TCHAR_TO_UTF8(*(myAlgoRpc));
+        
+    IndexerClient indexerClient(address, std::string(TCHAR_TO_UTF8(*myAlgoTokenHeader)));
 
     auto resp = indexerClient.searchForAssets(0,"",algorand::vertices::Address(), "", "", asset_id);
 
     try {
-        if(resp.json->HasField("assets")) {
+        if(resp.json != nullptr && resp.json->HasField("assets")) {
             if(resp.json->GetArrayField("assets").Num() > 0) {
                 TSharedPtr<FJsonObject> json_asset = resp.json->GetArrayField("assets")[0]->AsObject();
 
@@ -72,13 +76,19 @@ void ArcBase::from_asset(uint64_t asset_id) {
 
 }
 
-void ArcBase::from_tx(uint64_t asset_id) {
-    IndexerClient indexerClient(std::string(TCHAR_TO_UTF8(*(myAlgoRpc + ":" + FString::FromInt(myAlgoPort)))), std::string(TCHAR_TO_UTF8(*myAlgoTokenHeader)));
+void ArcBase::getAssetByID(uint64_t asset_id) {
+    std::string address;
+    if(myAlgoPort != 0)
+        address = TCHAR_TO_UTF8(*(myAlgoRpc + ":" + FString::FromInt(myAlgoPort)));
+    else
+        address = TCHAR_TO_UTF8(*(myAlgoRpc));
+        
+    IndexerClient indexerClient(address, std::string(TCHAR_TO_UTF8(*myAlgoTokenHeader)));
 
     auto resp = indexerClient.searchForTransactions(0,"","","acfg","",0,asset_id,"","",algorand::vertices::Address(),0);
 
     try {
-        if (resp.json->HasField("transactions")) {
+        if (resp.json != nullptr && resp.json->HasField("transactions")) {
             if (resp.json->GetArrayField("transactions").Num() > 0) {
                 TSharedPtr<FJsonObject> json_tx = resp.json->GetArrayField("transactions")[0]->AsObject();
 

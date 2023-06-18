@@ -11,35 +11,41 @@ void UAlgorandHandler::OnRestoreWalletCallback(const FString& output) {
     UE_LOG(LogTemp, Display, TEXT("Generated address: %s"),
         *output);
     
-    FScriptDelegate _delegate8;
-    _delegate8.BindUFunction(this, FName("OnSendAssetConfigTransactionCallback"));
-    algorandManager->SendAssetConfigTransactionCallback.Add(_delegate8);
-    algorandManager->sendAssetConfigTransaction(FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
-                                                FString(""),
-                                                FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
-                                                FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
-                                                0,
-                                                10000,
-                                                0,
-                                                FString(""),
-                                                FString("wef"),
-                                                FString("ef"),
-                                                FString("fe"));
+    // FScriptDelegate _delegate8;
+    // _delegate8.BindUFunction(this, FName("OnSendAssetConfigTransactionCallback"));
+    // algorandManager->SendAssetConfigTransactionCallback.Add(_delegate8);
+    // algorandManager->sendAssetConfigTransaction(FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
+    //                                             FString(""),
+    //                                             FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
+    //                                             FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
+    //                                             0,
+    //                                             1000,
+    //                                             0,
+    //                                             "false",
+    //                                             FString("1234567890"),
+    //                                             FString("My Asset"),
+    //                                             FString("https://myurl.com"),
+    //                                             FString("fe"));
+
+    FScriptDelegate _delegate9;
+    _delegate9.BindUFunction(this, FName("OnGetAccountInformationCallback"));
+    algorandManager->FetchAccountInformationCallback.Add(_delegate9);
+    algorandManager->fetchAccountInformation("6WII6ES4H6UW7G7T7RJX63CUNPKJEPEGQ3PTYVVU3JHJ652W34GCJV5OVY");
     
-    /*FScriptDelegate _delegate1;
-    _delegate1.BindUFunction(this, FName("OnGetBalanceCallback"));
-    algorandManager->GetBalanceCallback.Add(_delegate1);
-    algorandManager->getBalance("LCKVRVM2MJ7RAJZKPAXUCEC4GZMYNTFMLHJTV2KF6UGNXUFQFIIMSXRVM4");*/
+    // FScriptDelegate _delegate1;
+    // _delegate1.BindUFunction(this, FName("OnGetBalanceCallback"));
+    // algorandManager->GetBalanceCallback.Add(_delegate1);
+    // algorandManager->getBalance("LCKVRVM2MJ7RAJZKPAXUCEC4GZMYNTFMLHJTV2KF6UGNXUFQFIIMSXRVM4");
 
     // FScriptDelegate _delegate2;
     // _delegate2.BindUFunction(this, FName("OnSendPaymentTransactionCallback"));
     // algorandManager->SendPaymentTransactionCallback.Add(_delegate2);
-    // algorandManager->sendPaymentTransaction(FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"), 100, FString("Sent 100 algo to A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM."));
+    // algorandManager->sendPaymentTransaction(FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"), 100000000, FString("Sent 100 algo to A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM."));
 
     // FScriptDelegate _delegate8;
     // _delegate8.BindUFunction(this, FName("OnSendAssetTransferTransactionCallback"));
     // algorandManager->SendAssetTransferTransactionCallback.Add(_delegate8);
-    // algorandManager->sendAssetTransferTransaction(FString("SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U"), FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),234664633,1,FString("Sent 100 ERC20 token to A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM."));   // A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM
+    // algorandManager->sendAssetTransferTransaction(FString("SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U"), FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),234664633,"0.1",FString("Sent 100 ERC20 token to A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM."));   // A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM
     
 }
 
@@ -72,9 +78,9 @@ void UAlgorandHandler::OnSendPaymentTransactionCallback(const FString& txID) {
         *txID);
 }
 
-void UAlgorandHandler::OnSendAssetConfigTransactionCallback(const FString& txID) {
-    UE_LOG(LogTemp, Display, TEXT("Asset Config TX ID: %s"),
-        *txID);
+void UAlgorandHandler::OnSendAssetConfigTransactionCallback(const FString& txID, const FUInt64& assetID) {
+    UE_LOG(LogTemp, Display, TEXT("Asset Config TX ID: %s, %llu"),
+        *txID, assetID.Value);
 }
 
 void UAlgorandHandler::OnSendAssetTransferTransactionCallback(const FString& txID) {
@@ -93,17 +99,24 @@ void UAlgorandHandler::OnGetArcAssetDetailsCallback(const FArcAssetDetails& asse
      *asset_Details.media_url);
 }
 
+void UAlgorandHandler::OnGetAccountInformationCallback(const TArray<FString>& IDs, const TArray<FString>& Names)
+{
+    for(int i = 0; i < IDs.Num(); i++) 
+        UE_LOG(LogTemp, Display, TEXT("Arc Account Info: %s, %s"),
+         *(IDs[i]), *(Names[i]));
+}
+
 void UAlgorandHandler::RunSomeLogic() {
     FScriptDelegate _delegate4;
     _delegate4.BindUFunction(this, FName("OnRestoreWalletCallback"));
     algorandManager->RestoreWalletCallback.Add(_delegate4);
-    FString mnemonics = "curious crime outdoor armor math rack odor mind elephant exit apple flat mango income social remember during woman bullet cinnamon romance harvest sign absorb acoustic";
+    FString mnemonics = "rally relief lucky maple primary chair syrup economy tired hurdle slot upset clever chest curve bitter weekend prepare movie letter lamp alert then able taste";
     algorandManager->restoreWallet(mnemonics);
     
     // FScriptDelegate _delegate9;
     // _delegate9.BindUFunction(this, FName("OnGetArcAssetDetailsCallback"));
     // algorandManager->FetchArcAssetDetailsCallback.Add(_delegate9);
-    // algorandManager->fetchArcAssetDetails(779312090);
+    // algorandManager->fetchArcAssetDetails(1019478822);// 779312090
     
     // FScriptDelegate _delegate5;
     // _delegate5.BindUFunction(this, FName("OnInitializeNewWalletCallback"));

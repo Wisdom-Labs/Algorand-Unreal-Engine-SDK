@@ -13,7 +13,7 @@ Arc03::Arc03(uint64_t asset_id, FString algoRpc, uint64_t algoPort, FString algo
     myAlgoTokenHeader = algoToken;
     
     this->from_asset(asset_id);
-    this->from_tx(asset_id);
+    this->getAssetByID(asset_id);
 }
 
 bool Arc03::IsVerify() {
@@ -34,7 +34,7 @@ void Arc03::from_asset_url(std::string &url) {
     auto resp = restClient.get(asset_url);
 
     try{
-
+        if(!resp.json.IsValid()) return;
         for (auto itr : resp.json->Values) {
             if (std::strcmp(TCHAR_TO_UTF8(*itr.Key) ,"standard") == 0)
                 metadata.standard = itr.Value->AsString();

@@ -111,18 +111,19 @@ namespace algorand {
         public:
             virtual ~VerticesAssetConfigTransactionGetRequest() {}
 
-            TOptional<FString>  creator; 
-            TOptional<FString>  manager;
-            TOptional<FString>  reserve;
-            TOptional<FString>  freeze;
-            TOptional<FString>  clawback;
-            TOptional<uint64_t>  asset_id;
-            TOptional<uint64_t>  total;
-            TOptional<uint64_t>  decimals;
-            TOptional<FString>  unit_name;
-            TOptional<FString>  asset_name;
-            TOptional<FString>  url;
-            TOptional<FString>  notes;
+            TOptional<FString>  Creator; 
+            TOptional<FString>  Manager;
+            TOptional<FString>  Reserve;
+            TOptional<FString>  Freeze;
+            TOptional<FString>  Clawback;
+            TOptional<uint64_t>  AssetId;
+            TOptional<uint64_t>  Total;
+            TOptional<uint64_t>  Decimals;
+            TOptional<uint8_t>  IsFrozen;
+            TOptional<FString>  UnitName;
+            TOptional<FString>  AssetName;
+            TOptional<FString>  Url;
+            TOptional<FString>  Notes;
         };
 
         // Response for Asset Config TX
@@ -131,6 +132,7 @@ namespace algorand {
         public:
             ~VerticesAssetConfigTransactionGetResponse() {}
             FString txID;
+            uint64 assetID;
         };
 
         // Request for Asset Transfer TX
@@ -142,7 +144,7 @@ namespace algorand {
             TOptional<FString> senderAddress;
             TOptional<FString> receiverAddress;
             TOptional<uint64_t> asset_id;
-            TOptional<uint64_t> amount;
+            TOptional<double> amount;
             TOptional<FString> notes;
         };
 
@@ -201,6 +203,25 @@ namespace algorand {
             FString external_url;
             FString animation_url;
             TMap<FString, FString> properties;
+        };
+
+        // Request for Account Information
+        class VerticesSDK::VerticesAccountInformationGetRequest : public Request
+        {
+        public:
+            virtual ~VerticesAccountInformationGetRequest() {}
+            
+            TOptional<FString> address;
+        };
+
+        // Response for Account Information
+        class VerticesSDK::VerticesAccountInformationGetResponse : public Response
+        {
+        public:
+            ~VerticesAccountInformationGetResponse() {}
+            
+            TArray<FString> assetIDs;
+            TArray<FString> assetNames;
         };
     }
 }

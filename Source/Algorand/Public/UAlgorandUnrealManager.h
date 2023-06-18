@@ -17,7 +17,7 @@
  * ToDo:
  * for asset bases on transactions and wallet provider
  * add like txs
- * Key Registration, Asset Configuration, Freeze and Transafer, State Proof
+ * Key Registration, Asset Freeze, State Proof
  */
 
 /**
@@ -73,7 +73,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPaymentTransactionDelegate, const F
  * asset config tx callback
  * @param txID transaction hash
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAssetConfigTransactionDelegate, const FString&, txID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAssetConfigTransactionDelegate, const FString&, txID, const FUInt64&,  assetID);
 
 /**
  * asset transfer tx callback
@@ -92,6 +92,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FApplicationCallTransactionDelegate,
  * @param assetDetails Arc Asset details
 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FArcAssetDetailsDelegate, const FArcAssetDetails&, assetDetails);
+
+/**
+ * account information callback
+ * @param accountInfo Arc Asset details
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAccountInfoDelegate, const TArray<FString>&, assetID, const TArray<FString>&, assetNames);
 
 /**
  * error callback
@@ -165,6 +171,24 @@ public:
 			  meta = (DisplayName = "setIndexerRpcInfo", Keywords = "AlgorandManager"),
 			  Category = "AlgorandUnrealManager")
 		void setIndexerRpcInfo(const FString& indexerRpc, const FUInt64& indexerPort, const FString& indexerTokenHeader);
+
+	/**
+	 * get current rpc net connected to algorand node
+	 * @return rpc net as string
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "getAlgodRpcNet", Keywords = "AlgodRpcInfo"),
+			  Category = "AlgorandUnrealManager")
+		FString getAlgodRpcNet();
+
+	/**
+	 * get current rpc net connected to algorand node
+	 * @return rpc net as string
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "getIndexerRpcNet", Keywords = "IndexerRpcInfo"),
+			  Category = "AlgorandUnrealManager")
+		FString getIndexerRpcNet();
 	
     /**
      * get account address connected to algorand node
@@ -337,6 +361,7 @@ public:
 									const FUInt64& asset_id,
 									const FUInt64& total,
 									const FUInt64& decimals,
+									const FString& isFrozen,
 									const FString& unit_name,
 									const FString& asset_name,
 									const FString& url,
@@ -368,7 +393,7 @@ public:
 	void sendAssetTransferTransaction(const FString& senderAddress,
 								const FString& receiverAddress,
 								const FUInt64& asset_ID,
-								const FUInt64& amount,
+								const FString& amount,
 								const FString& notes);   
 	/**
 	 * asset transfer transaction information callback
@@ -404,7 +429,7 @@ public:
     void OnSendApplicationCallTransactionCompleteCallback(const Vertices::VerticesApplicationCallTransactionGetResponse& response);
 
 	/**
-	 * send request to algorand node to fetech arc-asset details
+	 * send request to algorand node to fetch arc-asset details
 	 * @param asset_ID asset id to be fetched from algorand node
 	 */
 	UFUNCTION(BlueprintCallable,
@@ -424,6 +449,27 @@ public:
 	 */ 
 	void OnFetchArcAssetDetailsCompleteCallback(const Vertices::VerticesArcAssetDetailsGetResponse& response);
 
+	/**
+	 * send request to algorand node to fetech account information
+	 * @param asset_ID asset id to be fetched from algorand node
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "fetchAccountInfo", Keywords = "CreatedAsset"),	
+			  Category = "AlgorandUnrealManager")
+	void fetchAccountInformation(const FString& address);
+
+	/**
+	 * account information callback
+	 */
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+	FAccountInfoDelegate FetchAccountInformationCallback;
+
+	/**
+	 * get response after account information
+	 * @param response after account information
+	 */ 
+	void OnFetchAccountInformationCompleteCallback(const Vertices::VerticesAccountInformationGetResponse& response);
+	
 	/**
 	 * return world of outer
 	 * @return outer world

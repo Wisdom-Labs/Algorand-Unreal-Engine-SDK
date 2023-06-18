@@ -24,16 +24,16 @@ UnrealApi::UnrealApi(TSharedPtr<algorand::vertices::VerticesSDK>& vertices)
 
 UnrealApi::~UnrealApi() {}
 
-void UnrealApi::setAlgoRpc(const FString& algoRpc) {
-    myAlgoRpc = algoRpc;
+void UnrealApi::setAlgodRpcInfo(const FString& algodRpc, const uint64_t& algodPort, const FString& algodTokenHeader_) {
+    myAlgodRpc = algodRpc;
+    myAlgodPort = algodPort;
+    myAlgodTokenHeader = algodTokenHeader_;
 }
 
-void UnrealApi::setAlgoPort(const int& algoPort) {
-    myAlgoPort = algoPort;
-}
-
-void UnrealApi::setAlgoTokenHeader(const FString& algoTokenHeader) {
-    myAlgoTokenHeader = algoTokenHeader;
+void UnrealApi::setIndexerRpcInfo(const FString& indexerRpc, const uint64_t& indexerPort, const FString& indexerTokenHeader) {
+    myIndexerRpc = indexerRpc;
+    myIndexerPort = indexerPort;
+    myIndexerTokenHeader = indexerTokenHeader;
 }
     
 void UnrealApi::AlgorandRestoreWalletGet(const Vertices::VerticesRestoreWalletGetRequest& Request, const FAlgorandRestoreWalletGetDelegate& Delegate) const
@@ -206,7 +206,7 @@ void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetai
     {   
         TSharedRef<ArcResponseBuilders::FAPIArcAssetDetailsGetDelegate> delegatePtr(MakeShared<ArcResponseBuilders::FAPIArcAssetDetailsGetDelegate>());
     
-        Arc03 arc03_data(Request.asset_ID.GetValue(), myAlgoRpc, myAlgoPort, myAlgoTokenHeader);
+        Arc03 arc03_data(Request.asset_ID.GetValue(), myIndexerRpc, myIndexerPort, myIndexerTokenHeader);
         if(arc03_data.IsVerify())
         {
             auto param_url = StringCast<ANSICHAR>(*(arc03_data.asset.params.url));
@@ -221,7 +221,7 @@ void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetai
             return;
         }
 
-        Arc69 arc69_data(Request.asset_ID.GetValue(), myAlgoRpc, myAlgoPort, myAlgoTokenHeader);
+        Arc69 arc69_data(Request.asset_ID.GetValue(), myIndexerRpc, myIndexerPort, myIndexerTokenHeader);
         if(arc69_data.IsVerify())
         {
             auto tx_note = StringCast<ANSICHAR>(*(arc69_data.tx.note));
@@ -251,6 +251,31 @@ void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetai
  * @brief callback after arc asset details
  */
 void UnrealApi::OnAlgorandArcAssetDetailsGetResponse(const Vertices::VerticesArcAssetDetailsGetResponse& response, const FAlgorandArcAssetDetailsGetDelegate& Delegate) const
+{
+    Delegate.ExecuteIfBound(response);
+}
+
+void UnrealApi::AlgorandAccountInformationGet(const Vertices::VerticesAccountInformationGetRequest& Request, const FAlgorandAccountInformationGetDelegate& Delegate) const
+{
+    AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, Delegate]()
+    {   
+        TSharedRef<ArcResponseBuilders::FAPIAccountInfoGetDelegate> delegatePtr(MakeShared<ArcResponseBuilders::FAPIAccountInfoGetDelegate>());
+
+        AccountAsset accountInfo(myAlgodRpc, myAlgodPort, myAlgodTokenHeader);
+        accountInfo.getInformation(Request.address.GetValue());
+        
+        delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesAccountInformationGetResponse& response) {
+            OnAlgorandAccountInformationGetResponse(response, Delegate);
+        });
+
+        ArcResponseBuilders::buildAccountInformationResponse(accountInfo, delegatePtr.Get());
+    });
+}
+
+/**
+ * @brief callback after arc asset details
+ */
+void UnrealApi::OnAlgorandAccountInformationGetResponse(const Vertices::VerticesAccountInformationGetResponse& response, const FAlgorandAccountInformationGetDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
 }

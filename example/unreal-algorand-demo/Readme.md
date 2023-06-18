@@ -9,6 +9,7 @@ This repository contains a sample project that uses the Algorand Play Unreal SDK
  - Create Asset TX
  - Update Asset TX
  - Transfer Asset TX
+ - NFT Viewer
  - Send Application TX
  - Generate wallet
 
@@ -73,10 +74,10 @@ This repository contains a sample project that uses the Algorand Play Unreal SDK
     + receiver address: `NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE`
  - AssetCreation TX
     > C++ Usage
-    + manager address: `A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM`
-    + reserve address: `SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U`
-    + freeze address: `A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM`
-    + clawback address: `SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U`
+    + manager address: `Z5C3T63QHLEAAXV2A2L3Y2LY6TURAPEESMQZC7777PGGPPAAGC4F4GWHHA`
+    + reserve address: `Z5C3T63QHLEAAXV2A2L3Y2LY6TURAPEESMQZC7777PGGPPAAGC4F4GWHHA`
+    + freeze address: `Z5C3T63QHLEAAXV2A2L3Y2LY6TURAPEESMQZC7777PGGPPAAGC4F4GWHHA`
+    + clawback address: `Z5C3T63QHLEAAXV2A2L3Y2LY6TURAPEESMQZC7777PGGPPAAGC4F4GWHHA`
     + asset id: `0`
     + total: `10000`
     + decimals: `2`
@@ -99,9 +100,12 @@ This repository contains a sample project that uses the Algorand Play Unreal SDK
     + notes: `Asset Creation TX`
  - AssetTransfer TX
     > C++ Usage
-    + sender address: `SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U`
+    + sender address: `Z5C3T63QHLEAAXV2A2L3Y2LY6TURAPEESMQZC7777PGGPPAAGC4F4GWHHA`
     + receiver address: `A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM`
     + asset ID: `218447260`
+- NFT Details
+    > C++ Usage
+    + wallet address: `HFIB4OCOT3ECQCVVTNROKIWWF7Q4MSWQSIJTB6G3UI3B6E2XBMIS55GCFU`
  - Application Usage
     > C++ Usage
     + App ID: `16037129`

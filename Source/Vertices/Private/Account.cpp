@@ -1,17 +1,30 @@
 #include "Account.h"
 
+#include <mutex>
+
+std::mutex sodiumMutex;
+
+// Declare a mutex object
 std::pair<bytes, bytes>
 Account::generate_keys(bytes seed) {
 	try
 	{
+		// Lock the mutex
+		sodiumMutex.lock();
+		
 		assert(sodium_init() >= 0);
 		unsigned char ed25519_pk[crypto_sign_ed25519_PUBLICKEYBYTES];
 		unsigned char ed25519_sk[crypto_sign_ed25519_SECRETKEYBYTES];
-
+		
 		crypto_sign_ed25519_seed_keypair(ed25519_pk, ed25519_sk, seed.data());
+		
 		auto pub = bytes{ ed25519_pk, &ed25519_pk[sizeof(ed25519_pk)] };
 		auto sec = bytes{ ed25519_sk, &ed25519_sk[sizeof(ed25519_sk)] };
+
+		// Unlock the mutex
+		sodiumMutex.unlock();
 		return std::make_pair(pub, sec);
+		
 	}
 	catch (std::exception &e)
 	{

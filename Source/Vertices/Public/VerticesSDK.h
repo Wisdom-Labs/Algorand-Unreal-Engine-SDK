@@ -36,10 +36,16 @@ namespace vertices {
         ~VerticesSDK();
 
         /**
+            * @brief set rpc url of algorand node 
+            * @param indexerRpc indexer rpc url
+            */
+        void setIndexerRpc(const FString& indexerRpc);
+     
+        /**
          * @brief set rpc url of algorand node 
          * @param algoRpc algoRpc rpc url
          */
-        void setAlgoRpc(const FString& algoRpc);
+        void setAlgodRpc(const FString& algodRpc);
 
         /**
          * @brief set rpc port of algorand node
@@ -72,25 +78,7 @@ namespace vertices {
         /**
          * @brief create new Vertices with rpc info
          */
-        void createNewVertices(char* , short, char* , ret_code_t&);
-
-        /**
-         * @brief create new account including pub_key and priv_key on Vertices lib
-         * @return return status of creation account, if VTC_SUCCESS, successful, not failed
-         */
-        ret_code_t create_new_account();
-
-        /**
-         * @brief load existing account from files stored on disk
-         * @return return status of loading keys, if VTC_SUCCESS, successful, not failed
-         */
-        ret_code_t load_existing_account();
-
-        /**
-         * @brief load public key which length is 32byte 
-         * @return return status of loading keys, if VTC_SUCCESS, successful, not failed
-         */
-        FString load_pub_key();
+        void createNewVertices(char* , char*,  short, char* , ret_code_t&);
 
         /**
          * @brief convert mnemonic account to vertices account
@@ -144,6 +132,8 @@ namespace vertices {
         class VerticesApplicationCallTransactionGetResponse;
         class VerticesArcAssetDetailsGetRequest;
         class VerticesArcAssetDetailsGetResponse;
+        class VerticesAccountInformationGetRequest;
+        class VerticesAccountInformationGetResponse;
 
         /// restore wallet callback
         DECLARE_DELEGATE_OneParam(FVerticesRestoreWalletGetDelegate, const VerticesRestoreWalletGetResponse&);
@@ -184,7 +174,8 @@ namespace vertices {
     
     private:
         // algorand rpc info for creating vertices
-        FString myAlgoRpc;
+        FString myIndexerRpc;
+        FString myAlgodRpc;
         int myAlgoPort;
         FString myAlgoTokenHeader;
 

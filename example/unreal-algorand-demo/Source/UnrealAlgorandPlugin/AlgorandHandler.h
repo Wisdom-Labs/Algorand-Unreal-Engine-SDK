@@ -29,7 +29,7 @@ public:
 		void OnSendPaymentTransactionCallback(const FString& txID);
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OnSendAssetConfigTransactionCallback(const FString& txID);
+		void OnSendAssetConfigTransactionCallback(const FString& txID, const FUInt64& assetID);
 	
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
 		void OnSendAssetTransferTransactionCallback(const FString& txID);
@@ -39,6 +39,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
 		void OnGetArcAssetDetailsCallback(const FArcAssetDetails& asset_Details);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnGetAccountInformationCallback(const TArray<FString>& IDs, const TArray<FString>& Names);
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
 		void OnRestoreWalletCallback(const FString& output);

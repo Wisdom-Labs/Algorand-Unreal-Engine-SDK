@@ -67,24 +67,29 @@ namespace request_builders {
 									   const FUInt64& asset_id,
 									   const FUInt64& total,
 									   const FUInt64& decimals,
+									   const FString& isFrozen,
 									   const FString& unit_name,
 									   const FString& asset_name,
 									   const FString& url,
 									   const FString& notes)
 	{
 		Vertices::VerticesAssetConfigTransactionGetRequest request;
-		request.creator = creator;
-		request.manager = manager;
-		request.reserve = reserve;
-		request.freeze = freeze;
-		request.clawback = clawback;
-		request.asset_id = asset_id;
-		request.total = total;
-		request.decimals = decimals;
-		request.unit_name = unit_name;
-		request.asset_name = asset_name;
-		request.url = url;
-		request.notes = notes;
+		request.Creator = creator;
+		request.Manager = manager;
+		request.Reserve = reserve;
+		request.Freeze = freeze;
+		request.Clawback = clawback;
+		request.AssetId = asset_id;
+		request.Total = total;
+		request.Decimals = decimals;
+		if(isFrozen.ToLower().Contains("true"))
+			request.IsFrozen = 1;
+		else
+			request.IsFrozen = 0;
+		request.UnitName = unit_name;
+		request.AssetName = asset_name;
+		request.Url = url;
+		request.Notes = notes;
 		return request;
 	}
 
@@ -92,14 +97,14 @@ namespace request_builders {
 		buildAssetTransferTransactionRequest(const FString& sender, 
 									   const FString& receiver,
 									   const FUInt64& asset_id,
-									   const FUInt64& amount,
+									   const FString& amount,
 									   const FString& notes)
 	{
 		Vertices::VerticesAssetTransferTransactionGetRequest request;
 		request.senderAddress = sender;
 		request.receiverAddress = receiver;
 		request.asset_id = asset_id;
-		request.amount = amount;
+		request.amount = atof(TCHAR_TO_ANSI(*amount)); 
 		request.notes = notes;
 		return request;
 	}
@@ -119,6 +124,14 @@ namespace request_builders {
 	{
 		Vertices::VerticesArcAssetDetailsGetRequest request;
 		request.asset_ID = asset_ID;
+		return request;
+	}
+
+	Vertices::VerticesAccountInformationGetRequest
+		buildAccountInformationRequest(const FString& address)
+	{
+		Vertices::VerticesAccountInformationGetRequest request;
+		request.address = address;
 		return request;
 	}
 }

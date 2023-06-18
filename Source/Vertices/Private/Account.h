@@ -34,4 +34,5 @@ public:
 	const bytes public_key() const { return address.public_key; }
 	algorand::vertices::Address address;
 	bytes secret_key;       // empty() if created from an address, not key
+	
 };
