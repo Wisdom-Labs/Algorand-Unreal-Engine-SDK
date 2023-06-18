@@ -204,5 +204,24 @@ namespace algorand {
             FString animation_url;
             TMap<FString, FString> properties;
         };
+
+        // Request for Account Information
+        class VerticesSDK::VerticesAccountInformationGetRequest : public Request
+        {
+        public:
+            virtual ~VerticesAccountInformationGetRequest() {}
+            
+            TOptional<FString> address;
+        };
+
+        // Response for Account Information
+        class VerticesSDK::VerticesAccountInformationGetResponse : public Response
+        {
+        public:
+            ~VerticesAccountInformationGetResponse() {}
+            
+            TArray<FString> assetIDs;
+            TArray<FString> assetNames;
+        };
     }
 }

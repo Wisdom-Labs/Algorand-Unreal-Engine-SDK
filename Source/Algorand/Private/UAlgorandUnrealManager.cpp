@@ -7,7 +7,6 @@
 #include <functional>
 
 #include "VerticesApiOperations.h"
-#include "VerticesApiOperations.h"
 #include "Misc/MessageDialog.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogMyAwesomeGame, Log, All);
@@ -22,7 +21,7 @@ namespace {
 // create vertices_ , transactionBuilder_ , unrealApi_ and load payment address 
 // Sets default values
 UAlgorandUnrealManager::UAlgorandUnrealManager()
-    :myAlgodRpc("https://testnet-algorand.api.purestake.io/ps2") , myAlgodPort(0) , myAlgodTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1"), myIndexerRpc("https://mainnet-idx.algonode.network"), myIndexerPort(443), myIndexerTokenHeader("")
+    :myAlgodRpc("https://mainnet-algorand.api.purestake.io/ps2") , myAlgodPort(0) , myAlgodTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1"), myIndexerRpc("https://mainnet-idx.algonode.network"), myIndexerPort(443), myIndexerTokenHeader("")
 {
     FString address;
     // create instance of Vertices library
@@ -70,6 +69,8 @@ void UAlgorandUnrealManager::setAlgodRpcInfo(const FString& algodRpc, const FUIn
     vertices_->setAlgodRpc(myAlgodRpc);
     vertices_->setAlgoPort(myAlgodPort);
     vertices_->setAlgoTokenHeader(myAlgodTokenHeader);
+
+    unrealApi_->setAlgodRpcInfo(myAlgodRpc, myAlgodPort, myAlgodTokenHeader);
 }
 
 /// set rpc info from algorand manager to unrealapi instance
@@ -81,9 +82,7 @@ void UAlgorandUnrealManager::setIndexerRpcInfo(const FString& indexerRpc, const 
 
     vertices_->setIndexerRpc(myIndexerRpc);
     
-    unrealApi_->setAlgoRpc(myIndexerRpc);
-    unrealApi_->setAlgoPort(myIndexerPort);
-    unrealApi_->setAlgoTokenHeader(myIndexerTokenHeader);
+    unrealApi_->setIndexerRpcInfo(myIndexerRpc,myIndexerPort, myIndexerTokenHeader);
 }
 
 /// get algod rpc net info 
@@ -486,6 +485,40 @@ void UAlgorandUnrealManager::OnFetchArcAssetDetailsCompleteCallback(const Vertic
         FArcAssetDetails arcNft(response);
         FetchArcAssetDetailsCallback.Broadcast(arcNft);
         FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Arc Asset Details", "sent request to fetch details of arc asset successfully."));
+    }
+    else {
+        FFormatNamedArguments Arguments;
+        Arguments.Add(TEXT("MSG"), FText::FromString(response.GetResponseString()));
+        FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "{MSG}"), Arguments));
+        
+        if (!ErrorDelegateCallback.IsBound()) {
+            ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
+        }
+    }
+}
+
+/**
+ * @brief create its context to send the request to unreal api for account information
+ */
+void UAlgorandUnrealManager::fetchAccountInformation(const FString& address)
+{
+    this->requestContextManager_
+        .createContext<API::FAlgorandAccountInformationGetDelegate,
+        Vertices::VerticesAccountInformationGetRequest>(
+            request_builders::buildAccountInformationRequest(address),
+            std::bind(&API::AlgorandAccountInformationGet, unrealApi_.Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            std::bind(&UAlgorandUnrealManager::OnFetchAccountInformationCompleteCallback, this, std::placeholders::_1)
+            );
+}
+
+/**
+ * @brief get response from unreal api after fetching arc asset details and broadcast the result to binded functions
+ */
+void UAlgorandUnrealManager::OnFetchAccountInformationCompleteCallback(const Vertices::VerticesAccountInformationGetResponse& response) {
+    if (response.IsSuccessful()) {
+        FetchAccountInformationCallback.Broadcast(response.assetIDs, response.assetNames);
+        FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Account Information", "sent request to fetch account info successfully."));
     }
     else {
         FFormatNamedArguments Arguments;

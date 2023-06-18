@@ -114,4 +114,12 @@ namespace request_builders {
 	 */
 	algorand::vertices::VerticesSDK::VerticesArcAssetDetailsGetRequest
 		buildArcAssetDetailsRequest(const FUInt64& asset_ID);
+
+	/**
+	 * @brief build request for account information with following params
+	 * like wallet address
+	 * @return request
+	 */
+	algorand::vertices::VerticesSDK::VerticesAccountInformationGetRequest
+		buildAccountInformationRequest(const FString& address);
 }

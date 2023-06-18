@@ -28,7 +28,8 @@ using ApiDelegate = TVariant<
 	algorand::api::UnrealApi::FAlgorandAssetConfigTransactionGetDelegate,
 	algorand::api::UnrealApi::FAlgorandAssetTransferTransactionGetDelegate,
 	algorand::api::UnrealApi::FAlgorandApplicationCallTransactionGetDelegate,
-	algorand::api::UnrealApi::FAlgorandArcAssetDetailsGetDelegate
+	algorand::api::UnrealApi::FAlgorandArcAssetDetailsGetDelegate,
+	algorand::api::UnrealApi::FAlgorandAccountInformationGetDelegate
 >;
 
 /// Request Contxet info

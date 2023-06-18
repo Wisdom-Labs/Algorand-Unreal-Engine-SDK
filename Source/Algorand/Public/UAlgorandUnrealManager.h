@@ -94,6 +94,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FApplicationCallTransactionDelegate,
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FArcAssetDetailsDelegate, const FArcAssetDetails&, assetDetails);
 
 /**
+ * account information callback
+ * @param accountInfo Arc Asset details
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAccountInfoDelegate, const TArray<FString>&, assetID, const TArray<FString>&, assetNames);
+
+/**
  * error callback
  * @param error 
 */
@@ -423,7 +429,7 @@ public:
     void OnSendApplicationCallTransactionCompleteCallback(const Vertices::VerticesApplicationCallTransactionGetResponse& response);
 
 	/**
-	 * send request to algorand node to fetech arc-asset details
+	 * send request to algorand node to fetch arc-asset details
 	 * @param asset_ID asset id to be fetched from algorand node
 	 */
 	UFUNCTION(BlueprintCallable,
@@ -443,6 +449,27 @@ public:
 	 */ 
 	void OnFetchArcAssetDetailsCompleteCallback(const Vertices::VerticesArcAssetDetailsGetResponse& response);
 
+	/**
+	 * send request to algorand node to fetech account information
+	 * @param asset_ID asset id to be fetched from algorand node
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "fetchAccountInfo", Keywords = "CreatedAsset"),	
+			  Category = "AlgorandUnrealManager")
+	void fetchAccountInformation(const FString& address);
+
+	/**
+	 * account information callback
+	 */
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+	FAccountInfoDelegate FetchAccountInformationCallback;
+
+	/**
+	 * get response after account information
+	 * @param response after account information
+	 */ 
+	void OnFetchAccountInformationCompleteCallback(const Vertices::VerticesAccountInformationGetResponse& response);
+	
 	/**
 	 * return world of outer
 	 * @return outer world

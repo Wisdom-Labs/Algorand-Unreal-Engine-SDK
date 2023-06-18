@@ -126,4 +126,12 @@ namespace request_builders {
 		request.asset_ID = asset_ID;
 		return request;
 	}
+
+	Vertices::VerticesAccountInformationGetRequest
+		buildAccountInformationRequest(const FString& address)
+	{
+		Vertices::VerticesAccountInformationGetRequest request;
+		request.address = address;
+		return request;
+	}
 }

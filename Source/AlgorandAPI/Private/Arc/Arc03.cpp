@@ -34,7 +34,7 @@ void Arc03::from_asset_url(std::string &url) {
     auto resp = restClient.get(asset_url);
 
     try{
-
+        if(!resp.json.IsValid()) return;
         for (auto itr : resp.json->Values) {
             if (std::strcmp(TCHAR_TO_UTF8(*itr.Key) ,"standard") == 0)
                 metadata.standard = itr.Value->AsString();

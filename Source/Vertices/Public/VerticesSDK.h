@@ -132,6 +132,8 @@ namespace vertices {
         class VerticesApplicationCallTransactionGetResponse;
         class VerticesArcAssetDetailsGetRequest;
         class VerticesArcAssetDetailsGetResponse;
+        class VerticesAccountInformationGetRequest;
+        class VerticesAccountInformationGetResponse;
 
         /// restore wallet callback
         DECLARE_DELEGATE_OneParam(FVerticesRestoreWalletGetDelegate, const VerticesRestoreWalletGetResponse&);

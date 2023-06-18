@@ -70,5 +70,16 @@ public:
 	
 };
 
+USTRUCT(BlueprintType)
+struct ALGORAND_API FCreatedAsset
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CreatedAsset")
+	FString ID;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CreatedAsset")
+	FString Name;
+};
+
 #pragma pack(pop)
 #undef PACKED

@@ -59,4 +59,29 @@ namespace ArcResponseBuilders {
 		});
 	}
 
+	void ArcResponseBuilders::buildAccountInformationResponse(const AccountAsset& arc_asset, const FAPIAccountInfoGetDelegate& delegate)
+	{
+		Vertices::VerticesAccountInformationGetResponse response;
+
+		if(arc_asset.info.Num() != 0)
+		{
+			for(int i = 0; i < arc_asset.info.Num(); i++)
+			{
+				response.assetIDs.Add(FString::Printf(TEXT("%llu"), arc_asset.info[i].id));
+				response.assetNames.Add(arc_asset.info[i].name);
+			}
+				
+			response.SetSuccessful(true);		
+		}
+		else
+		{
+			response.SetSuccessful(false);
+			response.SetResponseString("can't fetch account Info for assets.");
+		}
+		
+		AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+		{
+			delegate.ExecuteIfBound(response);
+		});
+	}
 }

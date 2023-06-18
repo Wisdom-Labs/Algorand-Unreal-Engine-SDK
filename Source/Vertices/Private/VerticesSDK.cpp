@@ -1199,6 +1199,7 @@ namespace algorand {
                 SodiumPath = FPaths::Combine(*BaseDir, TEXT("Source/Vertices/Libs/libsodium.dll"));
                 
                 VerticesHandle = LoadLibrary(*VerticesPath);
+                SodiumHandle = LoadLibrary(*SodiumPath);
                 
                 set_http_init(&http_init);
                 set_http_get(&http_get);
