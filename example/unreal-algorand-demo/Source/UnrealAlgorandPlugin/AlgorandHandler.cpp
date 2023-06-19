@@ -26,11 +26,16 @@ void UAlgorandHandler::OnRestoreWalletCallback(const FString& output) {
     //                                             FString("My Asset"),
     //                                             FString("https://myurl.com"),
     //                                             FString("fe"));
+
+    FScriptDelegate _delegate9;
+    _delegate9.BindUFunction(this, FName("OnGetAccountInformationCallback"));
+    algorandManager->FetchAccountInformationCallback.Add(_delegate9);
+    algorandManager->fetchAccountInformation("6WII6ES4H6UW7G7T7RJX63CUNPKJEPEGQ3PTYVVU3JHJ652W34GCJV5OVY");
     
-    FScriptDelegate _delegate1;
-    _delegate1.BindUFunction(this, FName("OnGetBalanceCallback"));
-    algorandManager->GetBalanceCallback.Add(_delegate1);
-    algorandManager->getBalance("LCKVRVM2MJ7RAJZKPAXUCEC4GZMYNTFMLHJTV2KF6UGNXUFQFIIMSXRVM4");
+    // FScriptDelegate _delegate1;
+    // _delegate1.BindUFunction(this, FName("OnGetBalanceCallback"));
+    // algorandManager->GetBalanceCallback.Add(_delegate1);
+    // algorandManager->getBalance("LCKVRVM2MJ7RAJZKPAXUCEC4GZMYNTFMLHJTV2KF6UGNXUFQFIIMSXRVM4");
 
     // FScriptDelegate _delegate2;
     // _delegate2.BindUFunction(this, FName("OnSendPaymentTransactionCallback"));
@@ -92,6 +97,13 @@ void UAlgorandHandler::OnGetArcAssetDetailsCallback(const FArcAssetDetails& asse
 {
     UE_LOG(LogTemp, Display, TEXT("Arc Asset Media Url: %s"),
      *asset_Details.media_url);
+}
+
+void UAlgorandHandler::OnGetAccountInformationCallback(const TArray<FString>& IDs, const TArray<FString>& Names)
+{
+    for(int i = 0; i < IDs.Num(); i++) 
+        UE_LOG(LogTemp, Display, TEXT("Arc Account Info: %s, %s"),
+         *(IDs[i]), *(Names[i]));
 }
 
 void UAlgorandHandler::RunSomeLogic() {

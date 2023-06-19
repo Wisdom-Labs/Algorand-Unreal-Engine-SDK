@@ -41,6 +41,9 @@ public:
 		void OnGetArcAssetDetailsCallback(const FArcAssetDetails& asset_Details);
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnGetAccountInformationCallback(const TArray<FString>& IDs, const TArray<FString>& Names);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
 		void OnRestoreWalletCallback(const FString& output);
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
