@@ -4,6 +4,9 @@
 
 #ifndef CPP_ARCBASE_H
 #define CPP_ARCBASE_H
+#include <string>
+
+const std::string BASE_URL_OF_IPFS = "https://ipfs.io/ipfs/";
 
 #include "../Private/Client/RestClient.h"
 #include <iostream>

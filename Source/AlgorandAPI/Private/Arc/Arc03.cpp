@@ -4,16 +4,14 @@
 
 #include "Arc/Arc03.h"
 
-const std::string BASE_URL_OF_IPFS = "https://ipfs.io/ipfs/";
-
-Arc03::Arc03(uint64_t asset_id, FString algoRpc, uint64_t algoPort, FString algoToken) {
+Arc03::Arc03(const arc_asset& asset_, FString algoRpc, uint64_t algoPort, FString algoToken) {
     // set rpc info
     myAlgoRpc = algoRpc;
     myAlgoPort = algoPort;
     myAlgoTokenHeader = algoToken;
-    
-    this->from_asset(asset_id);
-    this->getAssetByID(asset_id);
+
+    asset = asset_;
+    this->getAssetByID(asset_.index);
 }
 
 bool Arc03::IsVerify() {

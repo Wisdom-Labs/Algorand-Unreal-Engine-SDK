@@ -4,6 +4,7 @@
 #include "ArcResponseBuilders.h"
 #include "VerticesApiOperations.h"
 #include "Arc/Arc03.h"
+#include "Arc/Arc19.h"
 #include "Arc/Arc69.h"
 #include "Misc/MessageDialog.h"
 
@@ -205,8 +206,11 @@ void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetai
     AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, Delegate]()
     {   
         TSharedRef<ArcResponseBuilders::FAPIArcAssetDetailsGetDelegate> delegatePtr(MakeShared<ArcResponseBuilders::FAPIArcAssetDetailsGetDelegate>());
-    
-        Arc03 arc03_data(Request.asset_ID.GetValue(), myIndexerRpc, myIndexerPort, myIndexerTokenHeader);
+
+        ArcBase temp_arc(myIndexerRpc, myIndexerPort, myIndexerTokenHeader);
+        temp_arc.from_asset(Request.asset_ID.GetValue());
+        
+        Arc03 arc03_data(temp_arc.asset, myIndexerRpc, myIndexerPort, myIndexerTokenHeader);
         if(arc03_data.IsVerify())
         {
             auto param_url = StringCast<ANSICHAR>(*(arc03_data.asset.params.url));
@@ -220,8 +224,22 @@ void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetai
             ArcResponseBuilders::buildArcAssetDetailsResponse(arc03_data, delegatePtr.Get());
             return;
         }
+        
+        Arc19 arc19_data(temp_arc.asset, myIndexerRpc, myIndexerPort, myIndexerTokenHeader);
+        if(arc19_data.IsVerify())
+        {
+            arc19_data.ParseASAUrl();
+            arc19_data.from_temp_ipfs();
 
-        Arc69 arc69_data(Request.asset_ID.GetValue(), myIndexerRpc, myIndexerPort, myIndexerTokenHeader);
+            delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesArcAssetDetailsGetResponse& response) {
+                OnAlgorandArcAssetDetailsGetResponse(response, Delegate);
+            });
+
+            ArcResponseBuilders::buildArcAssetDetailsResponse(arc19_data, delegatePtr.Get());
+            return;
+        }
+        
+        Arc69 arc69_data(temp_arc.asset, myIndexerRpc, myIndexerPort, myIndexerTokenHeader);
         if(arc69_data.IsVerify())
         {
             auto tx_note = StringCast<ANSICHAR>(*(arc69_data.tx.note));
@@ -261,14 +279,28 @@ void UnrealApi::AlgorandAccountInformationGet(const Vertices::VerticesAccountInf
     {   
         TSharedRef<ArcResponseBuilders::FAPIAccountInfoGetDelegate> delegatePtr(MakeShared<ArcResponseBuilders::FAPIAccountInfoGetDelegate>());
 
-        AccountAsset accountInfo(myAlgodRpc, myAlgodPort, myAlgodTokenHeader);
-        accountInfo.getInformation(Request.address.GetValue());
-        
-        delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesAccountInformationGetResponse& response) {
-            OnAlgorandAccountInformationGetResponse(response, Delegate);
-        });
+        if ( Request.address.GetValue().Len() == 58 )
+        {
+            AccountAsset accountInfo(myAlgodRpc, myAlgodPort, myAlgodTokenHeader);
+            accountInfo.getInformation(Request.address.GetValue());
+            
+            delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesAccountInformationGetResponse& response) {
+                OnAlgorandAccountInformationGetResponse(response, Delegate);
+            });
 
-        ArcResponseBuilders::buildAccountInformationResponse(accountInfo, delegatePtr.Get());
+            ArcResponseBuilders::buildAccountInformationResponse(accountInfo, delegatePtr.Get());   
+        }
+        else
+        {
+            Vertices::VerticesAccountInformationGetResponse response;
+            response.SetSuccessful(false);
+            response.SetResponseString("Address Length is invalid.");
+            
+            AsyncTask(ENamedThreads::GameThread, [Delegate, response]()
+		    {
+			    Delegate.ExecuteIfBound(response);
+		    });
+        }
     });
 }
 

@@ -107,16 +107,16 @@ void UAlgorandHandler::OnGetAccountInformationCallback(const TArray<FString>& ID
 }
 
 void UAlgorandHandler::RunSomeLogic() {
-    FScriptDelegate _delegate4;
-    _delegate4.BindUFunction(this, FName("OnRestoreWalletCallback"));
-    algorandManager->RestoreWalletCallback.Add(_delegate4);
-    FString mnemonics = "rally relief lucky maple primary chair syrup economy tired hurdle slot upset clever chest curve bitter weekend prepare movie letter lamp alert then able taste";
-    algorandManager->restoreWallet(mnemonics);
+    // FScriptDelegate _delegate4;
+    // _delegate4.BindUFunction(this, FName("OnRestoreWalletCallback"));
+    // algorandManager->RestoreWalletCallback.Add(_delegate4);
+    // FString mnemonics = "rally relief lucky maple primary chair syrup economy tired hurdle slot upset clever chest curve bitter weekend prepare movie letter lamp alert then able taste";
+    // algorandManager->restoreWallet(mnemonics);
     
-    // FScriptDelegate _delegate9;
-    // _delegate9.BindUFunction(this, FName("OnGetArcAssetDetailsCallback"));
-    // algorandManager->FetchArcAssetDetailsCallback.Add(_delegate9);
-    // algorandManager->fetchArcAssetDetails(1019478822);// 779312090
+    FScriptDelegate _delegate9;
+    _delegate9.BindUFunction(this, FName("OnGetArcAssetDetailsCallback"));
+    algorandManager->FetchArcAssetDetailsCallback.Add(_delegate9);
+    algorandManager->fetchArcAssetDetails(1092400027);// 779312090, 1019478822
     
     // FScriptDelegate _delegate5;
     // _delegate5.BindUFunction(this, FName("OnInitializeNewWalletCallback"));
