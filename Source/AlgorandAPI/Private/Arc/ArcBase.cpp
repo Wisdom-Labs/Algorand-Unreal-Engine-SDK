@@ -71,9 +71,7 @@ void ArcBase::from_asset(uint64_t asset_id) {
     catch (std::exception &e) {
         std::cout << e.what() << std::endl;
     }
-
-    int x = 0;
-
+    
 }
 
 void ArcBase::getAssetByID(uint64_t asset_id) {

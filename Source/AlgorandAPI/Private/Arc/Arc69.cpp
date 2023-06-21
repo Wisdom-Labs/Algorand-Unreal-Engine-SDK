@@ -71,14 +71,14 @@ std::string trim(std::string str)
     return str;
 }
 
-Arc69::Arc69(uint64_t asset_id, FString algoRpc, uint64_t algoPort, FString algoToken) {
+Arc69::Arc69(const arc_asset& asset_, FString algoRpc, uint64_t algoPort, FString algoToken) {
     // set rpc info
     myAlgoRpc = algoRpc;
     myAlgoPort = algoPort;
     myAlgoTokenHeader = algoToken;
-    
-    this->from_asset(asset_id);
-    this->getAssetByID(asset_id);
+
+    asset = asset_;
+    this->getAssetByID(asset.index);
 }
 
 bool Arc69::IsVerify() {
