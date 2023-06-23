@@ -2,7 +2,7 @@
 
 ## 📑 Contents
 
-### Algorand C++ SDK Documentation
+### [Algorand C++ SDK Documentation](#algorand-c-sdk-documentation-1)
 
 1. [Pre-requisites](#1-pre-requisites)
 2. [Installation & Enabling](#2-installation--enabling)
@@ -15,7 +15,7 @@
 4. [Creating static or shared libraries of Vertices](#4-creating-static-or-shared-libraries-of-vertices)
 5. [Tests](#5-tests)
 
-### Algorand Unreal Plugin Documentation
+### [Algorand Unreal Plugin Documentation](#algorand-unreal-plugin-documentation-1)
 1. [Pre-requisites](#1-pre-requisites-1)
 2. [Installation & Enabling](#2-installation--enabling-1)
 3. [Creating a Demo project](#3-creating-a-demo-project-1)
