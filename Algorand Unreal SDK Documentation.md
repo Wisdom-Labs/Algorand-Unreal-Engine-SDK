@@ -4,22 +4,21 @@
 
 ### Algorand C++ SDK Documentation
 
-1. Pre-requisites
-2. Installation & Enabling
-    - Installation
-    - Enabling
-3. Creating a Demo project.
-    - Configuration
-    - Setting unix_config.h
-    - Running a Demo project
-4. Creating static or shared libraries of Vertices
-    - Update the MPack module on the windows platform
-5. Tests
+1. [Pre-requisites](#1-pre-requisites)
+2. [Installation & Enabling](#2-installation--enabling)
+    - [Installation](#🧰-installation)
+    - [Enabling](#enabling)
+3. [Creating a Demo project](#3-creating-a-demo-project)
+    - [Configuration](#configuration)
+    - [Setting unix_config.h](#setting-unix_configh)
+    - [Running a Demo project](#running-a-demo-project)
+4. [Creating static or shared libraries of Vertices](#4-creating-static-or-shared-libraries-of-vertices)
+5. [Tests](#5-tests)
 
 ### Algorand Unreal Plugin Documentation
-1. Pre-requisites
-2. Installation & Enabling
-3. Creating a Demo project
+1. [Pre-requisites](#1-pre-requisites-1)
+2. [Installation & Enabling](#2-installation--enabling-1)
+3. [Creating a Demo project](#3-creating-a-demo-project-1)
 
 <br>
 
@@ -68,7 +67,7 @@ git clone --recurse-submodules <url> [path]
 git submodule add <url> [path]
 ```
 
-### Enabling
+### [Enabling](#2-installation--enabling-3)
 - Compilation
     - CMake is currently used to build the library and examples(GNU Make and Visual Studio Make)
 - CMake	
