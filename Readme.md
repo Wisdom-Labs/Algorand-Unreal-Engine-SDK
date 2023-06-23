@@ -8,7 +8,7 @@ This plugin provides the functionallity for building different types of transact
 ## 📙 1. Overview:
 Algorand Unreal Engine Plugin
 
-For indepth documentation on the overview, setup and usage of this plugin check here: [Doc](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.pdf)
+For indepth documentation on the overview, setup and usage of this plugin check here: [Doc](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.md)
 
 For indepth video demo on using the plugin watch here: [Video](https://youtu.be/xXlqLxUo3Uo)
  
