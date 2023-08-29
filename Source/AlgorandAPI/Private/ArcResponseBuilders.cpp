@@ -6,11 +6,9 @@ namespace ArcResponseBuilders {
 	void ArcResponseBuilders::buildArcAssetDetailsResponse(const Arc03& arc_asset, const FAPIArcAssetDetailsGetDelegate& delegate)
 	{
 		Vertices::VerticesArcAssetDetailsGetResponse response;
-
-		if(arc_asset.metadata.standard.Contains("arc69"))
-			response.standard = 2;
-		else
-			response.standard = 1;
+		
+		response.standard = 1;		// arc03 
+		
 		response.unit_name = arc_asset.asset.params.unit_name;
 		response.total = arc_asset.asset.params.total;
 		response.decimals = arc_asset.asset.params.decimals;
@@ -34,11 +32,9 @@ namespace ArcResponseBuilders {
 	void ArcResponseBuilders::buildArcAssetDetailsResponse(const Arc19& arc_asset, const FAPIArcAssetDetailsGetDelegate& delegate)
 	{
 		Vertices::VerticesArcAssetDetailsGetResponse response;
+		
+		response.standard = 2;			// arc19
 
-		if(arc_asset.metadata.standard.Contains("arc69"))
-			response.standard = 2;
-		else
-			response.standard = 1;
 		response.unit_name = arc_asset.asset.params.unit_name;
 		response.total = arc_asset.asset.params.total;
 		response.decimals = arc_asset.asset.params.decimals;
@@ -60,10 +56,9 @@ namespace ArcResponseBuilders {
 	void ArcResponseBuilders::buildArcAssetDetailsResponse(const Arc69& arc_asset, const FAPIArcAssetDetailsGetDelegate& delegate)
 	{
 		Vertices::VerticesArcAssetDetailsGetResponse response;
-		if(arc_asset.metadata.standard.Contains("arc69"))
-			response.standard = 2;
-		else
-			response.standard = 1;
+		
+		response.standard = 3;	// arc69
+
 		response.unit_name = arc_asset.asset.params.unit_name;
 		response.total = arc_asset.asset.params.total;
 		response.decimals = arc_asset.asset.params.decimals;

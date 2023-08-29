@@ -15,7 +15,8 @@ UENUM(BlueprintType)
 enum class EArcType : uint8 {
 	Arc00 = 0 UMETA(Hidden),
 	Arc03 = 1 UMETA(DisplayName = "Arc03"),
-	Arc69 = 2 UMETA(DisplayName = "Arc69")
+	Arc19 = 2 UMETA(DisplayName = "Arc19"),
+	Arc69 = 3 UMETA(DisplayName = "Arc69")
 };
 
 USTRUCT(BlueprintType)
