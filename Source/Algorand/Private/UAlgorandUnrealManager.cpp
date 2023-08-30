@@ -73,6 +73,17 @@ void UAlgorandUnrealManager::setAlgodRpcInfo(const FString& algodRpc, const FUIn
     unrealApi_->setAlgodRpcInfo(myAlgodRpc, myAlgodPort, myAlgodTokenHeader);
 }
 
+/// get algod rpc info from algorand manager
+FRPCInfo UAlgorandUnrealManager::getAlgodRpcInfo()
+{
+    FRPCInfo rpc_info;
+    rpc_info.url = myAlgodRpc;
+    rpc_info.port = myAlgodPort;
+    rpc_info.token = myAlgodTokenHeader;
+
+    return rpc_info;
+}
+
 /// set rpc info from algorand manager to unrealapi instance
 void UAlgorandUnrealManager::setIndexerRpcInfo(const FString& indexerRpc, const FUInt64& indexerPort, const FString& indexerTokenHeader)
 {
@@ -83,6 +94,17 @@ void UAlgorandUnrealManager::setIndexerRpcInfo(const FString& indexerRpc, const 
     vertices_->setIndexerRpc(myIndexerRpc);
     
     unrealApi_->setIndexerRpcInfo(myIndexerRpc,myIndexerPort, myIndexerTokenHeader);
+}
+
+/// get indexer rpc info from algorand manager
+FRPCInfo UAlgorandUnrealManager::getIndexerRpcInfo()
+{
+    FRPCInfo rpc_info;
+    rpc_info.url = myIndexerRpc;
+    rpc_info.port = myIndexerPort;
+    rpc_info.token = myIndexerTokenHeader;
+
+    return rpc_info;
 }
 
 /// get algod rpc net info 

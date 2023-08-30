@@ -105,6 +105,19 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAccountInfoDelegate, const TArray<
 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FErrorDelegate, const FError&, error);
 
+USTRUCT(BlueprintType)
+struct ALGORAND_API FRPCInfo
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Algod, Indexer")
+	FString url;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Algod, Indexer")
+	FUInt64 port;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Algod, Indexer")
+	FString token;
+};
+
 class TransactionBuilder;
 
 UCLASS(Blueprintable, BlueprintType)
@@ -161,6 +174,16 @@ public:
 		void setAlgodRpcInfo(const FString& algodRpc, const FUInt64& algodPort, const FString& algodTokenHeader_);
 
 	/**
+	 * Fetch Algod RPC Info of Algorand manager
+	 * @param RPC Info for algod
+	 * @return AlgorandUnrealManager as a pointer
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "getAlgodRpcInfo", Keywords = "AlgorandManager"),
+			  Category = "AlgorandUnrealManager")
+	FRPCInfo getAlgodRpcInfo();
+
+	/**
 	 * Create Instance of Algorand manager
 	 * @param indexerRpc algorand rpc url https://testnet-idx.algonode.network
 	 * @param indexerPort algorand rpc port 443
@@ -171,6 +194,16 @@ public:
 			  meta = (DisplayName = "setIndexerRpcInfo", Keywords = "AlgorandManager"),
 			  Category = "AlgorandUnrealManager")
 		void setIndexerRpcInfo(const FString& indexerRpc, const FUInt64& indexerPort, const FString& indexerTokenHeader);
+
+	/**
+	 * Fetch Indexer RPC Info of Algorand manager
+	 * @param RPC Info for indexer
+	 * @return AlgorandUnrealManager as a pointer
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "getIndexerRpcInfo", Keywords = "AlgorandManager"),
+			  Category = "AlgorandUnrealManager")
+	FRPCInfo getIndexerRpcInfo();
 
 	/**
 	 * get current rpc net connected to algorand node
