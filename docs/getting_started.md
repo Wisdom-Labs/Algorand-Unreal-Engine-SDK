@@ -1,74 +1,60 @@
-# Algorand Play Unreal SDK Demo
+# Getting Started
 
-This repository contains a sample project that uses the Algorand Play Unreal SDK. 
+## How do I connect to an Algorand Network?
 
-## basic flow
- inherit c++ and blueprint functions  
- - GetBalance
- - Send Payment TX
- - Create Asset TX
- - Update Asset TX
- - Transfer Asset TX
- - NFT Viewer
- - Send Application TX
- - Generate wallet
+Rest API services provide access to an algorand network.
 
-## How to set rpc info
- - Rest API
+| Service                       | Client                                               | Purpose                                                                                 |
+| ----------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `C++ Library`         | [`Algorand C++ SDK`](https://github.com/Wisdom-Labs/Algorand-CPlusPlus-SDK)     | Send Transactions and fetch some Details.                       |
+| `Algod v2 API`         | [`AlgodClient`](xref:Algorand.Unity.AlgodClient)     | Monitor Transactions.                       |
+| `Indexer API`                     | [`IndexerClient`](xref:Algorand.Unity.IndexerClient) | Query details from Algorand  and lookup account, asset, transactions or smart contract information. |
+
+If you want to run sandbox algorand node for local dev, check this tutorial [Access BetaNet Network using Sandbox](https://developer.algorand.org/tutorials/betanet-sandbox/)
+
+## How do I send TX to an Algorand Blockchain?
+
+To make a transaction:
+
+1. Define/construct your transaction using static methods on UAlgorandUnrealManager class.
+2. Send and Sign the transaction using `3rd-party` module via [`Algorand C++ SDK`]().
+3. Wait for the transaction to be confirmed via its [`Multi-cast Delegate`].
+
+See [Your First Transaction](getting_started/your_first_transaction.md) for an in-depth guide on making your first transaction.
+
+## How do I set rpc info
+
+- Rest API
     * rpc url
         + mainnet: https://mainnet-api.algonode.cloud
         + testnet: https://testnet-api.algonode.cloud
         + betanet: https://betanet-api.algonode.cloud
-    > C++ Usage
-    ```c++
-    setAlgoRpc("https://testnet-api.algonode.cloud");
-    setAlgoPort(443);
-    setAlgoTokenHeader("");
-    ```
  - Purestake
     * rpc url
         + mainnet: https://mainnet-algorand.api.purestake.io/ps2
         + testnet: https://testnet-algorand.api.purestake.io/ps2
         + betanet: https://betanet-algorand.api.purestake.io/ps2
-        > C++ Usage
-        + ```setAlgoRpc("https://testnet-algorand.api.purestake.io/ps2");```
     * rpc Port
         should be set port supporting in algorand node.
         should set ```port = 0```
-        > C++ Usage
-        + ```setAlgoPort(0);```
     * rpc TokenHeader
         > Thing that you should know
         + When you set tokenHeader of algorand rpc using purestake, key value of tokenHeader should be started with `x-api-key:`
-        + You can get purestake api key using [Reference](##Reference)
-        > C++ Usage
-        + ```setAlgoTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1");```
+        + You can get purestake api key using [Purestake Doc](https://developer.algorand.org/tutorials/getting-started-purestake-api-service/)
   - Sandbox Algorand Node
 
     You can access any algorand network using sandbox. (`mainnet`, `testnet`, `betanet`, or ... )
     > Thing that you should know
     + key value of tokenHeader should be started with `X-Algo-API-Token:`
-    + You can see reference Doc to install sandbox. [Reference](##Reference)
-    > C++ Usage
-    ```c++
-    setAlgoRpc("http://localhost");
-    setAlgoPort(4001);
-    setAlgoTokenHeader("X-Algo-API-Token:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-    ```
+    + You can see reference Doc to install sandbox. [Sandbox Doc](https://developer.algorand.org/tutorials/betanet-sandbox)
+
  - Local Algorand Node
  
     After installation of algorand node on local, You should set some rpc info.
     > Thing that you should know
     + key value of tokenHeader should be started with `X-Algo-API-Token:`
-    + You can see reference Doc to install local algorand node. [Reference](##Reference)
-    > C++ Usage
-    ```c++
-    setAlgoRpc("http://localhost");
-    setAlgoPort(8080);
-    setAlgoTokenHeader("X-Algo-API-Token:77aa632e1a023e6b1c79bbb275645cb0ca7ac82cb9d4e92226d9c0029fe35c1c");
-    ```
 
-## How to run
+## Example for Demo project
  - Payment TX
     > C++ Usage
     + receiver address: `NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE`
@@ -109,9 +95,3 @@ This repository contains a sample project that uses the Algorand Play Unreal SDK
  - Application Usage
     > C++ Usage
     + App ID: `16037129`
-## Reference
- - If you are a game developer, please check this doc.  [How to get purestake key](https://developer.algorand.org/tutorials/getting-started-purestake-api-service/)
- - If you want to run sandbox algorand node, check this tutorial [Access BetaNet Network using Sandbox](https://developer.algorand.org/tutorials/betanet-sandbox/)
- - Also if you want to run local algorand node on `windows`, check this [How to compile and rn the algorand node natively windows](https://developer.algorand.org/tutorials/compile-and-run-the-algorand-node-natively-windows/)
-
-    

@@ -1,46 +1,12 @@
-# Algorand Unreal Engine Plugin
-Official Unreal Engine plugin for Algorand Blockchain Platform.
-
-> If you are looking for a repo for this c++ sdk, [check this repository](https://github.com/Wisdom-Labs/Algorand-CPlusPlus-SDK.git).
-
-This plugin provides the functionallity for building different types of transactions and managing wallets on the Algorand blockchain.
+# Algorand SDK for Unreal Engine
+Official Unreal Engine Plugin for Algorand Blockchain Platform.
 
 ## 📙 1. Overview:
-Algorand Unreal Engine Plugin
 
-For indepth documentation on the overview, setup and usage of this plugin check here: [Doc](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.pdf)
+This plugin provides the functionallity for building different types of transactions, wallet management and NFT Viewer on the Algorand blockchain.
+- For indepth video demo on using the plugin watch here: [Video](https://youtu.be/xXlqLxUo3Uo)
 
-For indepth video demo on using the plugin watch here: [Video](https://youtu.be/xXlqLxUo3Uo)
- 
-This UE plugin includes:
-- Root Folder: Unreal-Plugin - Put this plugin in your new or existing project to utilize.
-- Example Folder: Unreal Plugin Example Project - Use this project to start your new game or demo/test Algorand System
-
-This sdk contains a setting option to set RPC Info.
-* RPC URL : You should set the Algorand node you want to work on with this url.
-  ` setAlgoRpc("https://testnet-algorand.api.purestake.io/ps2"); `
-* RPC Port : Set port which can connect into server supporting algorand node with.
-  ` setAlgoPort(0); `
-* RPC TokenHeader : You should set Header to request apis according to algorand node type.
-  ` setAlgoTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1"); `
-  This param has a pair made of key and value.
-
-RPC types you can select are like following:
-* Rest API
-  + mainnet: https://mainnet-api.algonode.cloud
-  + testnet: https://testnet-api.algonode.cloud
-  + betanet: https://betanet-api.algonode.cloud
-* Purestake
-  + mainnet: https://mainnet-algorand.api.purestake.io/ps2
-  + testnet: https://testnet-algorand.api.purestake.io/ps2
-  + betanet: https://betanet-algorand.api.purestake.io/ps2
-* Sandbox Algorand Node
-  + algod: http://localhost:4001 
-  + kmd: http://localhost:4002
-  + indexer: http://localhost:8980
-* Local Algorand Node, (You should install new algorand node on your local)
-
- 👔 You should add token for above some urls and can reference this [link](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/tree/master/example/unreal-algorand-demo#how-to-set-rpc-info).
+- If you are looking for a repo for this c++ sdk, [check this repository](https://github.com/Wisdom-Labs/Algorand-CPlusPlus-SDK.git).
 
 ## 📑 2. Prerequisites:
 
@@ -72,14 +38,16 @@ directory of out test project (`example\unreal-algorand-demo`) and rebuild your 
 >Right click on UnrealAlgorandPlugin.uproject on `example/unreal-algorand-demo` folder, and "Generate Visual Studio project files" - This process may take some time.
 6. Once finished, open your *.sln project or *.uproject file with Visual Studio or JetBrains Rider.
 
-## 🧭 4. Modules reference
+## 🧭 4. Modules Reference:
 * **Algorand** - entrypoint module, provides `C++`- & `Blueprints`- friendly interfaces for plugin's users. This module should be considered as the only module you need to depend on.
 * **AlgorandAPI** - This module is one to make api request and process its result and send it to entrypoint module.
 * **Blockchain** - This module contains core logic for building and signing txs from tx types and params.
 * **Wallet** - This module is one related to manage wallet and wallet connect provider.
 * **Vertices** - This module play an important role as an interface and router in connecting to our algorand c++ sdk (Vertices shared library).
 
-## 🚀 5. Common Usage
-`UAlgorandUnrealManager` stored on `Algorand` module should be used as the main entry-point for all Algorand-related actions.
+## 🚀 5. Get Started
 
-Check our [demo project](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/tree/master/example/unreal-algorand-demo) made with this UE plugin.
+Read [Getting Started](docs/getting_started.md) to learn the basic workflows for developing on Algorand.
+
+### Demo Project
+Check an example folder(https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/tree/master/example/unreal-algorand-demo) made with this UE plugin.

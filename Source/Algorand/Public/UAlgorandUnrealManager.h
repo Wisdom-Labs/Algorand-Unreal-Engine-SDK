@@ -16,7 +16,7 @@
 /**
  * ToDo:
  * for asset bases on transactions and wallet provider
- * add like txs
+ * add txs
  * Key Registration, Asset Freeze, State Proof
  */
 
