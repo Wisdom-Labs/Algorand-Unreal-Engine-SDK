@@ -1,14 +1,22 @@
 // Copyright 2022, Wisdom Labs. All Rights Reserved
 
-#include "Models/FAppArgs.h"
+#include "Models/FAppNoOpTX.h"
 #include "Models/FUInt64.h"
 #include "include/vertices/vertices_config.h"
 #include "openssl/sha.h"
+#include "Utils/base.h"
 
 #define SHA512_256_DIGEST_LENGTH 32
 
+FAppArg::FAppArg() {}
+FAppArg::FAppArg(const uint8_t value_bytes_[], const uint8& len)
+{
+	if(value_bytes_ != nullptr)
+		Value_Bytes.Append((uint8_t *)value_bytes_, len);
+}
+
 ret_code_t
-UAppArgFactory::sha512_256(unsigned char const *input,
+UAppNoOpTXFactory::sha512_256(unsigned char const *input,
 		   unsigned long ilen,
 		   unsigned char *output,
 		   unsigned long olen)
@@ -63,34 +71,25 @@ UAppArgFactory::sha512_256(unsigned char const *input,
 	return (err_code);
 }
 
-
-FAppArg::FAppArg() {}
-FAppArg::FAppArg(const uint8_t value_bytes_[], const uint8& len)
+FAppArg UAppNoOpTXFactory::FAppArgFromString(const EAppArgType& value_type, const FString& value)
 {
-	if(value_bytes_ != nullptr)
-		Value_Bytes.Append((uint8_t *)value_bytes_, len);
-}
-
-FAppArg UAppArgFactory::FAppArgFromString(const EAppArgType& value_type, const FString& value)
-{
-	if( EAppArgType::VALUE_METHOD == value_type)
+	if( EAppArgType::ARG_METHOD == value_type)
 	{
 		uint8_t Bytes_Method[32];
-		char Raw_method[] = "add(uint64,uint64)uint64";
-		ret_code_t ret = sha512_256((const unsigned char *)Raw_method, (unsigned long)strlen(Raw_method), (unsigned char *)Bytes_Method, SHA512_256_DIGEST_LENGTH);
+		ret_code_t ret = sha512_256((const unsigned char *)TCHAR_TO_UTF8(*value), (unsigned long)strlen(TCHAR_TO_UTF8(*value)), (unsigned char *)Bytes_Method, SHA512_256_DIGEST_LENGTH);
 		if(ret == VTC_SUCCESS)
 			return FAppArg(Bytes_Method, 4);
 	}
-	else if(value_type == EAppArgType::VALUE_INT)
+	else if(value_type == EAppArgType::ARG_INT)
 	{
 		uint64 u8_Num = UUInt64Factory::UInt64FromString(value).Value;
 		TArray<uint8> Bytes_Num;
-		Bytes_Num.AddUninitialized(sizeof(u8_Num));
+		Bytes_Num.AddUninitialized(sizeof(uint64));
 		FMemory::Memcpy(Bytes_Num.GetData(), &u8_Num, sizeof(uint64));
 		Algo::Reverse(Bytes_Num);
 		return FAppArg(Bytes_Num.GetData(), APPS_KV_SLICE_MAX_SIZE);
 	}
-	else if( value_type == EAppArgType::VALUE_BYTE_SLICE) {
+	else if( value_type == EAppArgType::ARG_BYTE_SLICE) {
 		TArray<uint8> Bytes_Str;
 		FTCHARToUTF8 Converter(*value);
 		Bytes_Str.Append(reinterpret_cast<const uint8*>(Converter.Get()), Converter.Length());
@@ -99,19 +98,21 @@ FAppArg UAppArgFactory::FAppArgFromString(const EAppArgType& value_type, const F
 	return FAppArg(new uint8_t[8], APPS_KV_SLICE_MAX_SIZE);
 }
 
-/*char raw_method[] = "add(uint64,uint64)uint64";
-unsigned char* method_selector = new unsigned char [32];
-size_t len = 32;
-sha512_256((const unsigned char *)raw_method, (unsigned long)strlen(raw_method), (unsigned char *)method_selector, 32);
-*/
+FString UAppNoOpTXFactory::FAppResultFromLogs(const EAppLogType& log_type, const FString& logs)
+{
+	bytes plain_logs = b64_decode(std::string(TCHAR_TO_ANSI(*logs)));
+	if(log_type == EAppLogType::LOG_INT)
+	{
+		uint64_t app_result = 0;
 
-/*kv.count = 3;
-kv.values[0].type = VALUE_TYPE_BYTESLICE;
-kv.values[0].value_slice[0] = method_selector[0];
-kv.values[0].value_slice[1] = method_selector[1];
-kv.values[0].value_slice[2] = method_selector[2];
-kv.values[0].value_slice[3] = method_selector[3];
-kv.values[1].type = VALUE_TYPE_INTEGER;
-kv.values[1].value_uint = 800000;
-kv.values[2].type = VALUE_TYPE_INTEGER;
-kv.values[2].value_uint = 500;*/
+		if(bytes{plain_logs.begin(), plain_logs.begin() + 4} == bytes{21,31,124,117})		// check prefix of log
+		{
+			for(int i = 0; i < 8; i++)		// convertion from 8bit to 64bit integer
+				app_result += plain_logs[i + 4] * pow(256, 8 - i - 1);		
+
+			UE_LOG(LogTemp, Warning, TEXT("👉 Haha This is result of appl NoOpTX: %llu"), (unsigned long long int)app_result);
+			return FString::Printf(TEXT("%llu"), app_result);	
+		}
+	}
+	return FString("Can't read correct type of data.");
+}

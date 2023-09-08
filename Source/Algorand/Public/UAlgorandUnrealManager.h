@@ -84,7 +84,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAssetTransferTransactionDelegate, c
  * application call tx callback
  * @param txID transaction hash
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FApplicationCallTransactionDelegate, const FString&, txID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FApplicationCallTransactionDelegate, const FString&, txID, const FString&, tx_result);
 
 /**
  * nft details callback

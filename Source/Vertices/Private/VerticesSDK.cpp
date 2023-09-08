@@ -1120,9 +1120,9 @@ namespace algorand {
                                 {
                                     kv.values[arg_index].type = VALUE_TYPE_BYTESLICE;
                                     if(arg_index == 0)
-                                        memcpy(kv.values[0].value_slice, Request.app_args[0].GetData(), APPS_NOOP_TX_SLICE_MAX_SIZE);
+                                        memcpy(kv.values[arg_index].value_slice, Request.app_args[arg_index].GetData(), APPS_NOOP_TX_SLICE_MAX_SIZE);
                                     else
-                                        memcpy(kv.values[0].value_slice, Request.app_args[0].GetData(), APPS_KV_SLICE_MAX_SIZE);
+                                        memcpy(kv.values[arg_index].value_slice, Request.app_args[arg_index].GetData(), APPS_KV_SLICE_MAX_SIZE);
                                 }
                             }
                             

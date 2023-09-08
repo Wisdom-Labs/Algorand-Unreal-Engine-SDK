@@ -472,7 +472,8 @@ void UAlgorandUnrealManager::sendApplicationCallTransaction(const FUInt64& app_I
 void UAlgorandUnrealManager::OnSendApplicationCallTransactionCompleteCallback(const Vertices::VerticesApplicationCallTransactionGetResponse& response) {
     if (response.IsSuccessful()) {
         FString txID = response.txID;
-        SendApplicationCallTransactionCallback.Broadcast(txID);
+        FString logs = response.logs;
+        SendApplicationCallTransactionCallback.Broadcast(txID, logs);
         FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Application Transaction", "sent application tx successfully."));
     }
     else {
