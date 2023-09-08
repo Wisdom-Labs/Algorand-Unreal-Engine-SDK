@@ -21,7 +21,7 @@ namespace {
 // create vertices_ , transactionBuilder_ , unrealApi_ and load payment address 
 // Sets default values
 UAlgorandUnrealManager::UAlgorandUnrealManager()
-    :myAlgodRpc("https://mainnet-algorand.api.purestake.io/ps2") , myAlgodPort(0) , myAlgodTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1"), myIndexerRpc("https://mainnet-idx.algonode.network"), myIndexerPort(443), myIndexerTokenHeader("")
+    :myAlgodRpc("https://testnet-algorand.api.purestake.io/ps2") , myAlgodPort(0) , myAlgodTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1"), myIndexerRpc("https://testnet-algorand.api.purestake.io/idx2"), myIndexerPort(0), myIndexerTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1")
 {
     FString address;
     // create instance of Vertices library
@@ -451,13 +451,15 @@ void UAlgorandUnrealManager::OnSendAssetTransferTransactionCompleteCallback(cons
 /**
  * @brief create its context to send the request to unreal api for application call TX
  */
-void UAlgorandUnrealManager::sendApplicationCallTransaction(const FUInt64& app_ID)
+void UAlgorandUnrealManager::sendApplicationCallTransaction(const FUInt64& app_ID, const TArray<FAppArg>& app_args, const EAppOnCompleteTX& app_complete_tx)
 {
     this->requestContextManager_
         .createContext<API::FAlgorandApplicationCallTransactionGetDelegate,
         Vertices::VerticesApplicationCallTransactionGetRequest>(
             request_builders::buildApplicationCallTransactionRequest(this->getAddress(),
-                                                                     app_ID),
+                                                                     app_ID,
+                                                                     app_args,
+                                                                     app_complete_tx),
             std::bind(&API::AlgorandApplicationCallTransactionGet, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             std::bind(&UAlgorandUnrealManager::OnSendApplicationCallTransactionCompleteCallback, this, std::placeholders::_1)

@@ -22,7 +22,8 @@ public class Algorand : ModuleRules
                 "Blockchain",
 				"Wallet",
                 "Vertices",
-				"Projects"
+				"Projects",
+                "OpenSSL"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

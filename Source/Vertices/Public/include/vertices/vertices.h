@@ -100,15 +100,25 @@ vertices_transaction_app_call(account_info_t *account, uint64_t app_id, void *pa
 VERTICES_IMPORT ret_code_t
 vertices_application_get(uint64_t app_id, app_values_t * global_states);
 
-/// Get transaction.
-/// \param tx_id Transaction ID
-/// \param asset_id Asset ID which has been created
-/// \return codes
-///     * VTC_SUCCESS on success: key-values have been parsed correctly and put into global_states
-///     * VTC_ERROR_INTERNAL if unable to instantiate parser
-///     * VTC_ERROR_NOT_FOUND if key not found
-VERTICES_IMPORT ret_code_t
-vertices_transaction_get(unsigned char * tx_id, uint64_t *asset_id);
+ /// Get logs after noop tx.
+ /// \param tx_id Transaction ID
+ /// \param res_logs Response Logs After NoOp TX
+ /// \return codes
+ ///     * VTC_SUCCESS on success: key-values have been parsed correctly and put into global_states
+ ///     * VTC_ERROR_INTERNAL if unable to instantiate parser
+ ///     * VTC_ERROR_NOT_FOUND if key not found
+ VERTICES_IMPORT ret_code_t
+ vertices_noop_logs_get(unsigned char * tx_id, unsigned char* res_logs);
+
+ /// Get asset id after asset creation.
+ /// \param tx_id Transaction ID
+ /// \param asset_id Asset ID which has been created
+ /// \return codes
+ ///     * VTC_SUCCESS on success: key-values have been parsed correctly and put into global_states
+ ///     * VTC_ERROR_INTERNAL if unable to instantiate parser
+ ///     * VTC_ERROR_NOT_FOUND if key not found
+ VERTICES_IMPORT ret_code_t
+ vertices_asset_id_get(unsigned char * tx_id, uint64_t *asset_id);
 
 /// Get transaction based on event (identified by \c vtc_evt_t::bufid)
 /// \param bufid Event bufid

@@ -4,7 +4,6 @@
 #include "CoreMinimal.h"
 #include "Engine/World.h"
 #include "RequestContextManager.h"
-#include "Wallet.h"
 #include "Models/FArcAssetDetails.h"
 #include "Models/FUInt64.h"
 #include "Models/FError.h"
@@ -447,7 +446,7 @@ public:
     UFUNCTION(BlueprintCallable,
 			  meta = (DisplayName = "sendApplicationCallTX", Keywords = "ApplCallTX"),	
     		  Category = "AlgorandUnrealManager")
-    void sendApplicationCallTransaction(const FUInt64& app_ID);
+    void sendApplicationCallTransaction(const FUInt64& app_ID, const TArray<FAppArg>& app_Args, const EAppOnCompleteTX& app_complete_tx);
 
 	/**
 	 * application transaction information callback

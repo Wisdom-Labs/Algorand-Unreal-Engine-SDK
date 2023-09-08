@@ -2,6 +2,16 @@
 
 #pragma once
 
+enum EAppCompleteTX
+{
+    NOOP = 0,
+    OPT_IN = 1,
+    CLOSE_OUT = 2,
+    CLEAR_STATE = 3,
+    UPDATE_APP = 4,
+    DELETE_APP = 5
+};
+
 namespace algorand {
 namespace vertices {
 

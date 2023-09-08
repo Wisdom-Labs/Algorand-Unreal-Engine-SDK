@@ -884,7 +884,7 @@ namespace algorand {
                             uint64 asset_id;
                             
                             do{
-                                err_code = vertices_transaction_get(txID, &asset_id);
+                                err_code = vertices_asset_id_get(txID, &asset_id);
                                 UE_LOG(LogTemp, Warning, TEXT("Asset Config TX ASSET ID Success, %d"), asset_id);
                             }
                             while (err_code != VTC_SUCCESS);
@@ -1108,22 +1108,26 @@ namespace algorand {
                             app_values_t app_kv = { 0 };
                             err_code = vertices_application_get(Request.app_ID.GetValue(), &app_kv);
                             checkVTCSuccess("vertices_application_get error occured", err_code);
-                            for (uint32_t i = 0; i < app_kv.count; ++i) {
-                                if (app_kv.values[i].type == VALUE_TYPE_INTEGER) {
-                                    UE_LOG(LogTemp, Warning, TEXT("%s: %llu"), app_kv.values[i].name, (long long unsigned) app_kv.values[i].value_uint);
-                                }
-                                else if (app_kv.values[i].type == VALUE_TYPE_BYTESLICE) {
-                                    UE_LOG(LogTemp, Warning, TEXT("%s: %s"), app_kv.values[i].name, app_kv.values[i].value_slice);
+
+                            /// send application call
+                            // set app args as byte_slice type
+                            app_values_t kv = {0};
+                            kv.count = Request.app_args.Num();
+                            if(kv.count > 0)
+                            {
+                                uint8_t arg_index = 0;
+                                for(; arg_index < kv.count; arg_index++)
+                                {
+                                    kv.values[arg_index].type = VALUE_TYPE_BYTESLICE;
+                                    if(arg_index == 0)
+                                        memcpy(kv.values[0].value_slice, Request.app_args[0].GetData(), APPS_NOOP_TX_SLICE_MAX_SIZE);
+                                    else
+                                        memcpy(kv.values[0].value_slice, Request.app_args[0].GetData(), APPS_KV_SLICE_MAX_SIZE);
                                 }
                             }
-
-                            // send application call
-                            app_values_t kv = { 0 };
-                            kv.count = 1;
-                            kv.values[0].type = VALUE_TYPE_INTEGER;
-                            kv.values[0].value_uint = 32;
-
-                            err_code = vertices_transaction_app_call(sender_account.vtc_account, Request.app_ID.GetValue(), &kv);
+                            
+                            err_code = vertices_transaction_app_call(sender_account.vtc_account, 301624623, &kv);
+                            // err_code = vertices_transaction_app_call(sender_account.vtc_account, Request.app_ID.GetValue(), &kv);
                             checkVTCSuccess("vertices_transaction_app_call error occured", err_code);
 
                             unsigned char* txID = nullptr;
@@ -1138,9 +1142,29 @@ namespace algorand {
 
                             //free(txID);
 
+                            InitVertices(err_code);
+                            checkVTCSuccess("When reiniting vertices network, an error occured", err_code);
+                            
+                            unsigned char logs[MSG_LOGS_MAX_SIZE];
+                            err_code = vertices_noop_logs_get((unsigned char *) txID, logs);
+
+                            checkVTCSuccess("When getting logs after NoOp Tx, an error occured", err_code);
+                            UE_LOG(LogTemp, Warning, TEXT("👉 Haha This is NoOp Tx Logs Status: %llu"), (long long unsigned) err_code);
+                            UE_LOG(LogTemp, Warning, TEXT("👉 Haha This is logs: %s"), (char *) logs);
+                            /*unsigned char * u8_logs = new unsigned char[strlen((const char*)logs)];
+                            memset(u8_logs, 0, strlen((const char*)logs));
+                            len = strlen((const char*)logs);
+                            b64_decode((const char *)logs, strlen((const char*)logs), (char *)u8_logs, &len);
+
+                            uint64_t app_result = 0;
+                            for(int i = 0; i < 8; i++) {
+                                app_result += u8_logs[i + 4] * pow(256, 8 - i - 1);
+                            }
+                            UE_LOG(LogTemp, Warning, TEXT("👉 Haha This is logs: %llu"), (unsigned long long int)app_result);*/
+
                             err_code = vertices_account_free(sender_account.vtc_account);
                             checkVTCSuccess("vertices_account_free error occured", err_code);
-                            response = response_builders::buildApplicationCallTransactionResponse(FString(UTF8_TO_TCHAR(txID)));
+                            response = response_builders::buildApplicationCallTransactionResponse(FString(UTF8_TO_TCHAR(txID)), FString(UTF8_TO_TCHAR(logs)));
                             response.SetSuccessful(true);
                         }
                         catch(SDKException& e)

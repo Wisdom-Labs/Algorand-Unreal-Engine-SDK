@@ -21,5 +21,5 @@ namespace response_builders {
 	algorand::vertices::VerticesSDK::VerticesAssetTransferTransactionGetResponse
 		buildAssetTransferTransactionResponse(const FString& txID);
 	algorand::vertices::VerticesSDK::VerticesApplicationCallTransactionGetResponse
-		buildApplicationCallTransactionResponse(const FString& txID);
+		buildApplicationCallTransactionResponse(const FString& txID, const FString& logs);
 }

@@ -35,6 +35,15 @@
 #define OPTIONAL_TX_FIELDS_MAX_SIZE_BYTES     128
 #endif
 
+// transaction-related
+#ifndef TXS_LOGS_MAX_SIZE
+#define TXS_LOGS_MAX_SIZE              32   //!< Byte slice fixed length
+#endif
+
+#ifndef MSG_LOGS_MAX_SIZE
+#define MSG_LOGS_MAX_SIZE              1024  //!< Byte slice fixed length
+#endif
+
 // application-related
 #ifndef APPS_MAX_COUNT
 #define APPS_MAX_COUNT                  3   //!< Maximum number of applications per account
@@ -50,6 +59,10 @@
 
 #ifndef APPS_KV_SLICE_MAX_SIZE
 #define APPS_KV_SLICE_MAX_SIZE          8   //!< Byte slice maximum length
+#endif
+
+#ifndef APPS_NOOP_TX_SLICE_MAX_SIZE
+#define APPS_NOOP_TX_SLICE_MAX_SIZE     4   //!< Byte slice fixed length
 #endif
 
 #endif //VERTICES_SDK_INC_VERTICES_CONFIG_H

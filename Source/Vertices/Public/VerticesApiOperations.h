@@ -6,7 +6,6 @@
 
 namespace algorand {
     namespace vertices {
-        
         // Request for Restore wallet
         class VerticesSDK::VerticesRestoreWalletGetRequest : public Request
         {
@@ -164,6 +163,8 @@ namespace algorand {
 
             TOptional<FString> senderAddress;
             TOptional<uint64_t> app_ID;
+            TArray<TArray<uint8_t>> app_args;
+            EAppCompleteTX app_complete_tx; 
         };
 
         // Response for Application Call TX
@@ -172,6 +173,7 @@ namespace algorand {
         public:
             ~VerticesApplicationCallTransactionGetResponse() {}
             FString txID;
+            FString logs;
         };
 
         // Request for Arc Asset Details

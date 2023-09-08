@@ -50,4 +50,4 @@ directory of out test project (`example\unreal-algorand-demo`) and rebuild your 
 Read [Getting Started](docs/getting_started.md) to learn the basic workflows for developing on Algorand.
 
 ### Demo Project
-Check an example folder(https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/tree/master/example/unreal-algorand-demo) made with this UE plugin.
+ Check an [Example Folder](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/tree/master/example/unreal-algorand-demo) made with this UE plugin.

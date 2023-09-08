@@ -1,6 +1,7 @@
 // Copyright 2022, Wisdom Labs. All Rights Reserved
 
 #include "RequestBuilders.h"
+#include "BaseModel.h"
 #include "VerticesApiOperations.h"
 
 namespace {
@@ -111,11 +112,28 @@ namespace request_builders {
 
 	Vertices::VerticesApplicationCallTransactionGetRequest
 		buildApplicationCallTransactionRequest(const FString& sender, 
-									   const FUInt64& app_ID)
+									   const FUInt64& app_ID,
+									   const TArray<FAppArg>& app_args,
+									   const EAppOnCompleteTX& app_complete_tx)
 	{
 		Vertices::VerticesApplicationCallTransactionGetRequest request;
+		uint8_t index;
 		request.senderAddress = sender;
 		request.app_ID = app_ID;
+		request.app_args.Empty();
+		for(index = 0; index < app_args.Num(); index++)
+			request.app_args.Add(app_args[index].Value_Bytes);
+
+		request.app_complete_tx = NOOP;			// set initial value
+		switch (app_complete_tx)
+		{
+			case NOOP:			request.app_complete_tx = NOOP;	break;		
+			case OPT_IN:		request.app_complete_tx = OPT_IN;	break;
+			case CLOSE_OUT:		request.app_complete_tx = CLOSE_OUT;	break;
+			case CLEAR_STATE:	request.app_complete_tx = CLEAR_STATE;	break;
+			case UPDATE_APP:	request.app_complete_tx = UPDATE_APP;	break;
+			case DELETE_APP:	request.app_complete_tx = DELETE_APP;	break;
+		}
 		return request;
 	}
 

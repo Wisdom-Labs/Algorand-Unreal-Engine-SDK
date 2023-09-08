@@ -2,6 +2,7 @@
 
 #pragma once
 #include "Models/FUInt64.h"
+#include "Models/FAppArgs.h"
 #include "VerticesSDK.h"
 
 /**
@@ -105,7 +106,9 @@ namespace request_builders {
 	 */
 	algorand::vertices::VerticesSDK::VerticesApplicationCallTransactionGetRequest
 		buildApplicationCallTransactionRequest(const FString& sender,
-									   const FUInt64& app_ID);
+											   const FUInt64& app_ID, 
+											   const TArray<FAppArg>& app_args,
+											   const EAppOnCompleteTX& app_complete_tx);
 
 	/**
 	 * @brief build request for arc asset details with following params

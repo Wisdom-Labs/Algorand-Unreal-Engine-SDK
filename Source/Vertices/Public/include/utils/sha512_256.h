@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-    SHA512_256_IMPORT ret_code_t
+    VERTICES_API ret_code_t
         sha512_256(unsigned char const* input,
             unsigned long ilen,
             unsigned char* output,

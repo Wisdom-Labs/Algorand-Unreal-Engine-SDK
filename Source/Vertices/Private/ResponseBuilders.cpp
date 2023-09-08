@@ -74,10 +74,11 @@ namespace response_builders {
 	}
 
 	Vertices::VerticesApplicationCallTransactionGetResponse
-		buildApplicationCallTransactionResponse(const FString& txID)
+		buildApplicationCallTransactionResponse(const FString& txID, const FString& logs)
 	{
 		Vertices::VerticesApplicationCallTransactionGetResponse response;
 		response.txID = txID;
+		response.logs = logs;
 		return response;
 	}
 }
