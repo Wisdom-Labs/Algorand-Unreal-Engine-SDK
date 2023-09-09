@@ -35,7 +35,7 @@ public:
 		void OnSendAssetTransferTransactionCallback(const FString& txID);
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OnSendApplicationCallTransactionCallback(const FString& txID);
+		void OnSendApplicationCallTransactionCallback(const FString& txID, const FString& logs);
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
 		void OnGetArcAssetDetailsCallback(const FArcAssetDetails& asset_Details);
